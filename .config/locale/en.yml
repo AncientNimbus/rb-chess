@@ -48,6 +48,48 @@ en:
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
   app:
     chess:
+      boot: |
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+        * │                                                                            │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   AN/""""'\NA dP                                      │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   N/ .cCc. \M 88                                      │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   C  hHHHh `M 88                                      │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   I  EEEEEeeE 88d888b. .d8888b. .d8888b. .d8888b.     │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   E  sSSSSSSS 88'  `88 88ooood8 Y8ooooo. Y8ooooo.     │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   N. `sSs' .S 88    88 88.  ...       88       88     │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   TT.     .sS dP    dP `88888P' `88888P' `88888P'     │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   NIMBUSCHESS                                         │
+        * │                                                                            │
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+        * │                                   Chess                                    │
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+        * │             A Command Line Game by Ancient Nimbus | Ver: 0.1.0             │
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+      intro: |
+        * How to start:
+        * A series of prompts will help setup the game for you in no time. 
+        * See below for what to expect:
+        * 1. Start a new game or load game from save
+        *    • [1] New Game
+        *    • [2] Load Game
+        * 2. Select a game mode:
+        *    • [1] Player vs Player
+        *    • [2] Player vs Computer (Coming soon)
+        * 3. You can give Player a name, you can skip this by leaving the input empty.
+        *    • Please name Player 1 (Default: Player 1)
+        *    • Please name Player 2 (Default: Player 2) (Mode 1 only)
+        * 4. The game will randomly decide which player goes first.
+        * 5. A game save will be created, and it is stored locally at the ./data folder.
+        * 
+        * How to play:
+        * 1. In chess, White makes the first move, follow by Black.
+        * 2. To make a move, type a move in Algebraic notation format. (More info below)
+        * 3. The game features autosave, your progress is saved at the end of each move.
+        *
+        * To learn more about chess, see: ↴
+        *   https://www.instructables.com/Playing-Chess/
+        * To learn more about notation, see: ↴
+        *   https://www.chessable.com/blog/chess-notation-for-beginners/
       pieces:
         wh:
           k: "♔"
