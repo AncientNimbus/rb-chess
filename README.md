@@ -33,5 +33,9 @@ For more details regarding the development of this project, feel free to checkou
 - Rubocop
 - Yard
 
+## Additional Resources
+
+The chessboard design is published as a [gist](https://gist.github.com/AncientNimbus/c85f5a4289f95e1fd6fc27a7a93be310), feel free to adapt it on your own project.
+
 ---
 
