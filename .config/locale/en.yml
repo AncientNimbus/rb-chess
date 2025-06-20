@@ -30,7 +30,7 @@ en:
       * +───────────────+───────────────+────────────────────────────────────────────+
       * │ GAME          │ LAUNCH CODE   │ INFO                                       │
       * +───────────────+───────────────+────────────────────────────────────────────+
-      * │ Chess         │ chess         │ The all time classic board game            │
+      * │ Chess         │ chess         │ Strategy, Patience, Victory.               │
       * +───────────────+───────────────+────────────────────────────────────────────+
       * 
       * Type '--help' to see a list of available commands.
@@ -48,6 +48,30 @@ en:
       * │ * Info - [--info]                   | * Display system info                │
       * │ * Exit - [--exit | --ttfn]          | * Safely close the program           │
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+    std_msg_prefix: "* "
+    prompt_prefix: ">>> "
+    lobby:
+      msg: "Get started by typing a command: "
+      err: "Invalid input, please try again: "
+      cmd_err: "Invalid commands, type --help to view all available commands."
+      exit: "~~Thank you for visiting Ruby Arcade~~"
+    load:
+      msg: "Detecting user profile..."
+      msg2: "Choose from the following profile by typing the corresponding number:"
+      msg3: "Profile loaded. Welcome back %{name}."
+      input_err: "Invalid input, please try again! To load the first profile, type '1'."
+      bad_file_err: "The chosen user profile is corrupted and cannot be loaded, operation cancelled."
+      no_profile_err: "No profile found, operation cancelled."
+    save:
+      msg:
+    self:
+      msg:
+    play:
+      run: "Launching %{app}..."
+      run_err: "Invalid launch code, please try again."
+      gm_err: "No game manager available"
+    info:
+
   app:
     chess:
       boot: |
@@ -138,8 +162,8 @@ en:
         * • 'R1xd4' => 'Rook on first rank captures d4'
         * 
         * Castling:
-        * • 'O-O' => 'Castle kingside'
-        * • 'O-O-O' => 'Castle queenside'
+        * • '0-0' => 'Castle kingside'
+        * • '0-0-0' => 'Castle queenside'
         * 
         * Pawn Promotion:
         * Pawn can be prompted to a queen, rook, bishop or a knight.
@@ -160,6 +184,8 @@ en:
           b: "♝"
           n: "♞"
           p: "♟"
+      flow:
+
       board:
         frame:
           h: "═"
@@ -224,4 +250,3 @@ en:
           * ╠═══╬═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╬═══╣
           * ║ ◆ ║ h ⋄ g ⋄ f ⋄ e ⋄ d ⋄ c ⋄ b ⋄ a ║ ◇ ║
           * ╚═══╩═══════════════════════════════╩═══╝
-      flow:
