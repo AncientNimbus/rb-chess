@@ -32,10 +32,12 @@ en:
       * +───────────────+───────────────+────────────────────────────────────────────+
       * │ Chess         │ chess         │ The all time classic board game            │
       * +───────────────+───────────────+────────────────────────────────────────────+
-      *
+      * 
+      * Type '--help' to see a list of available commands.
       * To run a game, type '--play <launch code>' to run a game. 
       * E.g., '--play chess'
     help: |
+      * Ruby Arcade | Help Menu
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       * │ * Available commands:               |                                      │
       * │ * Help - [--help]                   | * Display all available commands     │
@@ -51,13 +53,13 @@ en:
       boot: |
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * │                                                                            │
-        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   AN/""""'\NA dP                                      │
-        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   N/ .cCc. \M 88                                      │
-        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   C  hHHHh `M 88                                      │
-        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   I  EEEEEeeE 88d888b. .d8888b. .d8888b. .d8888b.     │
-        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   E  sSSSSSSS 88'  `88 88ooood8 Y8ooooo. Y8ooooo.     │
-        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   N. `sSs' .S 88    88 88.  ...       88       88     │
-        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   TT.     .sS dP    dP `88888P' `88888P' `88888P'     │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   AN/""""'\TT dP                                      │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   N/ .cCc. \O 88                                      │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   C  hHHHh `P 88                                      │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   I  EEEEEeeO 88d888b. .d8888b. .d8888b. .d8888b.     │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   E  sSSSSSSD 88'  `88 88ooood8 Y8ooooo. Y8ooooo.     │
+        * │     ░░▓▓░░▓▓░░▓▓░░▓▓   N. `sSs' .I 88    88 88.  ...       88       88     │
+        * │     ▓▓░░▓▓░░▓▓░░▓▓░░   TT.     .sN dP    dP `88888P' `88888P' `88888P'     │
         * │     ░░▓▓░░▓▓░░▓▓░░▓▓   NIMBUSCHESS                                         │
         * │                                                                            │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
@@ -66,30 +68,83 @@ en:
         * │             A Command Line Game by Ancient Nimbus | Ver: 0.1.0             │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       intro: |
-        * How to start:
+        * **How to start**
         * A series of prompts will help setup the game for you in no time. 
         * See below for what to expect:
-        * 1. Start a new game or load game from save
+        * 1. Start a new game or load game from savefile
         *    • [1] New Game
         *    • [2] Load Game
-        * 2. Select a game mode:
+        *
+        * 2. Select a game mode: (When New Game is selected)
         *    • [1] Player vs Player
         *    • [2] Player vs Computer (Coming soon)
+        *
+        * 2. Select a game session to resume: (When Load Game is selected)
+        *    • A list of session linked to you will be loaded 
+        *    • Please enter a number to indicate the session you wish to load
+        *
         * 3. You can give Player a name, you can skip this by leaving the input empty.
         *    • Please name Player 1 (Default: Player 1)
         *    • Please name Player 2 (Default: Player 2) (Mode 1 only)
-        * 4. The game will randomly decide which player goes first.
+        *
+        * 4. You can choose to play as White or Black, or let the game decide randomly.
+        *    • [1] Play as White
+        *    • [2] Play as Black
+        *    • [3] Let the game decide
+        *
         * 5. A game save will be created, and it is stored locally at the ./data folder.
-        * 
-        * How to play:
+        *
+        * **How to play**
         * 1. In chess, White makes the first move, follow by Black.
-        * 2. To make a move, type a move in Algebraic notation format. (More info below)
-        * 3. The game features autosave, your progress is saved at the end of each move.
+        * 2. This game uses Algebraic notation standard to process movements.
+        * 3. To make a move, type your move in notation format. (More info below)
+        * 4. The game features autosave, your progress is saved at the end of each move.
         *
         * To learn more about chess, see: ↴
         *   https://www.instructables.com/Playing-Chess/
         * To learn more about notation, see: ↴
         *   https://www.chessable.com/blog/chess-notation-for-beginners/
+        *
+      help: |
+        * Chess | Help Menu
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+        * │ * Available commands:               |                                      │
+        * │ * Help - [--help]                   | * Display all available commands     │
+        * │ * Info - [--info]                   | * Display game info                  │
+        * │ * Save - [--save]                   | * Save user profile to local disc    │
+        * │ * Exit - [--exit | --ttfn]          | * Safely exit the game.              │
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+        * 
+        * **Input examples**
+        * Algebraic notation:
+        * Pieces Symbols:
+        * • ♔: K, ♕: Q, ♖: R, ♗: B, ♘: N, ♙: (P) No symbol
+        *
+        * Movements:
+        * • 'e4' => 'Pawn to e4'
+        * • 'Nh3' => 'Knight to h3'
+        * 
+        * Capturing:
+        * • 'exd5' => 'Pawn captures d5'
+        * • 'Qxh7' => 'Queen captures h7'
+        *
+        * When multiple pieces can move/capture the same location (Disambiguation):
+        * Use file to specify (a to h):
+        * • 'Nbd2' => 'b-Knight to d2'
+        * • 'Rbxd4' => 'b-Rook captures d4'
+        *
+        * Use rank to specify (1 to 8):
+        * • 'N1d2' => 'Knight on first rank to d2'
+        * • 'R1xd4' => 'Rook on first rank captures d4'
+        * 
+        * Castling:
+        * • 'O-O' => 'Castle kingside'
+        * • 'O-O-O' => 'Castle queenside'
+        * 
+        * Pawn Promotion:
+        * Pawn can be prompted to a queen, rook, bishop or a knight.
+        * • 'e8=Q' => 'Pawn promotes to queen'
+        * • 'e8=R' => 'Pawn promotes to rook'
       pieces:
         wh:
           k: "♔"
@@ -169,3 +224,4 @@ en:
           * ╠═══╬═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╬═══╣
           * ║ ◆ ║ h ⋄ g ⋄ f ⋄ e ⋄ d ⋄ c ⋄ b ⋄ a ║ ◇ ║
           * ╚═══╩═══════════════════════════════╩═══╝
+      flow:
