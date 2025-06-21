@@ -27,10 +27,10 @@ module ConsoleGame
     # @param reg [Regexp] pattern to match
     # @param allow_empty [Boolean] allow empty input value, default to false
     # @return [String] user input
-    def prompt_user(msg = "", err_msg: F.s("console.msg.err"), reg: /.*/, allow_empty: false)
+    def prompt_user(msg = "", err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
       input = ""
       loop do
-        print_msg("#{msg}#{F.s('console.msg.std')}", mode: :print)
+        print_msg("#{msg}#{F.s('cli.prompt_prefix')}", mode: :print)
         input = gets.chomp
         break if input.match?(reg) && (!input.empty? || allow_empty)
 
@@ -75,7 +75,7 @@ module ConsoleGame
     # @param err_msg [String] second print
     # @param reg [Regexp] pattern to match
     # @param allow_empty [Boolean] allow empty input value, default to false
-    def handle_input(msg = "", err_msg: F.s("console.msg.err"), reg: /.*/, allow_empty: false)
+    def handle_input(msg = "", err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
       input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: allow_empty)
       return input if input.empty?
 
@@ -83,7 +83,7 @@ module ConsoleGame
       @input_is_cmd, is_valid, cmd = command?(input_arr[0], commands)
 
       if @input_is_cmd
-        is_valid ? commands[cmd].call(input_arr[1..]) : print_msg(F.s("console.cmd_err"))
+        is_valid ? commands[cmd].call(input_arr[1..]) : print_msg(F.s("cli.cmd_err"))
       else
         input
       end
@@ -104,26 +104,26 @@ module ConsoleGame
 
     # Display help string
     def help(_arr = [])
-      show("console.help")
+      show("cli.help")
     end
 
     # Launch a game
     # @param arr [Array<String>] optional arguments
     def play(arr = [])
-      return print_msg(F.s("console.msg.gm_err")) unless game_manager
+      return print_msg(F.s("cli.play.gm_err")) unless game_manager
 
       app_name = arr[0]
       if game_manager.apps.key?(app_name)
         game_manager.apps[app_name].call
       else
-        print_msg(F.s("console.msg.run_err"))
+        print_msg(F.s("cli.play.run_err"))
       end
     end
 
     # Exit sequences
     def quit(_arg = [])
       game_manager.running = false
-      print_msg(F.s("console.exit"))
+      print_msg(F.s("cli.lobby.exit"))
       exit
     end
   end

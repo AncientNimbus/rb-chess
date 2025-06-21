@@ -53,7 +53,7 @@ module ConsoleGame
     # Edit player name
     # @param name [String]
     def edit_name(name = "")
-      return F.rs("connect4.default.player_name", { num: Player.total_player }) if name.empty?
+      return "Player #{Player.total_player}" if name.empty?
 
       @name = name.colorize(player_color)
     end
@@ -79,7 +79,7 @@ module ConsoleGame
 
   # Computer player class
   class Computer < Player
-    def initialize(game_manager = nil, name = F.rs("connect4.default.ai_name"))
+    def initialize(game_manager = nil, name = "Computer")
       super(game_manager, name)
     end
 

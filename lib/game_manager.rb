@@ -3,7 +3,7 @@
 require_relative "console"
 require_relative "player"
 require_relative "base_game"
-require_relative "connect_four"
+require_relative "chess"
 
 # Console Game System v2.0.0
 module ConsoleGame
@@ -15,9 +15,8 @@ module ConsoleGame
 
     def initialize(lang: "en")
       FileUtils.set_locale(lang)
-      String.prevent_colors = true
       @running = true
-      @apps = { "connect4" => method(:connect_four) }
+      @apps = { "chess" => method(:chess) }
       @menu = ConsoleMenu.new(self)
       @p1 = Player.new(self)
       @active_game = nil
@@ -32,15 +31,16 @@ module ConsoleGame
 
     # Greet user
     def greet
-      menu.show("console.ver")
-      menu.show("console.boot")
-      menu.show("console.menu")
+      menu.show("cli.ver")
+      menu.show("cli.boot")
+      menu.show("cli.menu")
     end
 
-    # Run game: Connect Four
-    def connect_four
-      self.active_game = ConnectFour.new(self, menu)
-      active_game.start
+    # Run game: Chess
+    def chess
+      puts "Should start chess"
+      # self.active_game = Chess.new(self, menu)
+      # active_game.start
     end
   end
 end

@@ -11,6 +11,9 @@
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
+Style/FormatString:
+  EnforcedStyle: percent
+
 Style/FrozenStringLiteralComment:
   EnforcedStyle: always_true
 

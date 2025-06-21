@@ -6,6 +6,7 @@ GEM
     json (2.12.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
+    paint (2.3.0)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -56,6 +57,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  paint (~> 2.3)
   rspec (~> 3.13)
   rubocop (~> 1.76)
   rubocop-performance (~> 1.25)

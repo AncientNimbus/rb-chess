@@ -49,11 +49,11 @@ en:
       * │ * Exit - [--exit | --ttfn]          | * Safely close the program           │
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
     std_msg_prefix: "* "
+    std_err: "Invalid input, please try again: "
     prompt_prefix: ">>> "
+    cmd_err: "Invalid commands, type --help to view all available commands."
     lobby:
       msg: "Get started by typing a command: "
-      err: "Invalid input, please try again: "
-      cmd_err: "Invalid commands, type --help to view all available commands."
       exit: "~~Thank you for visiting Ruby Arcade~~"
     load:
       msg: "Detecting user profile..."
@@ -63,11 +63,12 @@ en:
       bad_file_err: "The chosen user profile is corrupted and cannot be loaded, operation cancelled."
       no_profile_err: "No profile found, operation cancelled."
     save:
-      msg:
+      msg: "Your profile has been saved and can be found at the following directory: \n%{dir}"
     self:
       msg:
     play:
       run: "Launching %{app}..."
+      test: "Launching %{app}... %{msg}"
       run_err: "Invalid launch code, please try again."
       gm_err: "No game manager available"
     info:
@@ -95,7 +96,7 @@ en:
         * **How to start**
         * A series of prompts will help setup the game for you in no time. 
         * See below for what to expect:
-        * 1. Start a new game or load game from savefile
+        * 1. Start a new game or load game from profile
         *    • [1] New Game
         *    • [2] Load Game
         *
