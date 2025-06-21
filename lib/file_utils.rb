@@ -6,8 +6,8 @@ require "paint"
 
 # Filer operations helper module
 # @author Ancient Nimbus
-# @version 0.3.0
-module FileUtils
+# @version 0.4.0
+module NimbusFileUtils
   class << self
     attr_accessor :locale
 

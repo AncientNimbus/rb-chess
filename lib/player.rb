@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "colorize"
-require_relative "file_utils"
 
 module ConsoleGame
   # Player class

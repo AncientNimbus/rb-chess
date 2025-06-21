@@ -1,24 +1,28 @@
 # frozen_string_literal: true
 
+require_relative "user_profile"
 require_relative "console"
 require_relative "player"
 require_relative "base_game"
 require_relative "chess"
+
+# Alias for NimbusFileUtils
+F = NimbusFileUtils
 
 # Console Game System v2.0.0
 module ConsoleGame
   # Game Manager for Console game
   class GameManager
     include Console
-    attr_reader :apps, :menu, :p1
+    attr_reader :apps, :menu, :user
     attr_accessor :running, :active_game
 
     def initialize(lang: "en")
-      FileUtils.set_locale(lang)
+      F.set_locale(lang)
       @running = true
       @apps = { "chess" => method(:chess) }
       @menu = ConsoleMenu.new(self)
-      @p1 = Player.new(self)
+      @user = UserProfile.new
       @active_game = nil
     end
 
@@ -31,6 +35,7 @@ module ConsoleGame
 
     # Greet user
     def greet
+      # %w[ver boot menu].map
       menu.show("cli.ver")
       menu.show("cli.boot")
       menu.show("cli.menu")

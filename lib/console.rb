@@ -2,9 +2,6 @@
 
 require_relative "file_utils"
 
-# Alias for FileUtils
-F = FileUtils
-
 module ConsoleGame
   # Game display & input manager for console game
   module Console
