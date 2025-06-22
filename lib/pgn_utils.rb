@@ -35,7 +35,15 @@ module PgnUtils
     # @param value [Object]
     # @return [String]
     def format_metadata(key, value)
-      "[#{key.capitalize} \"#{value}\"]"
+      key = key.is_a?(Symbol) ? key.capitalize : key
+      case value
+      in String | Integer | Float
+        "[#{key} \"#{value}\"]"
+      in Time
+        "[#{key} \"#{value.year}.#{value.mon}.#{value.day}\"]"
+      else
+        "[#{key} \"#{value}\"]"
+      end
     end
 
     # Helper to format PGN moves
