@@ -14,6 +14,9 @@ module ConsoleGame
   # Game Manager for Console game
   class GameManager
     include Console
+
+    SUPPORTED_FILETYPE = %i[yml json pgn].freeze
+
     attr_reader :apps, :menu, :user
     attr_accessor :running, :active_game
 
