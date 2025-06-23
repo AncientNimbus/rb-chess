@@ -39,6 +39,9 @@ describe PgnUtils do
         { event: "ch-USA Seniors 2024", site: "Saint Louis USA", date: Time.new(2024, 7, 25), round: 9.2, white: "Akopian, Vl",
           black: "Benjamin, Joe", result: "1/2-1/2", moves: formatted_moves }
       end
+      let(:incomplete_session) do
+        { result: "1/2-1/2", moves: formatted_moves }
+      end
       it "returns a string containing seven tags roaster and moves sequence" do
         pgn_data = <<~DATA
           [Event "ch-USA Seniors 2024"]
@@ -55,7 +58,19 @@ describe PgnUtils do
         expect(result).to eq(pgn_data)
       end
 
-      xit "returns a string containing moves sequence when seven tags roaster is incomplete" do
+      it "returns a string containing moves sequence when seven tags roaster is incomplete" do
+        pgn_data = <<~DATA
+          [Result "1/2-1/2"]
+
+          1. Nf3 Nf6 2. c4 g6 3. g3 Bg7 4. Bg2 O-O 5. O-O c6 6. d4 d6 7. Nc3 Bf5 8. b3 Ne4 9. Bb2 Nxc3 10. Bxc3 Be4 11. Rc1 d5 12. Nd2 Bxg2 13. Kxg2 Nd7 14. e4 dxe4 15. Nxe4 Nf6 16. Nxf6+ Bxf6 17. d5 Qd6 18. dxc6 Qxc6+ 19. Qf3 Bxc3 20. Qxc6 bxc6 21. Rxc3 Rfd8 22. Re1 e6 23. Re5 a5 24. Rc5 Ra6 25. a3 Kf8 26. b4 axb4 27. axb4 Rb6 28. b5 cxb5 29. cxb5 Ke7 30. g4 Rd5 31. Rc7+ Rd7 32. Rxd7+ Kxd7 33. Rb3 f5 34. gxf5 gxf5 35. Kg3 e5 36. Kh4 Rh6+ 37. Kg5 Rxh2 38. b6 Kc8 39. Kxf5 Rxf2+ 40. Kxe5 Kb7 41. Rh3 Kxb6 42. Rxh7 Re2+ 43. Kf5 Rf2+ 44. Ke5 Re2+ 45. Kf5 Rf2+ 46. Ke5 Re2+ 1/2-1/2
+        DATA
+        result = PgnUtils.to_pgn(incomplete_session)
+        expect(result).to eq(pgn_data)
+      end
+    end
+
+    context "when session is valid pgn hash and incomplete" do
+      xit "returns a string containing seven tags roaster and moves sequence" do
       end
     end
 
