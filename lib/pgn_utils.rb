@@ -22,11 +22,9 @@ module PgnUtils
         k, v = parse_pgn_metadata(elem)
         session[k] = v
       end
-      session[:moves] = parse_pgn_moves(others)
-      # p metadata
-      p session
-      # p session[:moves]
-      # p others
+      session[:moves] = parse_pgn_moves(clean_pgn_moves(others))
+
+      session
     end
 
     # Expects a hash and returns a string object with PGN formatting.
@@ -75,6 +73,8 @@ module PgnUtils
       str_data = elem.delete('"[]').split
       key, value = str_data.partition { |part| str_data.index(part).zero? }
       key = key.join.downcase.to_sym
+      raise ArgumentError, "#{key} is not a valid metadata field, please verify data integrity" unless TAGS.key?(key)
+
       value = if key == :date
                 handle_date(value[0])
               else
@@ -105,10 +105,29 @@ module PgnUtils
     end
 
     # Helper to turn pgn moves data to key, value array pair
+    # @param clean_moves [String]
+    # @return [Array]
+    def parse_pgn_moves(clean_moves)
+      moves = Hash.new { |h, k| h[k] = [] }
+
+      turn_tracker = 0
+      clean_moves.each do |elem|
+        if elem.include?(".")
+          turn_tracker = elem.sub(".", "").to_i
+        elsif moves[turn_tracker].size < 2
+          # TODO: need to add check to see if elem is a valid chess move, go through chess_logic.rb
+          moves[turn_tracker] << elem
+        end
+      end
+      moves
+    end
+
+    # Helper to clean up raw string before further processing
     # @param moves_data [String]
     # @return [Array]
-    def parse_pgn_moves(moves_data)
-      moves_data.join(" ").split
+    def clean_pgn_moves(moves_data)
+      arr = moves_data.join(" ").split
+      arr.map! { |elem| elem.include?(".") ? elem.sub(".", ". ").split : elem }.flatten!
     end
   end
 end
