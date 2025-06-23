@@ -123,7 +123,7 @@ module PgnUtils
     end
 
     # Helper to clean up raw string before further processing
-    # @param moves_data [String]
+    # @param moves_data [Array]
     # @return [Array]
     def clean_pgn_moves(moves_data)
       arr = moves_data.join(" ").split
