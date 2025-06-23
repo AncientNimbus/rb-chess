@@ -99,7 +99,7 @@ module PgnUtils
     # @param result [String, nil] session result, if any.
     # @return [Array<String>]
     def format_moves(moves, result = nil)
-      moves_arr = moves.map { |k, v| "#{k}. #{v}" }
+      moves_arr = moves.map { |k, v| "#{k}. #{v.join(' ')}" }
       moves_arr << result unless result.nil?
       moves_arr
     end
