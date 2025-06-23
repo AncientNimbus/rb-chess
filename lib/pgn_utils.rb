@@ -22,8 +22,10 @@ module PgnUtils
         k, v = parse_pgn_metadata(elem)
         session[k] = v
       end
+      session[:moves] = parse_pgn_moves(others)
       # p metadata
       p session
+      # p session[:moves]
       # p others
     end
 
@@ -68,18 +70,28 @@ module PgnUtils
 
     # Helper to turn metadata string to key, value array pair
     # @param elem [String] expects a single metadata element
-    # @return [Array<String>] key, value pair
+    # @return [Array] key, value pair
     def parse_pgn_metadata(elem)
       str_data = elem.delete('"[]').split
       key, value = str_data.partition { |part| str_data.index(part).zero? }
       key = key.join.downcase.to_sym
-      if key == :date
-        y, m, d = value[0].tr(".", " ").split
-        value = Time.new(y, m, d)
-      else
-        value = value.join(" ")
-      end
+      value = if key == :date
+                handle_date(value[0])
+              else
+                value.join(" ")
+              end
       [key, value]
+    end
+
+    # Helper to try convert string value to a date, if it fails, returns a incomplete date as string
+    # @param str_date [String]
+    # @return [Time]
+    def handle_date(str_date)
+      y, m, d = str_date.tr(".", " ").split
+      Time.new(y, m, d)
+    rescue ArgumentError
+      y, m, d = [y, m, d].map { |elem| elem.to_i.zero? ? 1 : elem }
+      Time.new(y, m, d)
     end
 
     # Helper to format PGN moves
@@ -90,6 +102,13 @@ module PgnUtils
       moves_arr = moves.map { |k, v| "#{k}. #{v}" }
       moves_arr << result unless result.nil?
       moves_arr
+    end
+
+    # Helper to turn pgn moves data to key, value array pair
+    # @param moves_data [String]
+    # @return [Array]
+    def parse_pgn_moves(moves_data)
+      moves_data.join(" ").split
     end
   end
 end
