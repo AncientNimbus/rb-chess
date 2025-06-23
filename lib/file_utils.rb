@@ -61,12 +61,8 @@ module NimbusFileUtils
       filepath += format == :yml ? ".yml" : ".json"
       return puts "File not found: #{filepath}" unless File.exist?(filepath)
 
-      File.open(filepath, "r") do |str|
-        data = if format == :yml
-                 YAML.safe_load(str, permitted_classes: [Time, Symbol], aliases: true, freeze: true)
-               else
-                 JSON.parse(str.read)
-               end
+      File.open(filepath, "r") do |file|
+        data = format == :yml ? handle_yaml(file) : handle_json(file)
         return symbols ? to_symbols(data) : data
       end
     end
@@ -115,6 +111,20 @@ module NimbusFileUtils
       str = get_string(key_path, format: format)
 
       Paint % [str, *paint_str, subs]
+    end
+
+    private
+
+    # Helper to handle yaml data
+    # @param file [File]
+    def handle_yaml(file)
+      YAML.safe_load(file, permitted_classes: [Time, Symbol], aliases: true, freeze: true)
+    end
+
+    # Helper to handle json data
+    # @param file [File]
+    def handle_json(file)
+      JSON.parse(file.read)
     end
   end
 end
