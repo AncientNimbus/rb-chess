@@ -50,6 +50,24 @@ module NimbusFileUtils
       File.exist?(filepath)
     end
 
+    # Writes the given data and save it to the specified file path.
+    # @param filepath [String] The base path of the file to write (extension is added automatically).
+    # @param data [Object] The data to serialize and write.
+    # @param format [Symbol] The format to use. Defaults to :yml.
+    def write_to_disk(filepath, data, format: :yml)
+      # @todo error handling
+      File.open("#{filepath}.#{format}", "w") do |output|
+        case format
+        when :yml
+          return output.puts data.to_yaml
+        when :json
+          return output.puts data.to_json
+        else
+          return output.puts data
+        end
+      end
+    end
+
     # Load file in YAML or JSON format.
     # @param filepath [String] the base path of the file to write (extension is added automatically).
     # @param format [Symbol] set target file format, default: `:yml`
