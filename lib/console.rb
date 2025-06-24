@@ -55,13 +55,22 @@ module ConsoleGame
 
     # Helper method to create regexp pattern
     # @param reg [String] pattern to match
-    # @param cmds [Array<String>] command patterns
+    # @param cmd_pattern [String] command patterns
     # @param pre [String] pattern prefix
     # @param suf [String] pattern suffix
     # @param flag [String, Regexp] regexp flag
-    def regexp_formatter(reg = "reg", cmds: %w[exit help debug], pre: '\A', suf: '\z', flag: "")
-      cmd_pattern = "--(#{cmds.join('|')}).*?"
+    # @return [Regexp]
+    def regexp_formatter(reg = "reg", cmd_pattern = "--(exit|help|debug).*?", pre: '\A', suf: '\z', flag: "")
       Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
+    end
+
+    # Helper method to build regexp capturing group
+    # @param reg [Array] elements
+    # @param pre [String] pattern prefix
+    # @param suf [String] pattern suffix
+    # @return [String]
+    def regexp_capturing_gp(reg = %w[reg abc], pre: "", suf: "")
+      "#{pre}(#{reg.join('|')})#{suf}"
     end
   end
 end
