@@ -40,6 +40,8 @@ module ConsoleGame
     # Save user profile to disk | command pattern: `save`
     def save(_arr = [])
       puts "Saving user profile..."
+      game_manager.user.profile[:saved_date] = Time.now.ceil
+      game_manager.user.save_profile
     end
 
     # Load user profile from disk | command pattern: `load`
@@ -62,7 +64,7 @@ module ConsoleGame
 
     # Display user info | command pattern: `self`
     def self(_arr = [])
-      puts "should print username"
+      puts game_manager.user.profile
     end
   end
 end

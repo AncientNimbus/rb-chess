@@ -9,9 +9,9 @@ module ConsoleGame
     attr_reader :profile, :filepath
     attr_accessor :username
 
-    def initialize(username = "")
+    def initialize(username = "", user_profile = nil)
       @username = username.empty? ? "Arcade Player" : username
-      @profile = create_profile
+      @profile = user_profile.nil? ? create_profile : user_profile
     end
 
     # Create a user profile
@@ -24,6 +24,12 @@ module ConsoleGame
       filename ||= F.formatted_filename(username)
       @filepath ||= F.filepath(filename, "user_data")
       F.write_to_disk(filepath, profile, format: format)
+    end
+
+    # load user profile
+    def load_profile(format: :json)
+      data = F.load_file(filepath, format: format)
+      p data
     end
   end
 end

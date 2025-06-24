@@ -16,7 +16,10 @@ module ConsoleGame
   class GameManager
     include Console
 
-    SUPPORTED_FILETYPE = %i[yml json pgn].freeze
+    # Expected file types
+    SUPPORTED_FILETYPES = %i[yml json pgn].freeze
+    # Expected user profile structure
+    PROFILE = { uuid: "", username: "", saved_date: Time, appdata: {}, stats: {} }.freeze
 
     attr_reader :apps, :cli, :user
     attr_accessor :running, :active_game
@@ -84,13 +87,20 @@ module ConsoleGame
       @user = UserProfile.new(username)
       # Save to disk
       user.save_profile
-      # p user
+      # Print confirmation message
       print_msg(F.s("cli.save.msg", { dir: ["#{user.filepath}.json", :yellow] }))
       print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
     end
 
     # Handle returning user
     def load_profile
+      username = handle_input(F.s("cli.new.msg3"), empty: true)
+      filename ||= F.formatted_filename(username)
+      filepath ||= F.filepath(filename, "user_data")
+
+      profile = F.load_file(filepath, format: :json)
+
+      @user = UserProfile.new(username, profile) if profile.keys == PROFILE.keys
     end
   end
 end
