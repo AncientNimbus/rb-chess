@@ -43,13 +43,12 @@ module ConsoleGame
     # @return [Boolean, Array<Boolean, String>] whether it is a command or not
     def command?(input, commands = %w[exit debug], flags: %w[-- -])
       clean_input = nil
-      i = 0
-      loop do
-        flag = flags[i]
-        clean_input = input.delete_prefix(flags[i]) if input[0...flag.size] == flag
-        i += 1
+      flags.each do |flag|
+        clean_input = input.delete_prefix(flag) if input[0...flag.size] == flag
         break unless clean_input.nil?
       end
+      return false if clean_input.nil?
+
       [true, commands.include?(clean_input), clean_input]
     end
 
