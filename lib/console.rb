@@ -18,6 +18,26 @@ module ConsoleGame
       method(mode).call(formatted_msg)
     end
 
+    # process user input
+    # @param msg [String] first print
+    # @param cmds [Array, Hash] expects a list of command key names
+    # @param err_msg [String] second print
+    # @param reg [Regexp, String] pattern to match
+    # @param allow_empty [Boolean] allow empty input value, default to false
+    def handle_input(msg = "", cmds: %w[exit help], err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
+      input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: allow_empty)
+      return input if input.empty?
+
+      input_arr = input.split(" ")
+      @input_is_cmd, is_valid, cmd = command?(input_arr[0], cmds)
+
+      if @input_is_cmd
+        is_valid ? cmds[cmd].call(input_arr[1..]) : print_msg(F.s("cli.cmd_err"))
+      else
+        input
+      end
+    end
+
     # prompt user to collect input
     # @param msg [String] first print
     # @param err_msg [String] second print
@@ -70,6 +90,19 @@ module ConsoleGame
     # @return [String]
     def regexp_capturing_gp(reg = %w[reg abc], pre: "", suf: "")
       "#{pre}(#{reg.join('|')})#{suf}"
+    end
+
+    # Shorthand method: simple display
+    # @param str [String] textfile key
+    def show(str)
+      print_msg(F.s(str))
+    end
+
+    # Shorthand method: Display with added prefix
+    # @param str [String] textfile key
+    # @param pre [String] message prefix
+    def std_show(str, pre: "* ")
+      print_msg(F.s(str), pre: pre)
     end
   end
 end

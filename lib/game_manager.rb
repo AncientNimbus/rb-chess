@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "user_profile"
 require_relative "console"
 require_relative "console_menu"
+require_relative "user_profile"
 require_relative "player"
 require_relative "base_game"
 require_relative "chess"
@@ -42,9 +42,9 @@ module ConsoleGame
     # Greet user
     def greet
       # %w[ver boot menu].map
-      cli.show("cli.ver")
-      cli.show("cli.boot")
-      # cli.show("cli.menu")
+      show("cli.ver")
+      show("cli.boot")
+      # show("cli.menu")
     end
 
     # Setup user profile
@@ -54,7 +54,7 @@ module ConsoleGame
 
     # Arcade lobby
     def lobby
-      cli.handle_input(allow_empty: true) while running
+      handle_input(cmds: cli.commands, allow_empty: true) while running
     end
 
     # Exit Arcade

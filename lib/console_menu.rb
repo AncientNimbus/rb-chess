@@ -19,40 +19,6 @@ module ConsoleGame
       @input_is_cmd = false
     end
 
-    # == Core methods ==
-
-    # process user input
-    # @param msg [String] first print
-    # @param err_msg [String] second print
-    # @param reg [Regexp] pattern to match
-    # @param allow_empty [Boolean] allow empty input value, default to false
-    def handle_input(msg = "", err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
-      input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: allow_empty)
-      return input if input.empty?
-
-      input_arr = input.split(" ")
-      @input_is_cmd, is_valid, cmd = command?(input_arr[0], commands)
-
-      if @input_is_cmd
-        is_valid ? commands[cmd].call(input_arr[1..]) : print_msg(F.s("cli.cmd_err"))
-      else
-        input
-      end
-    end
-
-    # Display the console menu
-    # @param str [String] textfile key
-    def show(str)
-      print_msg(F.s(str))
-    end
-
-    # Display with added prefix
-    # @param str [String] textfile key
-    # @param pre [String] message prefix
-    def std_show(str, pre: "* ")
-      print_msg(F.s(str), pre: pre)
-    end
-
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`, `ttfn`
