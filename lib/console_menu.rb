@@ -10,12 +10,15 @@ module ConsoleGame
 
     attr_reader :commands, :game_manager
 
+    # @param game_manager [ConsoleGame::GameManager]
     def initialize(game_manager = nil)
       @game_manager = game_manager
-      @commands = { "exit" => method(:quit), "ttfn" => method(:quit),
-                    "help" => method(:help), "play" => method(:play) }
+      @commands = { "exit" => method(:quit), "ttfn" => method(:quit), "help" => method(:help), "info" => method(:info),
+                    "save" => method(:save), "load" => method(:load), "play" => method(:play), "self" => method(:self) }
       @input_is_cmd = false
     end
+
+    # == Core methods ==
 
     # process user input
     # @param msg [String] first print
@@ -49,12 +52,35 @@ module ConsoleGame
       print_msg(F.s(str), pre: pre)
     end
 
-    # Display help string
+    # == Console Commands ==
+
+    # Exit sequences | command patterns: `exit`, `ttfn`
+    def quit(_arg = [])
+      print_msg(F.s("cli.lobby.exit"))
+      game_manager.exit_arcade
+    end
+
+    # Display help string | command pattern: `help`
     def help(_arr = [])
       show("cli.help")
     end
 
-    # Launch a game
+    # Display system info | command pattern: `info`
+    def info(_arr = [])
+      show("cli.menu")
+    end
+
+    # Save user profile to disk | command pattern: `save`
+    def save(_arr = [])
+      puts "Saving user profile..."
+    end
+
+    # Load user profile from disk | command pattern: `load`
+    def load(_arr = [])
+      puts "Fetching user profile..."
+    end
+
+    # Launch a game | command pattern: `play <launch code>`
     # @param arr [Array<String>] optional arguments
     def play(arr = [])
       return print_msg(F.s("cli.play.gm_err")) unless game_manager
@@ -67,11 +93,9 @@ module ConsoleGame
       end
     end
 
-    # Exit sequences
-    def quit(_arg = [])
-      game_manager.running = false
-      print_msg(F.s("cli.lobby.exit"))
-      exit
+    # Display user info | command pattern: `self`
+    def self(_arr = [])
+      puts "should print username"
     end
   end
 end
