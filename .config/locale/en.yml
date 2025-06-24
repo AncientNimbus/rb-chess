@@ -23,9 +23,9 @@ en:
       * │          /:/  /   |:\/__/   \:\__\     /:/  /   \::/  /   \:\/  /          │
       * │          \/__/     \|__|     \/__/     \/__/     \/__/     \/__/           │
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-    menu: |
-      * Welcome to ⟡ Ruby Arcade ⟡
       *
+      * Type '--help' to see a list of available commands.
+    menu: |
       * Games available in this release:
       * +───────────────+───────────────+────────────────────────────────────────────+
       * │ GAME          │ LAUNCH CODE   │ INFO                                       │
@@ -33,7 +33,6 @@ en:
       * │ Chess         │ chess         │ Strategy, Patience, Victory.               │
       * +───────────────+───────────────+────────────────────────────────────────────+
       * 
-      * Type '--help' to see a list of available commands.
       * To run a game, type '--play <launch code>' to run a game. 
       * E.g., '--play chess'
     help: |
@@ -56,6 +55,13 @@ en:
     lobby:
       msg: "Get started by typing a command: "
       exit: "👾 Thank you for visiting Ruby Arcade 👾"
+    new:
+      msg: |
+        Welcome to ⟡ Ruby Arcade ⟡
+
+        If this is your first visit to the Arcade, enter [1] to create a new profile.
+        If you have already created a profile, enter [2] to load your profile.
+      msg2: "Please specify a profile loading mode: "
     load:
       msg: "Detecting user profile..."
       msg2: "Choose from the following profile by typing the corresponding number:"

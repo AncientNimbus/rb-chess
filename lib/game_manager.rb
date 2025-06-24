@@ -44,16 +44,21 @@ module ConsoleGame
       # %w[ver boot menu].map
       show("cli.ver")
       show("cli.boot")
-      # show("cli.menu")
     end
 
     # Setup user profile
     def assign_user_profile
-      puts "Setting up user"
+      pretty_show("cli.new.msg")
+
+      reg = regexp_formatter("[1-2]")
+      mode = handle_input(F.s("cli.new.msg2"), cmds: cli.commands, reg: reg)
+
+      @user = mode == 1 ? new_profile : load_profile
     end
 
     # Arcade lobby
     def lobby
+      show("cli.menu")
       handle_input(cmds: cli.commands, allow_empty: true) while running
     end
 
@@ -68,6 +73,21 @@ module ConsoleGame
       puts "Should start chess"
       # self.active_game = Chess.new(self, cli)
       # active_game.start
+    end
+
+    def test_me
+      puts "Hello bean"
+    end
+
+    private
+
+    # Handle new user
+    def new_profile
+      UserProfile.new
+    end
+
+    # Handle returning user
+    def load_profile
     end
   end
 end

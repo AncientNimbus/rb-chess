@@ -31,12 +31,46 @@ module ConsoleGame
       input_arr = input.split(" ")
       @input_is_cmd, is_valid, cmd = command?(input_arr[0], cmds)
 
-      if @input_is_cmd
-        is_valid ? cmds[cmd].call(input_arr[1..]) : print_msg(F.s("cli.cmd_err"))
-      else
-        input
-      end
+      return input unless @input_is_cmd
+
+      handle_command(cmd, input_arr[1..], cmds, is_valid)
+      handle_input(msg, cmds: cmds, err_msg: err_msg, reg: reg, allow_empty: allow_empty)
     end
+
+    # Helper method to create regexp pattern
+    # @param reg [String] pattern to match
+    # @param cmd_pattern [String] command patterns
+    # @param pre [String] pattern prefix
+    # @param suf [String] pattern suffix
+    # @param flag [String, Regexp] regexp flag
+    # @return [Regexp]
+    def regexp_formatter(reg = "reg", cmd_pattern = "--(exit|help|debug).*?", pre: '\A', suf: '\z', flag: "")
+      Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
+    end
+
+    # Helper method to build regexp capturing group
+    # @param reg [Array] elements
+    # @param pre [String] pattern prefix
+    # @param suf [String] pattern suffix
+    # @return [String]
+    def regexp_capturing_gp(reg = %w[reg abc], pre: "", suf: "")
+      "#{pre}(#{reg.join('|')})#{suf}"
+    end
+
+    # Shorthand method: simple display
+    # @param str [String] textfile key
+    def show(str)
+      print_msg(F.s(str))
+    end
+
+    # Shorthand method: Display with added prefix
+    # @param str [String] textfile key
+    # @param pre [String] message prefix
+    def pretty_show(str, pre: "* ")
+      print_msg(F.s(str), pre: pre)
+    end
+
+    private
 
     # prompt user to collect input
     # @param msg [String] first print
@@ -72,37 +106,15 @@ module ConsoleGame
       [true, commands.include?(clean_input), clean_input]
     end
 
-    # Helper method to create regexp pattern
-    # @param reg [String] pattern to match
-    # @param cmd_pattern [String] command patterns
-    # @param pre [String] pattern prefix
-    # @param suf [String] pattern suffix
-    # @param flag [String, Regexp] regexp flag
-    # @return [Regexp]
-    def regexp_formatter(reg = "reg", cmd_pattern = "--(exit|help|debug).*?", pre: '\A', suf: '\z', flag: "")
-      Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
-    end
+    # Handle command
+    # @param cmd [String]
+    # @param opt_arg [String]
+    # @param cmds [Array]
+    # @param is_valid [Boolean]
+    def handle_command(cmd, opt_arg, cmds, is_valid)
+      return pretty_show("cli.cmd_err", pre: "! ") unless is_valid
 
-    # Helper method to build regexp capturing group
-    # @param reg [Array] elements
-    # @param pre [String] pattern prefix
-    # @param suf [String] pattern suffix
-    # @return [String]
-    def regexp_capturing_gp(reg = %w[reg abc], pre: "", suf: "")
-      "#{pre}(#{reg.join('|')})#{suf}"
-    end
-
-    # Shorthand method: simple display
-    # @param str [String] textfile key
-    def show(str)
-      print_msg(F.s(str))
-    end
-
-    # Shorthand method: Display with added prefix
-    # @param str [String] textfile key
-    # @param pre [String] message prefix
-    def std_show(str, pre: "* ")
-      print_msg(F.s(str), pre: pre)
+      cmds.fetch(cmd).call(opt_arg)
     end
   end
 end
