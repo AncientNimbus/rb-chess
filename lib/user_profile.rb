@@ -6,7 +6,7 @@ require_relative "file_utils"
 module ConsoleGame
   # User Profile class
   class UserProfile
-    attr_reader :profile
+    attr_reader :profile, :filepath
     attr_accessor :username
 
     def initialize(username = "")
@@ -17,6 +17,13 @@ module ConsoleGame
     # Create a user profile
     def create_profile
       { uuid: SecureRandom.uuid, username: username, saved_date: Time.now.ceil, appdata: {}, stats: {} }
+    end
+
+    # Save user profile
+    def save_profile(format: :json)
+      filename ||= F.formatted_filename(username)
+      @filepath ||= F.filepath(filename, "user_data")
+      F.write_to_disk(filepath, profile, format: format)
     end
   end
 end

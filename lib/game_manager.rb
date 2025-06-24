@@ -82,8 +82,10 @@ module ConsoleGame
       username = handle_input(F.s("cli.new.msg3"), empty: true)
       # Create user profile
       @user = UserProfile.new(username)
-
+      # Save to disk
+      user.save_profile
       # p user
+      print_msg(F.s("cli.save.msg", { dir: ["#{user.filepath}.json", :yellow] }))
       print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
     end
 

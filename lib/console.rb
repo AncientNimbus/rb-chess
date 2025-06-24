@@ -81,7 +81,7 @@ module ConsoleGame
     def prompt_user(msg = "", err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
       input = ""
       loop do
-        print_msg("#{msg}#{F.s('cli.prompt_prefix')}", mode: :print)
+        print_msg("#{Paint['?', :green]} #{msg}#{F.s('cli.prompt_prefix')}", mode: :print)
         input = gets.chomp
         break if input.match?(reg) && (!input.empty? || allow_empty)
 

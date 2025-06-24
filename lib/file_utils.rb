@@ -121,7 +121,7 @@ module NimbusFileUtils
 
     # Retrieves a localized string and perform String interpolation and paint text if needed.
     # @param key_path [String]
-    # @param subs [Hash]
+    # @param subs [Hash] `{ demo: ["some text", :red] }`
     # @param paint_str [Array<Symbol, String, nil>]
     # @param format [Symbol]
     # @return [String] the translated and interpolated string

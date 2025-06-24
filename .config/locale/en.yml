@@ -65,10 +65,7 @@ en:
       msg2: "Please specify a profile loading mode: "
       msg3: "Please provide a username(Default: Arcade Player): "
       msg4: |
-        * Profile created!
-        * 
         * 👋 Greetings %{name}!
-
     load:
       msg: "Detecting user profile..."
       msg2: "Choose from the following profile by typing the corresponding number:"
@@ -77,7 +74,7 @@ en:
       bad_file_err: "The chosen user profile is corrupted and cannot be loaded, operation cancelled."
       no_profile_err: "No profile found, operation cancelled."
     save:
-      msg: "Your profile has been saved and can be found at the following directory: \n%{dir}"
+      msg: "Your profile has been saved and can be found at the following directory: \n==> '%{dir}'"
     self:
       msg:
     play:
