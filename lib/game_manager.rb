@@ -26,7 +26,6 @@ module ConsoleGame
       @running = true
       @apps = { "chess" => method(:chess) }
       @cli = ConsoleMenu.new(self)
-      @user = UserProfile.new
       @active_game = nil
     end
 
@@ -51,9 +50,9 @@ module ConsoleGame
       pretty_show("cli.new.msg")
 
       reg = regexp_formatter("[1-2]")
-      mode = handle_input(F.s("cli.new.msg2"), cmds: cli.commands, reg: reg)
+      mode = handle_input(F.s("cli.new.msg2"), cmds: cli.commands, reg: reg).to_i
 
-      @user = mode == 1 ? new_profile : load_profile
+      mode == 1 ? new_profile : load_profile
     end
 
     # Arcade lobby
@@ -75,15 +74,17 @@ module ConsoleGame
       # active_game.start
     end
 
-    def test_me
-      puts "Hello bean"
-    end
-
     private
 
     # Handle new user
     def new_profile
-      UserProfile.new
+      # Get username
+      username = handle_input(F.s("cli.new.msg3"), cmds: cli.commands, allow_empty: true)
+      # Create user profile
+      @user = UserProfile.new(username)
+
+      # p user
+      print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
     end
 
     # Handle returning user
