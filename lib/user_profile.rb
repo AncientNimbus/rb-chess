@@ -9,8 +9,8 @@ module ConsoleGame
     attr_reader :profile
     attr_accessor :username
 
-    def initialize(username = "Arcade Player")
-      @username = username
+    def initialize(username = "")
+      @username = username.empty? ? "Arcade Player" : username
       @profile = create_profile
     end
 

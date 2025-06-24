@@ -131,6 +131,15 @@ module NimbusFileUtils
       Paint % [str, *paint_str, subs]
     end
 
+    # Textfile strings fetcher
+    # @param sub [String]
+    # @param keys [Array<String>] key
+    # @return [Array<String>] array of textfile strings
+    def tf_fetcher(sub, *keys, root: "cli")
+      sub = ".#{sub}" unless sub.empty?
+      keys.map { |key| s("#{root}#{sub}.#{key}") }
+    end
+
     private
 
     # Helper to handle yaml data

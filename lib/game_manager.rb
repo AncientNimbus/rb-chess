@@ -50,7 +50,7 @@ module ConsoleGame
       pretty_show("cli.new.msg")
 
       reg = regexp_formatter("[1-2]")
-      mode = handle_input(F.s("cli.new.msg2"), cmds: cli.commands, reg: reg).to_i
+      mode = handle_input(F.s("cli.new.msg2"), reg: reg).to_i
 
       mode == 1 ? new_profile : load_profile
     end
@@ -58,7 +58,7 @@ module ConsoleGame
     # Arcade lobby
     def lobby
       show("cli.menu")
-      handle_input(cmds: cli.commands, allow_empty: true) while running
+      handle_input(cmds: cli.commands, empty: true) while running
     end
 
     # Exit Arcade
@@ -79,7 +79,7 @@ module ConsoleGame
     # Handle new user
     def new_profile
       # Get username
-      username = handle_input(F.s("cli.new.msg3"), cmds: cli.commands, allow_empty: true)
+      username = handle_input(F.s("cli.new.msg3"), empty: true)
       # Create user profile
       @user = UserProfile.new(username)
 

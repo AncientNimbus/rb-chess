@@ -20,12 +20,12 @@ module ConsoleGame
 
     # process user input
     # @param msg [String] first print
-    # @param cmds [Array, Hash] expects a list of command key names
+    # @param cmds [Hash] expects a list of commands hash
     # @param err_msg [String] second print
     # @param reg [Regexp, String] pattern to match
-    # @param allow_empty [Boolean] allow empty input value, default to false
-    def handle_input(msg = "", cmds: %w[exit help], err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
-      input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: allow_empty)
+    # @param empty [Boolean] allow empty input value, default to false
+    def handle_input(msg = "", cmds: { "exit" => method(:exit) }, err_msg: F.s("cli.std_err"), reg: /.*/, empty: false)
+      input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: empty)
       return input if input.empty?
 
       input_arr = input.split(" ")
@@ -34,7 +34,7 @@ module ConsoleGame
       return input unless @input_is_cmd
 
       handle_command(cmd, input_arr[1..], cmds, is_valid)
-      handle_input(msg, cmds: cmds, err_msg: err_msg, reg: reg, allow_empty: allow_empty)
+      handle_input(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
     end
 
     # Helper method to create regexp pattern
@@ -44,7 +44,7 @@ module ConsoleGame
     # @param suf [String] pattern suffix
     # @param flag [String, Regexp] regexp flag
     # @return [Regexp]
-    def regexp_formatter(reg = "reg", cmd_pattern = "--(exit|help|debug).*?", pre: '\A', suf: '\z', flag: "")
+    def regexp_formatter(reg = "reg", cmd_pattern = "--(exit).*?", pre: '\A', suf: '\z', flag: "")
       Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
     end
 
@@ -95,7 +95,7 @@ module ConsoleGame
     # @param commands [Array<String>] command string keys
     # @param flags [Array<String>] command pattern prefixes
     # @return [Boolean, Array<Boolean, String>] whether it is a command or not
-    def command?(input, commands = %w[exit debug], flags: %w[-- -])
+    def command?(input, commands = %w[exit debug], flags: %w[--])
       clean_input = nil
       flags.each do |flag|
         clean_input = input.delete_prefix(flag) if input[0...flag.size] == flag
@@ -114,7 +114,11 @@ module ConsoleGame
     def handle_command(cmd, opt_arg, cmds, is_valid)
       return pretty_show("cli.cmd_err", pre: "! ") unless is_valid
 
-      cmds.fetch(cmd).call(opt_arg)
+      begin
+        cmds.fetch(cmd).call(opt_arg)
+      rescue TypeError
+        cmd == "exit" ? cmds.fetch(cmd).call : raise(TypeError, "#{cmd} is missing optional argument: #{opt_arg}")
+      end
     end
   end
 end
