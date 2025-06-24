@@ -42,15 +42,15 @@ module ConsoleGame
     # @param flags [Array<String>] command pattern prefixes
     # @return [Boolean, Array<Boolean, String>] whether it is a command or not
     def command?(input, commands = %w[exit debug], flags: %w[-- -])
-      case
-      when input[0..1] == flags[0]
-        input.delete_prefix!(flags[0])
-      when input[0] == flags[1]
-        input.delete_prefix!(flags[1])
-      else
-        return false
+      clean_input = nil
+      i = 0
+      loop do
+        flag = flags[i]
+        clean_input = input.delete_prefix(flags[i]) if input[0...flag.size] == flag
+        i += 1
+        break unless clean_input.nil?
       end
-      [true, commands.include?(input), input]
+      [true, commands.include?(clean_input), clean_input]
     end
 
     # Helper method to create regexp pattern
