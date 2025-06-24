@@ -18,7 +18,7 @@ en:
       * │           ___       ___       ___       ___       ___       ___            │
       * │          /\  \     /\  \     /\  \     /\  \     /\  \     /\  \           │
       * │         /::\  \   /::\  \   /::\  \   /::\  \   /::\  \   /::\  \          │
-      * +        /::\:\__\ /::\:\__\ /:/\:\__\ /::\:\__\ /:/\:\__\ /::\:\__\         │
+      * │        /::\:\__\ /::\:\__\ /:/\:\__\ /::\:\__\ /:/\:\__\ /::\:\__\         │
       * │        \/\::/  / \;:::/  / \:\ \/__/ \/\::/  / \:\/:/  / \:\:\/  /         │
       * │          /:/  /   |:\/__/   \:\__\     /:/  /   \::/  /   \:\/  /          │
       * │          \/__/     \|__|     \/__/     \/__/     \/__/     \/__/           │
@@ -51,10 +51,11 @@ en:
     std_msg_prefix: "* "
     std_err: "Invalid input, please try again: "
     prompt_prefix: ">>> "
+    query_prefix: "? "
     cmd_err: "Invalid commands, type --help to view all available commands."
     lobby:
       msg: "Get started by typing a command: "
-      exit: "~~Thank you for visiting Ruby Arcade~~"
+      exit: "👾 Thank you for visiting Ruby Arcade 👾"
     load:
       msg: "Detecting user profile..."
       msg2: "Choose from the following profile by typing the corresponding number:"

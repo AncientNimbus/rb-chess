@@ -8,13 +8,14 @@ module ConsoleGame
   class ConsoleMenu
     include Console
 
-    attr_reader :commands, :game_manager
+    attr_reader :commands, :cmd_patterns, :game_manager
 
     # @param game_manager [ConsoleGame::GameManager]
     def initialize(game_manager = nil)
       @game_manager = game_manager
       @commands = { "exit" => method(:quit), "ttfn" => method(:quit), "help" => method(:help), "info" => method(:info),
                     "save" => method(:save), "load" => method(:load), "play" => method(:play), "self" => method(:self) }
+      @cmd_patterns = commands.keys
       @input_is_cmd = false
     end
 
