@@ -39,13 +39,12 @@ module ConsoleGame
 
     # Save user profile to disk | command pattern: `save`
     def save(_arr = [])
-      puts "Saving user profile..."
-      game_manager.user.save_profile
+      game_manager.save_user_profile
     end
 
     # Load user profile from disk | command pattern: `load`
     def load(_arr = [])
-      puts "Fetching user profile..."
+      game_manager.switch_user_profile
     end
 
     # Launch a game | command pattern: `play <launch code>`

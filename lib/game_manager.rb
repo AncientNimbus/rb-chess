@@ -29,6 +29,7 @@ module ConsoleGame
       @running = true
       @apps = { "chess" => method(:chess) }
       @cli = ConsoleMenu.new(self)
+      @user = nil
       @active_game = nil
     end
 
@@ -83,6 +84,13 @@ module ConsoleGame
 
       user.save_profile
       print_msg(F.s("cli.save.msg", { dir: [user.filepath, :yellow] }))
+    end
+
+    # Load another profile when using is at the lobby
+    def switch_user_profile
+      return "No user profile found, operation cancelled" if user.nil?
+
+      load_profile
     end
 
     private
