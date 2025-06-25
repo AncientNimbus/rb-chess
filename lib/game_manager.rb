@@ -74,9 +74,9 @@ module ConsoleGame
 
     # Run game: Chess
     def chess
-      puts "Should start chess"
-      # self.active_game = Chess.new(self, cli)
-      # active_game.start
+      self.active_game = Chess.new(self)
+      active_game.start
+      puts "Welcome back to the lobby! Hope you have fun playing chess."
     end
 
     # Save user profile

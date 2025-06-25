@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
+require_relative "console"
+
 module ConsoleGame
   # Base Game class
   class BaseGame
-    attr_reader :game_manager, :input, :title, :p1
+    include Console
+    attr_reader :game_manager, :input, :title, :user
     attr_accessor :state, :game_result
 
     # @param game_manager [ConsoleGame::GameManager]
-    # @param input [ConsoleGame::ConsoleMenu]
     # @param title [String]
-    def initialize(game_manager = nil, input = nil, title = "Base Game")
+    def initialize(game_manager = nil, title = "Base Game")
       @game_manager = game_manager
-      @input = input
       @title = title
-      @p1 = game_config[:players][0]
-      Player.player_count(1)
+      @user = game_config[:users][0]
       @state = :created
     end
 
@@ -22,7 +22,7 @@ module ConsoleGame
     def game_config
       return nil if game_manager.nil?
 
-      { players: [game_manager.p1] }
+      { users: [game_manager.user] }
     end
 
     # State machine
@@ -30,7 +30,7 @@ module ConsoleGame
     # Start the game
     def start
       self.state = :playing
-      show_intro
+      boot
       setup_game
     end
 
@@ -57,14 +57,15 @@ module ConsoleGame
       state == :playing
     end
 
-    protected
+    private
+
+    # Print the boot screen
+    def boot
+      # system("clear")
+      print_msg(F.s("cli.play.run", { app: [title, :yellow] }))
+    end
 
     def setup_game; end
-
-    def show_intro
-      system("clear")
-      input.print_msg(F.s("console.msg.run", { app: title }, :yellow))
-    end
 
     def show_end_screen
       puts "Game Over! Result: #{@game_result}"
