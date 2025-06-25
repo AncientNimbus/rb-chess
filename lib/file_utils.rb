@@ -9,13 +9,15 @@ require "paint"
 # @version 0.4.0
 module NimbusFileUtils
   class << self
-    attr_accessor :locale
+    attr_accessor :locale, :locale_filename
 
     # Set program language
     # @param lang [String] default to English(en)
-    def set_locale(lang = "en")
+    # @param extname [String] default to `.yml`
+    def set_locale(lang = "en", extname: ".yml")
       # localization target
       @locale = lang
+      @locale_filename = formatted_filename(lang, extname)
     end
 
     # Return the root path.
@@ -25,12 +27,13 @@ module NimbusFileUtils
     end
 
     # Return cross-system friendly filename.
-    # @param filename [String]
+    # @param filename [String] file name
+    # @param extname [String] file extension name
     # @return [String] Formatted filename
-    def formatted_filename(filename, format = "")
+    def formatted_filename(filename, extname = "")
       raise ArgumentError, "Forbidden character detected" unless filename.match?(/\A[\sa-zA-Z0-9._-]+\z/)
 
-      filename.downcase.tr(" ", "_") + format
+      filename.downcase.tr(" ", "_") + extname
     end
 
     # Return the full path of a specific file.
@@ -43,24 +46,25 @@ module NimbusFileUtils
     # Check if a file exist in the given file path.
     # @param filepath [String]
     # @param use_filetype [Boolean]
-    # @param type [String]
-    def file_exist?(filepath, use_filetype: true, type: ".yml")
-      type = "" unless use_filetype
-      filepath += type
+    # @param extname [String]
+    def file_exist?(filepath, use_filetype: true, extname: ".yml")
+      extname = "" unless use_filetype
+      filepath += extname
       File.exist?(filepath)
     end
 
     # Writes the given data and save it to the specified file path.
     # @param filepath [String] The base path of the file to write (extension is added automatically).
     # @param data [Object] The data to serialize and write.
-    # @param format [Symbol] The format to use. Defaults to :yml.
-    def write_to_disk(filepath, data, format: :yml)
+    # @param extname [String] The format to use. Defaults to :yml.
+    def write_to_disk(filepath, data, extname: ".yml")
       # @todo error handling
-      File.open("#{filepath}.#{format}", "w") do |output|
-        case format
-        when :yml
+      filepath += extname if File.extname(filepath).empty?
+      File.open(filepath, "w") do |output|
+        case extname
+        when ".yml"
           return output.puts data.to_yaml
-        when :json
+        when ".json"
           return output.puts data.to_json
         else
           return output.puts data
@@ -70,17 +74,16 @@ module NimbusFileUtils
 
     # Load file in YAML or JSON format.
     # @param filepath [String] the base path of the file to write (extension is added automatically).
-    # @param format [Symbol] set target file format, default: `:yml`
+    # @param extname [String] set target file format, default: `.yml`
     # @param symbols [Boolean] set whether to use symbols as key, default: true
     # @return [Hash]
-    def load_file(filepath, format: :yml, symbols: true)
-      raise ArgumentError, "Invalid format key: only :yml or :json is accepted" unless %i[yml json].include?(format)
+    def load_file(filepath, extname: ".yml", symbols: true)
+      raise ArgumentError, "Invalid extension: only .yml or .json is accepted" unless %w[.yml .json].include?(extname)
 
-      filepath += format == :yml ? ".yml" : ".json"
       return puts "File not found: #{filepath}" unless File.exist?(filepath)
 
       File.open(filepath, "r") do |file|
-        data = format == :yml ? handle_yaml(file) : handle_json(file)
+        data = extname == ".yml" ? handle_yaml(file) : handle_json(file)
         return symbols ? to_symbols(data) : data
       end
     end
@@ -102,11 +105,11 @@ module NimbusFileUtils
     # Retrieves a localized string by key path from the specified locale file.
     # Returns a missing message if the locale or key is not found.
     # @param key_path [String] e.g., "welcome.greeting"
-    # @param format [Symbol] set target file format, default: `:yml`
+    # @param extname [String] set target file format, default: `:yml`
     # @return [String]
-    def get_string(key_path, format: :yml)
-      path = filepath(locale, ".config", "locale")
-      @strings ||= load_file(path, format: format, symbols: false)
+    def get_string(key_path, extname: ".yml")
+      path = filepath(locale_filename, ".config", "locale")
+      @strings ||= load_file(path, extname: extname, symbols: false)
 
       locale_strings = @strings[locale]
       return "Missing locale: #{locale}" unless locale_strings
@@ -123,10 +126,10 @@ module NimbusFileUtils
     # @param key_path [String]
     # @param subs [Hash] `{ demo: ["some text", :red] }`
     # @param paint_str [Array<Symbol, String, nil>]
-    # @param format [Symbol]
+    # @param extname [String]
     # @return [String] the translated and interpolated string
-    def s(key_path, subs = {}, paint_str: [nil, nil], format: :yml)
-      str = get_string(key_path, format: format)
+    def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
+      str = get_string(key_path, extname: extname)
 
       Paint % [str, *paint_str, subs]
     end
