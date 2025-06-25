@@ -54,12 +54,12 @@ module NimbusFileUtils
     end
 
     # Writes the given data and save it to the specified file path.
-    # @param filepath [String] The base path of the file to write (extension is added automatically).
+    # @param filepath [String] The base path of the file to write (expects complete filepath with extension).
     # @param data [Object] The data to serialize and write.
-    # @param extname [String] The format to use. Defaults to :yml.
-    def write_to_disk(filepath, data, extname: ".yml")
-      # @todo error handling
-      filepath += extname if File.extname(filepath).empty?
+    def write_to_disk(filepath, data) # rubocop:disable Metrics/MethodLength
+      extname = File.extname(filepath)
+      return "Operation error! File extension is missing." if extname.empty?
+
       File.open(filepath, "w") do |output|
         case extname
         when ".yml"
@@ -72,9 +72,9 @@ module NimbusFileUtils
       end
     end
 
-    # Load file in YAML or JSON format.
+    # Load file in YAML or JSON extension.
     # @param filepath [String] the base path of the file to write (extension is added automatically).
-    # @param extname [String] set target file format, default: `.yml`
+    # @param extname [String] set target file extension, default: `.yml`
     # @param symbols [Boolean] set whether to use symbols as key, default: true
     # @return [Hash]
     def load_file(filepath, extname: ".yml", symbols: true)
@@ -105,7 +105,7 @@ module NimbusFileUtils
     # Retrieves a localized string by key path from the specified locale file.
     # Returns a missing message if the locale or key is not found.
     # @param key_path [String] e.g., "welcome.greeting"
-    # @param extname [String] set target file format, default: `:yml`
+    # @param extname [String] set target file extension, default: `:yml`
     # @return [String]
     def get_string(key_path, extname: ".yml")
       path = filepath(locale_filename, ".config", "locale")
