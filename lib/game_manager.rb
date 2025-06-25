@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "input"
 require_relative "console"
 require_relative "console_menu"
 require_relative "user_profile"
@@ -11,6 +12,8 @@ require_relative "chess"
 F = NimbusFileUtils
 
 # Console Game System v2.0.0
+# @author Ancient Nimbus
+# @version 2.0.0
 module ConsoleGame
   # Game Manager for Console game
   class GameManager
@@ -21,14 +24,15 @@ module ConsoleGame
     # Expected user profile structure
     PROFILE = { uuid: "", username: "", saved_date: Time, appdata: {}, stats: {} }.freeze
 
-    attr_reader :apps, :cli, :user
+    attr_reader :base_input, :cli, :apps, :user
     attr_accessor :running, :active_game
 
     def initialize(lang: "en")
       F.set_locale(lang)
       @running = true
-      @apps = { "chess" => method(:chess) }
+      @base_input = Input.new(self)
       @cli = ConsoleMenu.new(self)
+      @apps = load_app_list
       @user = nil
       @active_game = nil
     end
@@ -44,7 +48,6 @@ module ConsoleGame
 
     # Greet user
     def greet
-      # %w[ver boot menu].map
       show("cli.ver")
       show("cli.boot")
     end
@@ -53,8 +56,8 @@ module ConsoleGame
     def assign_user_profile
       pretty_show("cli.new.msg")
 
-      reg = regexp_formatter("[1-2]")
-      mode = handle_input(F.s("cli.new.msg2"), reg: reg).to_i
+      reg = regexp_formatter("[1-2]", base_input.cmd_pattern)
+      mode = handle_input(F.s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i
 
       mode == 1 ? new_profile : load_profile
     end
@@ -77,6 +80,7 @@ module ConsoleGame
       self.active_game = Chess.new(self)
       active_game.start
       puts "Welcome back to the lobby! Hope you have fun playing chess."
+      self.active_game = nil
     end
 
     # Save user profile
@@ -95,6 +99,11 @@ module ConsoleGame
     end
 
     private
+
+    # Define the app list
+    def load_app_list
+      { "chess" => method(:chess) }
+    end
 
     # Handle new user
     # @param username [String] username for UserProfile, skip prompt stage if it is provided.
@@ -134,8 +143,8 @@ module ConsoleGame
       profile_names = F.file_list(folder_path, extname: extname)
       # Print the list
       F.print_file_list(folder_path, profile_names)
-      reg = regexp_formatter("[1-#{profile_names.size}]")
-      num = handle_input(F.s("cli.new.msg2"), reg: reg).to_i - 1
+      reg = regexp_formatter("[1-#{profile_names.size}]", base_input.cmd_pattern)
+      num = handle_input(F.s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i - 1
 
       folder_path + profile_names[num]
     end
@@ -143,8 +152,8 @@ module ConsoleGame
     # Get username from prompt
     # @return [String] username
     def grab_username
-      reg = /\A[\sa-zA-Z0-9._-]+\z/
-      handle_input(F.s("cli.new.msg3"), reg: reg, empty: true)
+      reg = regexp_formatter('[\sa-zA-Z0-9._-]+', base_input.cmd_pattern)
+      handle_input(F.s("cli.new.msg3"), cmds: base_input.commands, reg: reg, empty: true)
     end
 
     # Simple usage stats counting
