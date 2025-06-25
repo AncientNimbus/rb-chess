@@ -46,11 +46,37 @@ module NimbusFileUtils
     # Check if a file exist in the given file path.
     # @param filepath [String]
     # @param use_filetype [Boolean]
-    # @param extname [String]
+    # @param extname [String] file extension name
     def file_exist?(filepath, use_filetype: true, extname: ".yml")
       extname = "" unless use_filetype
       filepath += extname
       File.exist?(filepath)
+    end
+
+    # Returns a list of files within a given directory and file extensions
+    # @param folder_path [String] folder path
+    # @param extname [String] file extension name
+    # @return [Array<String>]
+    def file_list(folder_path, extname: ".yml")
+      filenames = []
+      Dir.new(folder_path).each_child { |entry| filenames << entry if File.extname(entry) == extname }
+      filenames
+    end
+
+    # Pretty print a list of files with last modified date as metadata field
+    # @param folder_path [String] folder path
+    # @param filenames [Array<String>] filenames within the given directory
+    # @param col1 [String] header name for the file name col
+    # @param col2 [String] header name for the last modified name col
+    def print_file_list(folder_path, filenames, list_width: 80, col1: "List of Files", col2: "Last modified date")
+      puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
+      puts "-" * list_width
+      filenames.each_with_index do |entry, i|
+        prefix = "* [#{i + 1}] - "
+        filename = File.basename(entry, File.extname(entry)).ljust(list_width * 0.6)
+        mod_time = File.new(folder_path + entry).mtime.strftime("%m/%d/%Y %I:%M %p")
+        puts "#{prefix}#{filename} | #{mod_time}"
+      end
     end
 
     # Writes the given data and save it to the specified file path.

@@ -69,7 +69,7 @@ en:
     load:
       msg: "Detecting user profile..."
       msg2: "Choose from the following profile by typing the corresponding number:"
-      msg3: "Profile loaded. Welcome back %{name}."
+      msg3: "Profile loaded! Welcome back %{name}!"
       input_err: "Invalid input, please try again! To load the first profile, type '1'."
       bad_file_err: "The chosen user profile is corrupted and cannot be loaded, operation cancelled."
       no_profile_err: "No profile found, operation cancelled."

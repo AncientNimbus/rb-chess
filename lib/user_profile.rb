@@ -25,7 +25,7 @@ module ConsoleGame
       @filepath ||= F.filepath(filename, "user_data")
 
       profile[:saved_date] = Time.now.ceil
-      F.write_to_disk(filepath, profile, extname: extname)
+      F.write_to_disk(filepath, profile)
     end
 
     # load user profile

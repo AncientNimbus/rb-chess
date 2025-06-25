@@ -100,49 +100,33 @@ module ConsoleGame
       print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
     end
 
-    # # Handle returning user
-    # def load_profile
-    #   username = grab_username
-    #   filename ||= F.formatted_filename(username)
-    #   filepath ||= F.filepath(filename, "user_data")
-
-    #   profile = F.load_file(filepath, format: :json)
-
-    #   begin
-    #     @user = UserProfile.new(username, profile) if profile.keys == PROFILE.keys
-    #   rescue NoMethodError
-    #     puts "No profile found, creating a new profile with the name: #{username}"
-    #     new_profile(username)
-    #   end
-    # end
     # Handle returning user
     def load_profile(extname: ".json")
-      show("cli.load.msg")
+      filepath = select_profile(extname: extname)
 
-      filepath = F.filepath("", "user_data")
-      profile_names = []
-      count = 0
-      dir = Dir.new(filepath).each_child do |f_name|
-        next unless f_name.include?(extname)
-
-        profile_names << f_name
-        count += 1
-        filename = File.basename(f_name, extname).ljust(20)
-        mod_time = File.new(filepath + f_name).mtime.strftime("%m/%d/%Y %I:%M %p")
-        puts "* [#{count}] - #{filename} | #{mod_time}"
-      end
-
-      reg = regexp_formatter("[1-#{profile_names.size}]")
-      num = handle_input(F.s("cli.new.msg2"), reg: reg).to_i - 1
-
-      profile = F.load_file(filepath + profile_names[num], extname: extname)
+      profile = F.load_file(filepath, extname: extname)
 
       begin
         @user = UserProfile.new(profile[:username], profile) if profile.keys == PROFILE.keys
+        print_msg(F.s("cli.load.msg3", { name: [user.username, :yellow] }))
       rescue NoMethodError
         puts "No profile found, creating a new profile with the name: #{username}"
         new_profile(username)
       end
+    end
+
+    # Handle profile selection
+    def select_profile(extname: ".json")
+      show("cli.load.msg")
+
+      folder_path = F.filepath("", "user_data")
+      profile_names = F.file_list(folder_path, extname: extname)
+      # Print the list
+      F.print_file_list(folder_path, profile_names)
+      reg = regexp_formatter("[1-#{profile_names.size}]")
+      num = handle_input(F.s("cli.new.msg2"), reg: reg).to_i - 1
+
+      folder_path + profile_names[num]
     end
 
     # Get username from prompt
