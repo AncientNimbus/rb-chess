@@ -152,7 +152,8 @@ en:
         * │ * Available commands:               |                                      │
         * │ * Help - [--help]                   | * Display all available commands     │
         * │ * Info - [--info]                   | * Display game info                  │
-        * │ * Save - [--save]                   | * Save user profile to local disc    │
+        * │ * Save - [--save]                   | * Save session to player profile     │
+        * │ * Load - [--load]                   | * Load session from player profile   │
         * │ * Exit - [--exit | --ttfn]          | * Safely exit the game.              │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * 

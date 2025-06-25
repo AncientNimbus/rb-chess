@@ -1,24 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "file_utils"
-require_relative "console"
+require_relative "input"
 
 module ConsoleGame
   # Game menu manager for console game
-  class ConsoleMenu
-    include Console
-
-    attr_reader :commands, :cmd_pattern, :game_manager
-
-    # @param game_manager [ConsoleGame::GameManager]
-    def initialize(game_manager = nil)
-      @game_manager = game_manager
-      @commands = { "exit" => method(:quit), "ttfn" => method(:quit), "help" => method(:help), "info" => method(:info),
-                    "save" => method(:save), "load" => method(:load), "play" => method(:play), "self" => method(:self) }
-      @cmd_pattern = regexp_capturing_gp(commands.keys, pre: "--", suf: ".*?")
-      @input_is_cmd = false
-    end
-
+  class ConsoleMenu < Input
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`, `ttfn`
@@ -70,6 +56,14 @@ module ConsoleGame
                       date: [profile[:saved_date].strftime("%m/%d/%Y %I:%M %p"), user_color],
                       name: [profile[:username], user_color],
                       visit: [profile[:stats][:launch_count], user_color] }))
+    end
+
+    # == Unities ==
+
+    # Setup input commands
+    def setup_commands
+      { "exit" => method(:quit), "ttfn" => method(:quit), "help" => method(:help), "info" => method(:info),
+        "save" => method(:save), "load" => method(:load), "play" => method(:play), "self" => method(:self) }
     end
   end
 end
