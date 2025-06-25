@@ -20,10 +20,12 @@ module ConsoleGame
     end
 
     # Save user profile
-    def save_profile(format: :json)
-      filename ||= F.formatted_filename(username)
+    def save_profile(extname: ".json")
+      filename ||= F.formatted_filename(username, extname)
       @filepath ||= F.filepath(filename, "user_data")
-      F.write_to_disk(filepath, profile, format: format)
+
+      profile[:saved_date] = Time.now.ceil
+      F.write_to_disk(filepath, profile, extname: extname)
     end
 
     # load user profile

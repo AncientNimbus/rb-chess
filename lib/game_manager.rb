@@ -77,30 +77,79 @@ module ConsoleGame
       # active_game.start
     end
 
+    # Save user profile
+    def save_user_profile
+      return "No user profile found, operation cancelled" if user.nil?
+
+      user.save_profile
+      print_msg(F.s("cli.save.msg", { dir: [user.filepath, :yellow] }))
+    end
+
     private
 
     # Handle new user
-    def new_profile
+    # @param username [String] username for UserProfile, skip prompt stage if it is provided.
+    def new_profile(username = "")
       # Get username
-      username = handle_input(F.s("cli.new.msg3"), empty: true)
+      username = username.empty? ? grab_username : username
       # Create user profile
       @user = UserProfile.new(username)
       # Save to disk
-      user.save_profile
-      # Print confirmation message
-      print_msg(F.s("cli.save.msg", { dir: ["#{user.filepath}.json", :yellow] }))
+      save_user_profile
+      # Welcome user
       print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
     end
 
+    # # Handle returning user
+    # def load_profile
+    #   username = grab_username
+    #   filename ||= F.formatted_filename(username)
+    #   filepath ||= F.filepath(filename, "user_data")
+
+    #   profile = F.load_file(filepath, format: :json)
+
+    #   begin
+    #     @user = UserProfile.new(username, profile) if profile.keys == PROFILE.keys
+    #   rescue NoMethodError
+    #     puts "No profile found, creating a new profile with the name: #{username}"
+    #     new_profile(username)
+    #   end
+    # end
     # Handle returning user
-    def load_profile
-      username = handle_input(F.s("cli.new.msg3"), empty: true)
-      filename ||= F.formatted_filename(username)
-      filepath ||= F.filepath(filename, "user_data")
+    def load_profile(extname: ".json")
+      show("cli.load.msg")
 
-      profile = F.load_file(filepath, format: :json)
+      filepath = F.filepath("", "user_data")
+      profile_names = []
+      count = 0
+      dir = Dir.new(filepath).each_child do |f_name|
+        next unless f_name.include?(extname)
 
-      @user = UserProfile.new(username, profile) if profile.keys == PROFILE.keys
+        profile_names << f_name
+        count += 1
+        filename = File.basename(f_name, extname).ljust(20)
+        mod_time = File.new(filepath + f_name).mtime.strftime("%m/%d/%Y %I:%M %p")
+        puts "* [#{count}] - #{filename} | #{mod_time}"
+      end
+
+      reg = regexp_formatter("[1-#{profile_names.size}]")
+      num = handle_input(F.s("cli.new.msg2"), reg: reg).to_i - 1
+
+      profile = F.load_file(filepath + profile_names[num], extname: extname)
+
+      begin
+        @user = UserProfile.new(profile[:username], profile) if profile.keys == PROFILE.keys
+      rescue NoMethodError
+        puts "No profile found, creating a new profile with the name: #{username}"
+        new_profile(username)
+      end
+    end
+
+    # Get username from prompt
+    # @return [String] username
+    def grab_username
+      reg = /\A[\sa-zA-Z0-9._-]+\z/
+      handle_input(F.s("cli.new.msg3"), reg: reg, empty: true)
     end
   end
 end
