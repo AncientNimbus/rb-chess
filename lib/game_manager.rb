@@ -68,6 +68,7 @@ module ConsoleGame
     # Exit Arcade
     def exit_arcade
       self.running = false
+      user&.save_profile
       exit
     end
 
@@ -103,6 +104,7 @@ module ConsoleGame
       # Create user profile
       @user = UserProfile.new(username)
       # Save to disk
+      launch_counter
       save_user_profile
       # Welcome user
       print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
@@ -116,6 +118,7 @@ module ConsoleGame
 
       begin
         @user = UserProfile.new(profile[:username], profile) if profile.keys == PROFILE.keys
+        launch_counter
         print_msg(F.s("cli.load.msg3", { name: [user.username, :yellow] }))
       rescue NoMethodError
         puts "No profile found, creating a new profile with the name: #{username}"
@@ -142,6 +145,14 @@ module ConsoleGame
     def grab_username
       reg = /\A[\sa-zA-Z0-9._-]+\z/
       handle_input(F.s("cli.new.msg3"), reg: reg, empty: true)
+    end
+
+    # Simple usage stats counting
+    def launch_counter
+      return "No user profile found, operation cancelled" if user.nil?
+
+      user.profile[:stats][:launch_count] ||= 0
+      user.profile[:stats][:launch_count] += 1
     end
   end
 end

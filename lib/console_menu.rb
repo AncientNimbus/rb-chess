@@ -63,8 +63,13 @@ module ConsoleGame
     # Display user info | command pattern: `self`
     def self(_arr = [])
       profile = game_manager.user.profile
+      user_color = :yellow
       p "Debug: #{profile}"
-      puts "User info: \nUsername: #{profile[:username]}"
+      print_msg(F.s("cli.self.msg",
+                    { uuid: [profile[:uuid], user_color],
+                      date: [profile[:saved_date].strftime("%m/%d/%Y %I:%M %p"), user_color],
+                      name: [profile[:username], user_color],
+                      visit: [profile[:stats][:launch_count], user_color] }))
     end
   end
 end

@@ -76,7 +76,12 @@ en:
     save:
       msg: "Your profile has been saved and can be found at the following directory: \n==> '%{dir}'"
     self:
-      msg:
+      msg: |
+        * Your profile info:
+        * Player ID: %{uuid}
+        * Last profile saved date: %{date}
+        * Username: %{name}
+        * Ruby Arcade visit count: %{visit}
     play:
       run: "Launching %{app}..."
       test: "Launching %{app}... %{msg}"

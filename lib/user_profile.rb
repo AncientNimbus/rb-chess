@@ -11,7 +11,7 @@ module ConsoleGame
 
     def initialize(username = "", user_profile = nil)
       @username = username.empty? ? "Arcade Player" : username
-      @profile = user_profile.nil? ? create_profile : user_profile
+      @profile = user_profile.nil? ? create_profile : load_profile(user_profile)
     end
 
     # Create a user profile
@@ -29,9 +29,24 @@ module ConsoleGame
     end
 
     # load user profile
-    def load_profile(format: :json)
-      data = F.load_file(filepath, format: format)
-      p data
+    def load_profile(user_profile, _extname: ".json")
+      integrity_check(user_profile)
+    end
+
+    private
+
+    # Profile integrity check
+    def integrity_check(imported_profile)
+      imported_profile[:saved_date] = to_time(imported_profile[:saved_date])
+      imported_profile
+    end
+
+    # convert string time field to TIme object for internal use
+    # @param str_date [String] expects a valid date format
+    def to_time(str_date)
+      return str_date if str_date.is_a?(Time)
+
+      Time.new(str_date)
     end
   end
 end
