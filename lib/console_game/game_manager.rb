@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "console/console"
 require_relative "input"
-require_relative "console"
 require_relative "console_menu"
 require_relative "user_profile"
 require_relative "player"

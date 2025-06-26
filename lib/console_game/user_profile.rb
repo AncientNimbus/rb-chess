@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "securerandom"
-require_relative "file_utils"
+require_relative "../nimbus_file_utils/nimbus_file_utils"
 
 module ConsoleGame
   # User Profile class

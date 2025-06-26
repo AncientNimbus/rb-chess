@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../lib/pgn_utils"
+require_relative "../lib/pgn_utils/pgn_utils"
 
 describe PgnUtils do
   describe "#parse_pgn" do

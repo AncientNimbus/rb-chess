@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../lib/user_profile"
+require_relative "../lib/console_game/user_profile"
 
 describe ConsoleGame::UserProfile do
   describe "#create_profile" do

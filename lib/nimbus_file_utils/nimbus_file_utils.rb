@@ -23,7 +23,7 @@ module NimbusFileUtils
     # Return the root path.
     # @return [String] project root path
     def proj_root
-      @proj_root ||= File.expand_path("../", __dir__)
+      @proj_root ||= File.expand_path("../..", __dir__)
     end
 
     # Return cross-system friendly filename.

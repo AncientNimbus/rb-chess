@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "file_utils"
+require_relative "../../nimbus_file_utils/nimbus_file_utils"
 
 module ConsoleGame
   # Game display & input manager for console game

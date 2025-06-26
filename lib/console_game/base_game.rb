@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "console"
+require_relative "console/console"
 
 module ConsoleGame
   # Base Game class
