@@ -62,8 +62,8 @@ module ConsoleGame
 
     # Setup input commands
     def setup_commands
-      { "exit" => method(:quit), "ttfn" => method(:quit), "help" => method(:help), "info" => method(:info),
-        "save" => method(:save), "load" => method(:load), "play" => method(:play), "self" => method(:self) }
+      super.merge({ "ttfn" => method(:quit), "save" => method(:save), "load" => method(:load),
+                    "play" => method(:play), "self" => method(:self) })
     end
   end
 end
