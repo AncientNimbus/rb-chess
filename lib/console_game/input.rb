@@ -19,6 +19,29 @@ module ConsoleGame
       @input_is_cmd = false
     end
 
+    # == Core methods ==
+
+    # Override: process user input
+    # @param msg [String] first print
+    # @param cmds [Hash] expects a list of commands hash
+    # @param err_msg [String] second print
+    # @param reg [Regexp, String, Array<String>] pattern to match, use an Array when input type is :range
+    # @param empty [Boolean] allow empty input value, default to false
+    # @param input_type [Symbol] expects the following option: :any, :range, :custom
+    def handle_input(msg = "", cmds: commands, err_msg: s("cli.std_err"), reg: ".*", empty: false, input_type: :any)
+      reg = case input_type
+            when :range
+              regexp_range(cmd_pattern, min: reg[0], max: reg[1])
+            when :custom
+              regexp_formatter(cmd_pattern, reg)
+            else
+              reg
+            end
+      p "location: #{self.class}, reg: "
+      p reg
+      super(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
+    end
+
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`

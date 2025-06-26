@@ -36,7 +36,7 @@ module ConsoleGame
     # @param reg [Regexp, String] pattern to match
     # @param empty [Boolean] allow empty input value, default to false
     def handle_input(msg = "", cmds: { "exit" => method(:exit) }, err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
-      input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: empty)
+      input = prompt_user(msg, err_msg: err_msg, reg: reg, empty: empty)
       return input if input.empty?
 
       input_arr = input.split(" ")
@@ -87,18 +87,18 @@ module ConsoleGame
     # @param msg [String] first print
     # @param err_msg [String] second print
     # @param reg [Regexp] pattern to match
-    # @param allow_empty [Boolean] allow empty input value, default to false
+    # @param empty [Boolean] allow empty input value, default to false
     # @return [String] user input
-    def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, allow_empty: false)
+    def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
       input = ""
       loop do
         print_msg("#{Paint[D_MSG[:query_prefix], :green]} #{msg}#{D_MSG[:prompt_prefix]}", mode: :print)
         input = gets.chomp
-        break if input.match?(reg) && (!input.empty? || allow_empty)
+        break if (input.match?(reg) && !input.empty?) || empty
 
         msg = err_msg
       end
-      input
+      input.rstrip
     end
 
     # returns true if user input matches available commands

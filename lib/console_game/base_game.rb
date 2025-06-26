@@ -13,8 +13,10 @@ module ConsoleGame
 
     # @param game_manager [ConsoleGame::GameManager]
     # @param title [String]
-    def initialize(game_manager = nil, title = "Base Game")
+    # @param input [ConsoleGame::Input]
+    def initialize(game_manager = nil, title = "Base Game", input = nil)
       @game_manager = game_manager
+      @input = input
       @title = title
       @user = game_config[:users][0]
       @state = :created

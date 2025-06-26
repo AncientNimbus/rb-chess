@@ -25,6 +25,9 @@ plugins: rubocop-performance
 Metrics/MethodLength:
   CountAsOne: ["array", "hash", "heredoc", "method_call"]
 
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
 Layout/LineLength:
   Exclude:
     - "../spec/**/*"

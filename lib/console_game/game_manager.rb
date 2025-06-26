@@ -58,16 +58,14 @@ module ConsoleGame
     def assign_user_profile
       print_msg(s("cli.new.msg"), pre: "* ")
 
-      reg = regexp_range(base_input.cmd_pattern, max: 2)
-      mode = handle_input(s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i
-
+      mode = base_input.handle_input(s("cli.new.msg2"), reg: [1, 2], input_type: :range).to_i
       mode == 1 ? new_profile : load_profile
     end
 
     # Arcade lobby
     def lobby
       print_msg(s("cli.menu"))
-      handle_input(cmds: cli.commands, empty: true) while running
+      cli.handle_input(empty: true) while running
     end
 
     # Exit Arcade
@@ -145,8 +143,7 @@ module ConsoleGame
       profile_names = F.file_list(folder_path, extname: extname)
       # Print the list
       print_file_list(folder_path, profile_names)
-      reg = regexp_range(base_input.cmd_pattern, max: profile_names.size)
-      num = handle_input(s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i - 1
+      num = base_input.handle_input(s("cli.new.msg2"), reg: [1, profile_names.size], input_type: :range).to_i - 1
 
       folder_path + profile_names[num]
     end
@@ -154,8 +151,7 @@ module ConsoleGame
     # Get username from prompt
     # @return [String] username
     def grab_username
-      reg = regexp_formatter(base_input.cmd_pattern, F::FILENAME_REG)
-      handle_input(s("cli.new.msg3"), cmds: base_input.commands, reg: reg, empty: true)
+      base_input.handle_input(s("cli.new.msg3"), reg: F::FILENAME_REG, input_type: :custom, empty: true)
     end
 
     # Simple usage stats counting
