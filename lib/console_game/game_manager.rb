@@ -56,7 +56,7 @@ module ConsoleGame
     def assign_user_profile
       pretty_show("cli.new.msg")
 
-      reg = regexp_formatter("[1-2]", base_input.cmd_pattern)
+      reg = regexp_range(base_input.cmd_pattern, max: 2)
       mode = handle_input(F.s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i
 
       mode == 1 ? new_profile : load_profile
@@ -143,7 +143,7 @@ module ConsoleGame
       profile_names = F.file_list(folder_path, extname: extname)
       # Print the list
       F.print_file_list(folder_path, profile_names)
-      reg = regexp_formatter("[1-#{profile_names.size}]", base_input.cmd_pattern)
+      reg = regexp_range(base_input.cmd_pattern, max: profile_names.size)
       num = handle_input(F.s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i - 1
 
       folder_path + profile_names[num]
@@ -152,7 +152,7 @@ module ConsoleGame
     # Get username from prompt
     # @return [String] username
     def grab_username
-      reg = regexp_formatter('[\sa-zA-Z0-9._-]+', base_input.cmd_pattern)
+      reg = regexp_formatter(base_input.cmd_pattern, '[\sa-zA-Z0-9._-]+')
       handle_input(F.s("cli.new.msg3"), cmds: base_input.commands, reg: reg, empty: true)
     end
 

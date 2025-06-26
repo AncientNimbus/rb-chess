@@ -38,14 +38,24 @@ module ConsoleGame
     end
 
     # Helper method to create regexp pattern
-    # @param reg [String] pattern to match
     # @param cmd_pattern [String] command patterns
+    # @param reg [String] pattern to match
     # @param pre [String] pattern prefix
     # @param suf [String] pattern suffix
     # @param flag [String, Regexp] regexp flag
     # @return [Regexp]
-    def regexp_formatter(reg = "reg", cmd_pattern = "--(exit).*?", pre: '\A', suf: '\z', flag: "")
+    def regexp_formatter(cmd_pattern = "--(exit).*?", reg = "reg", pre: '\A', suf: '\z', flag: "")
       Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
+    end
+
+    # Shorthand method: handle range selections prompt
+    # @param cmd_pattern [String] command patterns
+    # @param min [String, Integer] min range
+    # @param max [String, Integer] max range (inclusive)
+    # @param flag [String, Regexp] regexp flag
+    # @return [Regexp]
+    def regexp_range(cmd_pattern = "--(exit).*?", min: 1, max: 3, flag: "")
+      regexp_formatter("[#{min}-#{max}]", cmd_pattern, flag: flag)
     end
 
     # Helper method to build regexp capturing group
