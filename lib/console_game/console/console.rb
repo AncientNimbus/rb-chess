@@ -48,14 +48,21 @@ module ConsoleGame
       Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
     end
 
-    # Shorthand method: handle range selections prompt
+    # Shorthand method: handle range selections prompt, current number limit is up to 99.
     # @param cmd_pattern [String] command patterns
     # @param min [String, Integer] min range
     # @param max [String, Integer] max range (inclusive)
     # @param flag [String, Regexp] regexp flag
     # @return [Regexp]
     def regexp_range(cmd_pattern = "--(exit).*?", min: 1, max: 3, flag: "")
-      regexp_formatter("[#{min}-#{max}]", cmd_pattern, flag: flag)
+      block2 = ""
+      if max.is_a?(Integer) && max >= 10
+        block2 = "[0-#{max % 10}]?+"
+        max = 9
+      end
+      block = "[#{min}-#{max}]"
+      block << block2 unless block2.empty?
+      regexp_formatter(cmd_pattern, block, flag: flag)
     end
 
     # Helper method to build regexp capturing group
