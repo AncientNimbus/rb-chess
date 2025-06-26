@@ -5,9 +5,13 @@ module ConsoleGame
   module Console
     # Default message strings
     D_MSG = {
+      msg: "Using message printer",
       err_msg: "Invalid input, please try again: ",
       prompt_prefix: ">>> ",
-      cmd_err: "Invalid commands, type --help to view all available commands."
+      query_prefix: "? ",
+      warn_prefix: "! ",
+      cmd_err: "Invalid commands, type --help to view all available commands.",
+      cmd_pattern: "--(exit).*?"
     }.freeze
 
     # prompt message helper
@@ -15,7 +19,7 @@ module ConsoleGame
     # @param pre [String] message prefix
     # @param suf [String] message suffix
     # @param mode [Symbol] expecting the following symbols: `puts`, `print`, `p`
-    def print_msg(msg = "Using message printer", pre: "", suf: "", mode: :puts, delay: 0)
+    def print_msg(msg = D_MSG[:msg], pre: "", suf: "", mode: :puts, delay: 0)
       return ArgumentError("Invalid mode used for this method") unless %i[puts print p].include?(mode)
 
       sleep(delay) if delay.positive?
@@ -49,7 +53,7 @@ module ConsoleGame
     # @param suf [String] pattern suffix
     # @param flag [String, Regexp] regexp flag
     # @return [Regexp]
-    def regexp_formatter(cmd_pattern = "--(exit).*?", reg = "reg", pre: '\A', suf: '\z', flag: "")
+    def regexp_formatter(cmd_pattern = D_MSG[:cmd_pattern], reg = "reg", pre: '\A', suf: '\z', flag: "")
       Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
     end
 
@@ -59,7 +63,7 @@ module ConsoleGame
     # @param max [String, Integer] max range (inclusive)
     # @param flag [String, Regexp] regexp flag
     # @return [Regexp]
-    def regexp_range(cmd_pattern = "--(exit).*?", min: 1, max: 3, flag: "")
+    def regexp_range(cmd_pattern = D_MSG[:cmd_pattern], min: 1, max: 3, flag: "")
       block = "[#{min}-#{max}]"
       block = "[#{min}-9][0-#{max % 10}]?" if max.is_a?(Integer) && (max >= 10)
 
@@ -86,7 +90,7 @@ module ConsoleGame
     def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, allow_empty: false)
       input = ""
       loop do
-        print_msg("#{Paint['?', :green]} #{msg}#{D_MSG[:prompt_prefix]}", mode: :print)
+        print_msg("#{Paint[D_MSG[:query_prefix], :green]} #{msg}#{D_MSG[:prompt_prefix]}", mode: :print)
         input = gets.chomp
         break if input.match?(reg) && (!input.empty? || allow_empty)
 
@@ -117,7 +121,7 @@ module ConsoleGame
     # @param cmds [Array]
     # @param is_valid [Boolean]
     def handle_command(cmd, opt_arg, cmds, is_valid)
-      return print_msg(D_MSG[:cmd_err], pre: "! ") unless is_valid
+      return print_msg(D_MSG[:cmd_err], pre: D_MSG[:warn_prefix]) unless is_valid
 
       begin
         cmds.fetch(cmd).call(opt_arg)

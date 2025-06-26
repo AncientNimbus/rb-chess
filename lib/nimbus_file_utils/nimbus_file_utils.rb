@@ -65,23 +65,6 @@ module NimbusFileUtils
       filenames
     end
 
-    # Pretty print a list of files with last modified date as metadata field
-    # @param folder_path [String] folder path
-    # @param filenames [Array<String>] filenames within the given directory
-    # @param col1 [String] header name for the file name col
-    # @param col2 [String] header name for the last modified name col
-    # @param list_width [Integer] the width of the table
-    def print_file_list(folder_path, filenames, col1: "List of Files", col2: "Last modified date", list_width: 80) # rubocop:disable Metrics/AbcSize
-      puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
-      puts "-" * list_width
-      filenames.each_with_index do |entry, i|
-        prefix = "* [#{i + 1}] - "
-        filename = File.basename(entry, File.extname(entry)).ljust(list_width * 0.6 - (prefix.size % 8))
-        mod_time = File.new(folder_path + entry).mtime.strftime("%m/%d/%Y %I:%M %p")
-        puts "#{prefix}#{filename} | #{mod_time}"
-      end
-    end
-
     # Writes the given data and save it to the specified file path.
     # @param filepath [String] The base path of the file to write (expects complete filepath with extension).
     # @param data [Object] The data to serialize and write.
@@ -166,8 +149,25 @@ module NimbusFileUtils
     end
   end
 
+  # Pretty print a list of files with last modified date as metadata field
+  # @param folder_path [String] folder path
+  # @param filenames [Array<String>] filenames within the given directory
+  # @param col1 [String] header name for the file name col
+  # @param col2 [String] header name for the last modified name col
+  # @param list_width [Integer] the width of the table
+  def print_file_list(folder_path, filenames, col1: "List of Files", col2: "Last modified date", list_width: 80) # rubocop:disable Metrics/AbcSize
+    puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
+    puts "-" * list_width
+    filenames.each_with_index do |entry, i|
+      prefix = "* [#{i + 1}] - "
+      filename = File.basename(entry, File.extname(entry)).ljust(list_width * 0.6 - (prefix.size % 8))
+      mod_time = File.new(folder_path + entry).mtime.strftime("%m/%d/%Y %I:%M %p")
+      puts "#{prefix}#{filename} | #{mod_time}"
+    end
+  end
+
   # Retrieves a localized string and perform String interpolation and paint text if needed.
-  # @param key_path [String]
+  # @param key_path [String] textfile keypath
   # @param subs [Hash] `{ demo: ["some text", :red] }`
   # @param paint_str [Array<Symbol, String, nil>]
   # @param extname [String]

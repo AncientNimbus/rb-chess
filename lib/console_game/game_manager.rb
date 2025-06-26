@@ -144,7 +144,7 @@ module ConsoleGame
       folder_path = F.filepath("", "user_data")
       profile_names = F.file_list(folder_path, extname: extname)
       # Print the list
-      F.print_file_list(folder_path, profile_names)
+      print_file_list(folder_path, profile_names)
       reg = regexp_range(base_input.cmd_pattern, max: profile_names.size)
       num = handle_input(s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i - 1
 
