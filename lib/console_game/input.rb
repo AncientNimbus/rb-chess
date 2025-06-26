@@ -7,6 +7,7 @@ module ConsoleGame
   # Input class is a base class for various control layouts for ConsoleGame
   class Input
     include Console
+    include NimbusFileUtils
 
     attr_reader :game_manager, :commands, :cmd_pattern
 
@@ -22,7 +23,7 @@ module ConsoleGame
 
     # Exit sequences | command patterns: `exit`
     def quit(_arg = [])
-      pretty_show("cli.lobby.exit")
+      print_msg(s("cli.lobby.exit"))
       exit
     end
 
@@ -33,7 +34,7 @@ module ConsoleGame
 
     # Display system info | command pattern: `info`
     def info(_arr = [])
-      pretty_show("cli.ver")
+      print_msg(s("cli.ver"))
     end
 
     private

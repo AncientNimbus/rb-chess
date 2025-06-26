@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../nimbus_file_utils/nimbus_file_utils"
 require_relative "console/console"
 require_relative "input"
 require_relative "console_menu"
@@ -18,6 +19,7 @@ module ConsoleGame
   # Game Manager for Console game
   class GameManager
     include Console
+    include NimbusFileUtils
 
     # Expected file types
     SUPPORTED_FILETYPES = %i[yml json pgn].freeze
@@ -48,23 +50,23 @@ module ConsoleGame
 
     # Greet user
     def greet
-      show("cli.ver")
-      show("cli.boot")
+      print_msg(s("cli.ver"))
+      print_msg(s("cli.boot"))
     end
 
     # Setup user profile
     def assign_user_profile
-      pretty_show("cli.new.msg")
+      print_msg(s("cli.new.msg"), pre: "* ")
 
       reg = regexp_range(base_input.cmd_pattern, max: 2)
-      mode = handle_input(F.s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i
+      mode = handle_input(s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i
 
       mode == 1 ? new_profile : load_profile
     end
 
     # Arcade lobby
     def lobby
-      show("cli.menu")
+      print_msg(s("cli.menu"))
       handle_input(cmds: cli.commands, empty: true) while running
     end
 
@@ -88,7 +90,7 @@ module ConsoleGame
       return "No user profile found, operation cancelled" if user.nil?
 
       user.save_profile
-      print_msg(F.s("cli.save.msg", { dir: [user.filepath, :yellow] }))
+      print_msg(s("cli.save.msg", { dir: [user.filepath, :yellow] }))
     end
 
     # Load another profile when using is at the lobby
@@ -116,7 +118,7 @@ module ConsoleGame
       launch_counter
       save_user_profile
       # Welcome user
-      print_msg(F.s("cli.new.msg4", { name: [user.username, :yellow] }))
+      print_msg(s("cli.new.msg4", { name: [user.username, :yellow] }))
     end
 
     # Handle returning user
@@ -128,7 +130,7 @@ module ConsoleGame
       begin
         @user = UserProfile.new(profile[:username], profile) if profile.keys == PROFILE.keys
         launch_counter
-        print_msg(F.s("cli.load.msg3", { name: [user.username, :yellow] }))
+        print_msg(s("cli.load.msg3", { name: [user.username, :yellow] }))
       rescue NoMethodError
         puts "No profile found, creating a new profile with the name: #{username}"
         new_profile(username)
@@ -137,14 +139,14 @@ module ConsoleGame
 
     # Handle profile selection
     def select_profile(extname: ".json")
-      show("cli.load.msg")
+      print_msg(s("cli.load.msg"))
 
       folder_path = F.filepath("", "user_data")
       profile_names = F.file_list(folder_path, extname: extname)
       # Print the list
       F.print_file_list(folder_path, profile_names)
       reg = regexp_range(base_input.cmd_pattern, max: profile_names.size)
-      num = handle_input(F.s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i - 1
+      num = handle_input(s("cli.new.msg2"), cmds: base_input.commands, reg: reg).to_i - 1
 
       folder_path + profile_names[num]
     end
@@ -152,8 +154,8 @@ module ConsoleGame
     # Get username from prompt
     # @return [String] username
     def grab_username
-      reg = regexp_formatter(base_input.cmd_pattern, '[\sa-zA-Z0-9._-]+')
-      handle_input(F.s("cli.new.msg3"), cmds: base_input.commands, reg: reg, empty: true)
+      reg = regexp_formatter(base_input.cmd_pattern, F::FILENAME_REG)
+      handle_input(s("cli.new.msg3"), cmds: base_input.commands, reg: reg, empty: true)
     end
 
     # Simple usage stats counting

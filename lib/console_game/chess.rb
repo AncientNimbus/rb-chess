@@ -12,7 +12,8 @@ module ConsoleGame
 
     def boot
       super
-      %w[boot intro help].each { |key| show(T.call(key)) }
+      text = tf_fetcher("chess", *%w[boot intro help], root: "app")
+      puts text
     end
 
     def setup_game

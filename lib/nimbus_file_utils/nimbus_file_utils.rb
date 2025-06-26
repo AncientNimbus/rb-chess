@@ -6,8 +6,10 @@ require "paint"
 
 # File operations helper module
 # @author Ancient Nimbus
-# @version 0.5.0
+# @version 0.5.1
 module NimbusFileUtils
+  # Valid filename pattern
+  FILENAME_REG = '[\sa-zA-Z0-9._-]+'
   class << self
     attr_accessor :locale, :locale_filename
 
@@ -68,12 +70,13 @@ module NimbusFileUtils
     # @param filenames [Array<String>] filenames within the given directory
     # @param col1 [String] header name for the file name col
     # @param col2 [String] header name for the last modified name col
-    def print_file_list(folder_path, filenames, list_width: 80, col1: "List of Files", col2: "Last modified date")
+    # @param list_width [Integer] the width of the table
+    def print_file_list(folder_path, filenames, col1: "List of Files", col2: "Last modified date", list_width: 80) # rubocop:disable Metrics/AbcSize
       puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
       puts "-" * list_width
       filenames.each_with_index do |entry, i|
         prefix = "* [#{i + 1}] - "
-        filename = File.basename(entry, File.extname(entry)).ljust(list_width * 0.6)
+        filename = File.basename(entry, File.extname(entry)).ljust(list_width * 0.6 - (prefix.size % 8))
         mod_time = File.new(folder_path + entry).mtime.strftime("%m/%d/%Y %I:%M %p")
         puts "#{prefix}#{filename} | #{mod_time}"
       end
@@ -114,20 +117,6 @@ module NimbusFileUtils
       end
     end
 
-    # Convert string keys to symbol keys.
-    # @param obj [Object]
-    # @return [Hash]
-    def to_symbols(obj)
-      case obj
-      when Hash
-        obj.transform_keys(&:to_sym).transform_values { |v| to_symbols(v) }
-      when Array
-        obj.map { |e| to_symbols(e) }
-      else
-        obj
-      end
-    end
-
     # Retrieves a localized string by key path from the specified locale file.
     # Returns a missing message if the locale or key is not found.
     # @param key_path [String] e.g., "welcome.greeting"
@@ -148,27 +137,6 @@ module NimbusFileUtils
       result || "Missing string: '#{key_path}'"
     end
 
-    # Retrieves a localized string and perform String interpolation and paint text if needed.
-    # @param key_path [String]
-    # @param subs [Hash] `{ demo: ["some text", :red] }`
-    # @param paint_str [Array<Symbol, String, nil>]
-    # @param extname [String]
-    # @return [String] the translated and interpolated string
-    def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
-      str = get_string(key_path, extname: extname)
-
-      Paint % [str, *paint_str, subs]
-    end
-
-    # Textfile strings fetcher
-    # @param sub [String]
-    # @param keys [Array<String>] key
-    # @return [Array<String>] array of textfile strings
-    def tf_fetcher(sub, *keys, root: "cli")
-      sub = ".#{sub}" unless sub.empty?
-      keys.map { |key| s("#{root}#{sub}.#{key}") }
-    end
-
     private
 
     # Helper to handle yaml data
@@ -182,5 +150,40 @@ module NimbusFileUtils
     def handle_json(file)
       JSON.parse(file.read)
     end
+
+    # Convert string keys to symbol keys.
+    # @param obj [Object]
+    # @return [Hash]
+    def to_symbols(obj)
+      case obj
+      when Hash
+        obj.transform_keys(&:to_sym).transform_values { |v| to_symbols(v) }
+      when Array
+        obj.map { |e| to_symbols(e) }
+      else
+        obj
+      end
+    end
+  end
+
+  # Retrieves a localized string and perform String interpolation and paint text if needed.
+  # @param key_path [String]
+  # @param subs [Hash] `{ demo: ["some text", :red] }`
+  # @param paint_str [Array<Symbol, String, nil>]
+  # @param extname [String]
+  # @return [String] the translated and interpolated string
+  def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
+    str = NimbusFileUtils.get_string(key_path, extname: extname)
+
+    Paint % [str, *paint_str, subs]
+  end
+
+  # Textfile strings fetcher
+  # @param sub [String]
+  # @param keys [Array<String>] key
+  # @return [Array<String>] array of textfile strings
+  def tf_fetcher(sub, *keys, root: "cli")
+    sub = ".#{sub}" unless sub.empty?
+    keys.map { |key| s("#{root}#{sub}.#{key}") }
   end
 end

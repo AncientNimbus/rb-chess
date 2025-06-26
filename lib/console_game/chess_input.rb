@@ -9,7 +9,7 @@ module ConsoleGame
 
     # Exit sequences | command patterns: `exit`
     def quit(_arg = [])
-      pretty_show("cli.lobby.exit")
+      print_msg(s("cli.lobby.exit"), pre: "*")
       # exit
     end
 

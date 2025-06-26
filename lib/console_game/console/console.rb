@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
-require_relative "../../nimbus_file_utils/nimbus_file_utils"
-
 module ConsoleGame
   # Game display & input capturing for console game
   module Console
+    # Default message strings
+    D_MSG = {
+      err_msg: "Invalid input, please try again: ",
+      prompt_prefix: ">>> ",
+      cmd_err: "Invalid commands, type --help to view all available commands."
+    }.freeze
+
     # prompt message helper
     # @param msg [String] message to print
     # @param pre [String] message prefix
@@ -24,7 +29,7 @@ module ConsoleGame
     # @param err_msg [String] second print
     # @param reg [Regexp, String] pattern to match
     # @param empty [Boolean] allow empty input value, default to false
-    def handle_input(msg = "", cmds: { "exit" => method(:exit) }, err_msg: F.s("cli.std_err"), reg: /.*/, empty: false)
+    def handle_input(msg = "", cmds: { "exit" => method(:exit) }, err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
       input = prompt_user(msg, err_msg: err_msg, reg: reg, allow_empty: empty)
       return input if input.empty?
 
@@ -70,19 +75,6 @@ module ConsoleGame
       "#{pre}(#{reg.join('|')})#{suf}"
     end
 
-    # Shorthand method: simple display
-    # @param str [String] textfile key
-    def show(str)
-      print_msg(F.s(str))
-    end
-
-    # Shorthand method: Display with added prefix
-    # @param str [String] textfile key
-    # @param pre [String] message prefix
-    def pretty_show(str, pre: "* ")
-      print_msg(F.s(str), pre: pre)
-    end
-
     private
 
     # prompt user to collect input
@@ -91,10 +83,10 @@ module ConsoleGame
     # @param reg [Regexp] pattern to match
     # @param allow_empty [Boolean] allow empty input value, default to false
     # @return [String] user input
-    def prompt_user(msg = "", err_msg: F.s("cli.std_err"), reg: /.*/, allow_empty: false)
+    def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, allow_empty: false)
       input = ""
       loop do
-        print_msg("#{Paint['?', :green]} #{msg}#{F.s('cli.prompt_prefix')}", mode: :print)
+        print_msg("#{Paint['?', :green]} #{msg}#{D_MSG[:prompt_prefix]}", mode: :print)
         input = gets.chomp
         break if input.match?(reg) && (!input.empty? || allow_empty)
 
@@ -125,7 +117,7 @@ module ConsoleGame
     # @param cmds [Array]
     # @param is_valid [Boolean]
     def handle_command(cmd, opt_arg, cmds, is_valid)
-      return pretty_show("cli.cmd_err", pre: "! ") unless is_valid
+      return print_msg(D_MSG[:cmd_err], pre: "! ") unless is_valid
 
       begin
         cmds.fetch(cmd).call(opt_arg)

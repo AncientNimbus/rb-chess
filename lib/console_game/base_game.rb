@@ -6,6 +6,8 @@ module ConsoleGame
   # Base Game class
   class BaseGame
     include Console
+    include NimbusFileUtils
+
     attr_reader :game_manager, :input, :title, :user
     attr_accessor :state, :game_result
 
@@ -62,7 +64,7 @@ module ConsoleGame
     # Print the boot screen
     def boot
       # system("clear")
-      print_msg(F.s("cli.play.run", { app: [title, :yellow] }))
+      print_msg(s("cli.play.run", { app: [title, :yellow] }))
     end
 
     def setup_game; end

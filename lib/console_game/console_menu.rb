@@ -9,18 +9,18 @@ module ConsoleGame
 
     # Exit sequences | command patterns: `exit`, `ttfn`
     def quit(_arg = [])
-      print_msg(F.s("cli.lobby.exit"))
+      print_msg(s("cli.lobby.exit"))
       game_manager.exit_arcade
     end
 
     # Display help string | command pattern: `help`
     def help(_arr = [])
-      show("cli.help")
+      print_msg(s("cli.help"))
     end
 
     # Display system info | command pattern: `info`
     def info(_arr = [])
-      show("cli.menu")
+      print_msg(s("cli.menu"))
     end
 
     # Save user profile to disk | command pattern: `save`
@@ -36,13 +36,13 @@ module ConsoleGame
     # Launch a game | command pattern: `play <launch code>`
     # @param arr [Array<String>] optional arguments
     def play(arr = [])
-      return print_msg(F.s("cli.play.gm_err")) unless game_manager
+      return print_msg(s("cli.play.gm_err")) unless game_manager
 
       app_name = arr[0]
       if game_manager.apps.key?(app_name)
         game_manager.apps[app_name].call
       else
-        print_msg(F.s("cli.play.run_err"))
+        print_msg(s("cli.play.run_err"))
       end
     end
 
@@ -51,11 +51,11 @@ module ConsoleGame
       profile = game_manager.user.profile
       user_color = :yellow
       p "Debug: #{profile}"
-      print_msg(F.s("cli.self.msg",
-                    { uuid: [profile[:uuid], user_color],
-                      date: [profile[:saved_date].strftime("%m/%d/%Y %I:%M %p"), user_color],
-                      name: [profile[:username], user_color],
-                      visit: [profile[:stats][:launch_count], user_color] }))
+      print_msg(s("cli.self.msg",
+                  { uuid: [profile[:uuid], user_color],
+                    date: [profile[:saved_date].strftime("%m/%d/%Y %I:%M %p"), user_color],
+                    name: [profile[:username], user_color],
+                    visit: [profile[:stats][:launch_count], user_color] }))
     end
 
     # == Unities ==
