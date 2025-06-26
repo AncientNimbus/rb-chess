@@ -15,16 +15,18 @@ module ConsoleGame
     }.freeze
 
     # prompt message helper
-    # @param msg [String] message to print
+    # @param msgs [Array<String>] message to print
     # @param pre [String] message prefix
     # @param suf [String] message suffix
     # @param mode [Symbol] expecting the following symbols: `puts`, `print`, `p`
-    def print_msg(msg = D_MSG[:msg], pre: "", suf: "", mode: :puts, delay: 0)
+    def print_msg(*msgs, pre: "", suf: "", mode: :puts, delay: 0)
       return ArgumentError("Invalid mode used for this method") unless %i[puts print p].include?(mode)
 
-      sleep(delay) if delay.positive?
-      formatted_msg = "#{pre}#{msg}#{suf}"
-      method(mode).call(formatted_msg)
+      msgs.each do |msg|
+        formatted_msg = "#{pre}#{msg}#{suf}"
+        method(mode).call(formatted_msg)
+        sleep(delay) if delay.positive?
+      end
     end
 
     # process user input

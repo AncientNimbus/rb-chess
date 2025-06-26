@@ -12,12 +12,11 @@ module ConsoleGame
 
     def boot
       super
-      text = tf_fetcher("chess", *%w[boot intro help], root: "app")
-      puts text
+      print_msg(*tf_fetcher("chess", *%w[boot intro help], root: "app"))
     end
 
     def setup_game
-      handle_input("Type something")
+      handle_input("Type something ")
     end
   end
 end
