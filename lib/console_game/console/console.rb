@@ -55,13 +55,9 @@ module ConsoleGame
     # @param flag [String, Regexp] regexp flag
     # @return [Regexp]
     def regexp_range(cmd_pattern = "--(exit).*?", min: 1, max: 3, flag: "")
-      block2 = ""
-      if max.is_a?(Integer) && max >= 10
-        block2 = "[0-#{max % 10}]?+"
-        max = 9
-      end
       block = "[#{min}-#{max}]"
-      block << block2 unless block2.empty?
+      block = "[#{min}-9][0-#{max % 10}]?" if max.is_a?(Integer) && (max >= 10)
+
       regexp_formatter(cmd_pattern, block, flag: flag)
     end
 
