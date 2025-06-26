@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Helper module to perform PGN file related operations.
-# .pgn is a file type that stores detailed chess session data.
+# `.pgn` is a file type that stores detailed chess session data.
 # It is compatible with most online chess site, and extremely readable.
 # @author Ancient Nimbus
 # @version v1.0.0

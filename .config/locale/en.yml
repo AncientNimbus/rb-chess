@@ -154,6 +154,7 @@ en:
         * │ * Info - [--info]                   | * Display game info                  │
         * │ * Save - [--save]                   | * Save session to player profile     │
         * │ * Load - [--load]                   | * Load session from player profile   │
+        * │ * Export game - [--export]          | * Export current game as PGN file    │
         * │ * Exit - [--exit | --ttfn]          | * Safely exit the game.              │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * 

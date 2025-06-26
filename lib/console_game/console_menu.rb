@@ -3,7 +3,7 @@
 require_relative "input"
 
 module ConsoleGame
-  # Game menu manager for console game
+  # Input controller for console menu
   class ConsoleMenu < Input
     # == Console Commands ==
 

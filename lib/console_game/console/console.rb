@@ -3,7 +3,7 @@
 require_relative "../../nimbus_file_utils/nimbus_file_utils"
 
 module ConsoleGame
-  # Game display & input manager for console game
+  # Game display & input capturing for console game
   module Console
     # prompt message helper
     # @param msg [String] message to print

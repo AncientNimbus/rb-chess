@@ -4,9 +4,9 @@ require "yaml"
 require "json"
 require "paint"
 
-# Filer operations helper module
+# File operations helper module
 # @author Ancient Nimbus
-# @version 0.4.0
+# @version 0.5.0
 module NimbusFileUtils
   class << self
     attr_accessor :locale, :locale_filename
