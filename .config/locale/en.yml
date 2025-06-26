@@ -203,7 +203,18 @@ en:
           b: "♝"
           n: "♞"
           p: "♟"
-      flow:
+      load:
+        msg1: |
+          * Start a new game or load game from profile
+          *   • [1] New Game
+          *   • [2] Load Game
+        msg1_err: "Invalid input, please choose between 1 or 2."
+      new:
+        msg1: |
+          * Select a game mode:
+          *   • [1] Player vs Player
+          *   • [2] Player vs Computer (Coming soon)
+        msg1_err: "Invalid input, please choose between 1 or 2."
 
       board:
         frame:

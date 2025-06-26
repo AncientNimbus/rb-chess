@@ -8,15 +8,15 @@ module ConsoleGame
     include Console
     include NimbusFileUtils
 
-    attr_reader :game_manager, :input, :title, :user
+    attr_reader :game_manager, :controller, :title, :user
     attr_accessor :state, :game_result
 
-    # @param game_manager [ConsoleGame::GameManager]
+    # @param game_manager [GameManager]
     # @param title [String]
-    # @param input [ConsoleGame::Input]
+    # @param input [Input]
     def initialize(game_manager = nil, title = "Base Game", input = nil)
       @game_manager = game_manager
-      @input = input
+      @controller = input
       @title = title
       @user = game_config[:users][0]
       @state = :created
