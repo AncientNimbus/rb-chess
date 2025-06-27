@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../pgn_utils/pgn_utils"
+require_relative "player"
 
 module ConsoleGame
   # ChessPlayer is the Player object for the game Chess and it is a subclass of Player.

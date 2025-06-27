@@ -2,21 +2,29 @@
 
 require_relative "base_game"
 require_relative "chess_input"
+require_relative "chess_player"
+require_relative "chess_computer"
 
 module ConsoleGame
-  # Textfile head
-  TF = "app.chess"
   # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
   class Chess < BaseGame
+    # Textfile head
+    TF = "app.chess"
+
+    attr_reader :mode, :p1, :p2
+
     def initialize(game_manager = nil, title = "Base Game")
       super(game_manager, title, ChessInput.new(game_manager))
+      Player.player_count(0)
+      @p1 = ChessPlayer.new(game_manager, user.profile[:username])
+      @p2 = nil
     end
 
     private
 
     def boot
       super
-      print_msg(*tf_fetcher("chess", *%w[boot intro help], root: "app"))
+      print_msg(*tf_fetcher("", *%w[boot intro help]))
     end
 
     # == Flow ==
@@ -30,20 +38,25 @@ module ConsoleGame
       # b. load game
     end
 
-    # Flow 1
+    # Prompt player for new game or load game
     def game_selection
-      opt = controller.handle_input(s("load.msg1"), err_msg: s("load.msg1_err"), reg: [1, 2], input_type: :range).to_i
+      opt = controller.handle_input(s("load.f1"), err_msg: s("load.f1_err"), reg: [1, 2], input_type: :range).to_i
       opt == 1 ? new_game : load_game
     end
 
-    # Flow 2a
+    # Handle new game sequence
     def new_game
-      p "create new game"
-      opt = controller.handle_input(s("new.msg1"), err_msg: s("new.msg1_err"), reg: [1, 2], input_type: :range).to_i
-      opt == 1 ? pvp : pve
+      @mode = controller.handle_input(s("new.f1"), err_msg: s("new.f1_err"), reg: [1, 2], input_type: :range).to_i
+      # mode == 1 ? pvp : pve
+      setup_players
     end
 
-    # Flow 2.1a
+    # Setup players
+    def setup_players
+      [p1, p2].map! { |player| player_profile(player) }
+    end
+
+    # Setup PvP mode
     def pvp
       p "PvP selected"
 
@@ -53,7 +66,7 @@ module ConsoleGame
       # name player 2
     end
 
-    # Flow 2.1b
+    # Setup PvE mode
     def pve
       p "PvE selected"
 
@@ -62,7 +75,7 @@ module ConsoleGame
       # Set player 2 as computer
     end
 
-    # Flow 2b
+    # Handle load game sequence
     def load_game
       p "load game from list"
     end
@@ -70,7 +83,18 @@ module ConsoleGame
     # == Utilities ==
 
     # Set up player profile
-    def player_profile
+    # @param player [ConsoleGame::ChessPlayer, nil]
+    def player_profile(player)
+      p player.object_id
+      player ||= mode == 1 ? ChessPlayer.new(game_manager, "") : ChessComputer.new(game_manager)
+      p player.object_id
+      return player if player.is_a?(Computer)
+
+      f2 = s("new.f2", { count: [Player.total_player], name: [player.name] })
+      player.edit_name(controller.handle_input(f2, reg: FILENAME_REG, empty: true, input_type: :custom))
+
+      puts "Player is renamed to: #{player.name}"
+      player
     end
 
     # Override: s
