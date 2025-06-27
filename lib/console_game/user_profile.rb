@@ -45,7 +45,8 @@ module ConsoleGame
 
     # Create a user profile
     def create_profile
-      { uuid: SecureRandom.uuid, username: username, saved_date: Time.now.ceil, appdata: {}, stats: {} }
+      { uuid: SecureRandom.uuid, username: username, saved_date: Time.now.ceil,
+        appdata: Hash.new { |hash, key| hash[key] = {} }, stats: {} }
     end
 
     # Save user profile
