@@ -145,9 +145,7 @@ module ConsoleGame
       print_file_list(folder_path, profiles)
       # Handle selection
       max = profiles.size
-      until profiles.fetch(
-        num = base_input.ask(s("cli.new.msg2"), reg: [1, max], input_type: :range).to_i - 1, nil
-      )
+      until profiles.fetch(num = base_input.ask(s("cli.new.msg2"), reg: [1, max], input_type: :range).to_i - 1, nil)
         puts "Not a valid number, try again."
       end
       # Returns a valid filename

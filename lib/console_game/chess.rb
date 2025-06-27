@@ -40,13 +40,13 @@ module ConsoleGame
 
     # Prompt player for new game or load game
     def game_selection
-      opt = controller.handle_input(s("load.f1"), err_msg: s("load.f1_err"), reg: [1, 2], input_type: :range).to_i
+      opt = controller.ask(s("load.f1"), err_msg: s("load.f1_err"), reg: [1, 2], input_type: :range).to_i
       opt == 1 ? new_game : load_game
     end
 
     # Handle new game sequence
     def new_game
-      @mode = controller.handle_input(s("new.f1"), err_msg: s("new.f1_err"), reg: [1, 2], input_type: :range).to_i
+      @mode = controller.ask(s("new.f1"), err_msg: s("new.f1_err"), reg: [1, 2], input_type: :range).to_i
       # mode == 1 ? pvp : pve
       setup_players
     end
@@ -91,7 +91,7 @@ module ConsoleGame
       return player if player.is_a?(Computer)
 
       f2 = s("new.f2", { count: [Player.total_player], name: [player.name] })
-      player.edit_name(controller.handle_input(f2, reg: FILENAME_REG, empty: true, input_type: :custom))
+      player.edit_name(controller.ask(f2, reg: FILENAME_REG, empty: true, input_type: :custom))
 
       puts "Player is renamed to: #{player.name}"
       player

@@ -37,7 +37,7 @@ module ConsoleGame
     # @param err_msg [String] second print
     # @param reg [Regexp, String] pattern to match
     # @param empty [Boolean] allow empty input value, default to false
-    def handle_input(msg = "", cmds: { "exit" => method(:exit) }, err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
+    def ask(msg = "", cmds: { "exit" => method(:exit) }, err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
       input = prompt_user(msg, err_msg: err_msg, reg: reg, empty: empty)
       return input if input.empty?
 
@@ -47,7 +47,7 @@ module ConsoleGame
       return input unless @input_is_cmd
 
       handle_command(cmd, input_arr[1..], cmds, is_valid)
-      handle_input(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
+      ask(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
     end
 
     # Helper method to create regexp pattern
