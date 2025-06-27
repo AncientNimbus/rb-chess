@@ -41,6 +41,17 @@ module ConsoleGame
       super(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
     end
 
+    # Process user input where bound checks are required
+    # @param options [Array]
+    # @return [Integer] a valid index within the given array
+    def pick_from(options, msg: "Pick from the following options: ", err_msg: "Not a valid option, try again.", min: 1)
+      max = options.size
+      until options.fetch(opt = ask(msg, reg: [min, max], input_type: :range).to_i - 1, nil)
+        print_msg(err_msg, pre: "! ")
+      end
+      opt
+    end
+
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`
