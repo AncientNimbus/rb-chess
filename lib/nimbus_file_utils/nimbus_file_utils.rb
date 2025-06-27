@@ -182,8 +182,8 @@ module NimbusFileUtils
   # @param sub [String] sub-head
   # @param keys [Array<String>] key
   # @return [Array<String>] array of textfile strings
-  def tf_fetcher(sub, *keys, root: "cli")
+  def tf_fetcher(sub, *keys, root: "")
     sub = ".#{sub}" unless sub.empty?
-    keys.map { |key| s("#{root}#{sub}.#{key}") }
+    keys.map { |key| s("#{root}#{sub}#{key}") }
   end
 end

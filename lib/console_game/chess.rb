@@ -24,55 +24,30 @@ module ConsoleGame
 
     def boot
       super
-      print_msg(*tf_fetcher("", *%w[boot intro help]))
+      boot, intro, help = tf_fetcher("", *%w[boot intro help])
+      print_msg(boot, intro, help)
     end
 
     # == Flow ==
 
     # Setup sequence
     def setup_game
-      game_selection
-
-      # a. new game
-
-      # b. load game
+      # new game or load game
+      opt = game_selection
+      opt == 1 ? new_game : load_game
     end
 
     # Prompt player for new game or load game
     def game_selection
-      opt = controller.ask(s("load.f1"), err_msg: s("load.f1_err"), reg: [1, 2], input_type: :range).to_i
-      opt == 1 ? new_game : load_game
+      print_msg(s("load.f1"))
+      controller.ask(s("load.f1a"), err_msg: s("load.f1a_err"), reg: [1, 2], input_type: :range).to_i
     end
 
     # Handle new game sequence
     def new_game
-      @mode = controller.ask(s("new.f1"), err_msg: s("new.f1_err"), reg: [1, 2], input_type: :range).to_i
-      # mode == 1 ? pvp : pve
+      print_msg(s("new.f1"))
+      @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
       setup_players
-    end
-
-    # Setup players
-    def setup_players
-      [p1, p2].map! { |player| player_profile(player) }
-    end
-
-    # Setup PvP mode
-    def pvp
-      p "PvP selected"
-
-      # name player 1
-
-      # Set player 2 as player
-      # name player 2
-    end
-
-    # Setup PvE mode
-    def pve
-      p "PvE selected"
-
-      # name player 1
-
-      # Set player 2 as computer
     end
 
     # Handle load game sequence
@@ -81,19 +56,23 @@ module ConsoleGame
     end
 
     # == Utilities ==
+    # Setup players
+    def setup_players
+      [p1, p2].map! { |player| player_profile(player) }
+    end
 
     # Set up player profile
     # @param player [ConsoleGame::ChessPlayer, nil]
+    # @param [ChessPlayer, ChessComputer]
     def player_profile(player)
-      p player.object_id
       player ||= mode == 1 ? ChessPlayer.new(game_manager, "") : ChessComputer.new(game_manager)
-      p player.object_id
       return player if player.is_a?(Computer)
 
+      # flow 2: name players
       f2 = s("new.f2", { count: [Player.total_player], name: [player.name] })
       player.edit_name(controller.ask(f2, reg: FILENAME_REG, empty: true, input_type: :custom))
-
       puts "Player is renamed to: #{player.name}"
+
       player
     end
 
@@ -106,14 +85,6 @@ module ConsoleGame
     # @return [String] the translated and interpolated string
     def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
       super("#{TF}.#{key_path}", subs, paint_str: paint_str, extname: extname)
-    end
-
-    # Override: Textfile strings fetcher
-    # @param sub [String] sub-head
-    # @param keys [Array<String>] key
-    # @return [Array<String>] array of textfile strings
-    def tf_fetcher(sub, *keys, root: TF)
-      super(sub, keys, root: root)
     end
   end
 end

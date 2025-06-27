@@ -66,7 +66,7 @@ module ConsoleGame
     # Print the boot screen
     def boot
       # system("clear")
-      print_msg(s("cli.play.run", { app: [title, :yellow] }))
+      # print_msg(s("cli.play.run", { app: [title, :yellow] }))
     end
 
     def setup_game; end

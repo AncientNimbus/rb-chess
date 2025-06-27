@@ -208,7 +208,8 @@ en:
           * Start a new game or load game from profile
           *   • [1] New Game
           *   • [2] Load Game
-        f1_err: "Invalid input, please choose between 1 or 2"
+        f1a: "Please select a load mode: "
+        f1a_err: "Invalid input, please choose between 1 or 2"
         f2a: "Please enter a number to indicate the session you wish to load"
         f2b: "Select a game session to resume:"
         f2b_err: "Invalid input, please choose between 1 or %{max}"
@@ -217,7 +218,8 @@ en:
           * Select a game mode:
           *   • [1] Player vs Player
           *   • [2] Player vs Computer (Coming soon)
-        f1_err: "Invalid input, please choose between 1 or 2"
+        f1a: "Please select a game mode: "
+        f1a_err: "Invalid input, please choose between 1 or 2"
         f2: "Please name Player %{count} (Default: %{name})"
       board:
         frame:
