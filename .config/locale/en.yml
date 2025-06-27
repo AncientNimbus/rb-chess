@@ -71,8 +71,8 @@ en:
       msg2: "Choose a profile by typing the corresponding number:"
       msg3: "Profile loaded! Welcome back %{name}!"
       input_err: "Invalid input, please try again! To load the first profile, type '1'"
-      bad_file_err: "The chosen user profile is corrupted and cannot be loaded, operation cancelled."
-      no_profile_err: "No profile found, operation cancelled."
+      bad_file_err: "The chosen user profile is corrupted and cannot be loaded, creating a new profile now..."
+      no_profile_err: "No profile found, creating a new profile now..."
     save:
       msg: "Your profile has been saved and can be found at the following directory: \n==> '%{dir}'"
     self:
