@@ -21,11 +21,6 @@ module ConsoleGame
     include Console
     include NimbusFileUtils
 
-    # Expected file types
-    SUPPORTED_FILETYPES = %i[yml json pgn].freeze
-    # Expected user profile structure
-    PROFILE = { uuid: "", username: "", saved_date: Time, appdata: {}, stats: {} }.freeze
-
     attr_reader :base_input, :cli, :apps, :user
     attr_accessor :running, :active_game
 
@@ -50,8 +45,7 @@ module ConsoleGame
 
     # Greet user
     def greet
-      print_msg(s("cli.ver"))
-      print_msg(s("cli.boot"))
+      print_msg(*tf_fetcher("", *%w[.ver .boot], root: "cli"))
     end
 
     # Setup user profile

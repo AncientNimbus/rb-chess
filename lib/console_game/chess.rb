@@ -11,7 +11,7 @@ module ConsoleGame
     # Textfile head
     TF = "app.chess"
 
-    attr_reader :mode, :p1, :p2, :side
+    attr_reader :mode, :p1, :p2, :side, :sessions
 
     def initialize(game_manager = nil, title = "Base Game")
       super(game_manager, title, ChessInput.new(game_manager))
@@ -19,15 +19,16 @@ module ConsoleGame
       @p1 = ChessPlayer.new(game_manager, user.profile[:username])
       @p2 = nil
       @side = { white: nil, black: nil }
-      user.profile[:appdata][:chess] = {}
+      user.profile[:appdata][:chess] ||= {}
+      @sessions = user.profile[:appdata][:chess]
     end
 
     private
 
     def boot
       super
-      boot, intro, help = tf_fetcher("", *%w[boot intro help])
-      print_msg(boot, intro, help)
+      # boot, intro, help = tf_fetcher("", *%w[boot intro help])
+      # print_msg(boot, intro, help)
     end
 
     # == Flow ==
@@ -51,7 +52,7 @@ module ConsoleGame
       @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
       @p1, @p2 = setup_players
       start_order
-      user.profile[:appdata][:chess][1] = create_session(1)
+      create_session(sessions.size + 1)
       # [p1, p2].each { |player| print_msg(s("order.f2", { player: [player.name], color: [player.side] }), pre: "* ") }
     end
 
@@ -96,7 +97,7 @@ module ConsoleGame
     def create_session(id)
       sides = side.keys
       p1.side, p2.side = side[:white] == p1 ? sides : sides.reverse
-      p1.register_session(id, p2.name)
+      sessions[id] = p1.register_session(id, p2.name)
     end
 
     # Override: s

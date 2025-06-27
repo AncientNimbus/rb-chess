@@ -34,15 +34,14 @@ module ConsoleGame
       write_metadata(id, :event, event)
       write_metadata(id, :site, site)
       write_metadata(id, :date, date)
-      data[:chess][id]
+      data[id]
     end
 
     private
 
     # Access player session keys
     def write_metadata(id, key, value)
-      p id
-      data[:chess][id][key] = value
+      data[id][key] = value
     end
   end
 end
