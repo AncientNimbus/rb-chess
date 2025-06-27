@@ -42,14 +42,17 @@ module ConsoleGame
     end
 
     # Process user input where bound checks are required
-    # @param options [Array]
-    # @return [Integer] a valid index within the given array
+    # @param options [Array] a list of options
+    # @param msg [String] first print
+    # @param err_msg [String] second print
+    # @param min [Index] minimum bound
+    # @return [Any] a valid element within the given array
     def pick_from(options, msg: "Pick from the following options: ", err_msg: "Not a valid option, try again.", min: 1)
       max = options.size
       until options.fetch(opt = ask(msg, reg: [min, max], input_type: :range).to_i - 1, nil)
         print_msg(err_msg, pre: "! ")
       end
-      opt
+      options[opt]
     end
 
     # == Console Commands ==

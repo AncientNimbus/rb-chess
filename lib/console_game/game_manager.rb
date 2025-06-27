@@ -144,9 +144,9 @@ module ConsoleGame
       # Print the list
       print_file_list(folder_path, profiles)
       # Handle selection
-      num = base_input.pick_from(profiles)
+      profile = base_input.pick_from(profiles)
       # Returns a valid filename
-      folder_path + profiles[num]
+      folder_path + profile
     end
 
     # Get username from prompt
