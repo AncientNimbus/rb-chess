@@ -38,59 +38,60 @@ module ConsoleGame
       end
     end
 
-    attr_reader :name
-    attr_accessor :data, :player_color
+    attr_reader :data, :name, :player_color
 
     def initialize(game_manager = nil, name = "")
       @game_manager = game_manager
+      @name = name
       Player.setup_color
       Player.add_player
-      @name = edit_name(name)
       @player_color = Player.remove_color(Player.colors.sample)
+      edit_name(name)
       init_data
-    end
-
-    # Edit player name
-    # @param name [String]
-    def edit_name(name = "")
-      return "Player #{Player.total_player}" if name.empty?
-
-      @name = name.colorize(player_color)
     end
 
     # Initialise player save data
     def init_data
-      @data = { turn: 0, moves: [] }
+      @data = { name: name }
+    end
+
+    # Edit player name
+    # @param new_name [String]
+    def edit_name(new_name = "")
+      if new_name.empty?
+        new_name = name.empty? ? "Player #{Player.total_player}" : name
+      end
+      @name = new_name.colorize(player_color)
     end
 
     # Store player's move
     # @param value [Integer] Positional value of the grid
-    def store_move(value)
-      return nil if value.nil?
+    # def store_move(value)
+    #   return nil if value.nil?
 
-      data.fetch(:moves) << value
-    end
+    #   data.fetch(:moves) << value
+    # end
 
     # Update player turn count
-    def update_turn_count
-      data[:turn] = data.fetch(:moves).size
-    end
+    # def update_turn_count
+    #   data[:turn] = data.fetch(:moves).size
+    # end
   end
 
   # Computer player class
-  class Computer < Player
-    def initialize(game_manager = nil, name = "Computer")
-      super(game_manager, name)
-    end
+  # class Computer < Player
+  #   def initialize(game_manager = nil, name = "Computer")
+  #     super(game_manager, name)
+  #   end
 
-    # Returns a random integer between 1 to 7
-    # @param empty_slots [Array<Integer>]
-    # @param bound [Array<Integer>]
-    def random_move(empty_slots, bound)
-      row, = bound
-      value = (empty_slots.sample % row) + 1
-      print "#{value}\n"
-      value
-    end
-  end
+  #   # Returns a random integer between 1 to 7
+  #   # @param empty_slots [Array<Integer>]
+  #   # @param bound [Array<Integer>]
+  #   def random_move(empty_slots, bound)
+  #     row, = bound
+  #     value = (empty_slots.sample % row) + 1
+  #     print "#{value}\n"
+  #     value
+  #   end
+  # end
 end
