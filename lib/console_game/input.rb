@@ -49,8 +49,8 @@ module ConsoleGame
     # @return [Any] a valid element within the given array
     def pick_from(options, msg: "Pick from the following options: ", err_msg: "Not a valid option, try again.", min: 1)
       max = options.size
-      until options.fetch(opt = ask(msg, reg: [min, max], input_type: :range).to_i - 1, nil)
-        print_msg(err_msg, pre: "! ")
+      until options.fetch(opt = ask(msg, reg: [min, max], input_type: :range, err_msg: err_msg).to_i - 1, nil)
+        print_msg(err_msg, pre: Paint["! ", :red])
       end
       options[opt]
     end

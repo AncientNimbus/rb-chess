@@ -144,7 +144,7 @@ module ConsoleGame
       # Print the list
       print_file_list(folder_path, profiles)
       # Handle selection
-      profile = base_input.pick_from(profiles)
+      profile = base_input.pick_from(profiles, msg: s("cli.load.msg2"), err_msg: s("cli.load.input_err"))
       # Returns a valid filename
       folder_path + profile
     end
