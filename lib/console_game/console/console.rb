@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "readline"
+
 module ConsoleGame
   # Game display & input capturing for console game
   module Console
@@ -92,8 +94,8 @@ module ConsoleGame
     def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
       input = ""
       loop do
-        print_msg("#{Paint[D_MSG[:query_prefix], :green]} #{msg}#{D_MSG[:prompt_prefix]}", mode: :print)
-        input = gets.chomp
+        prompt_msg = "#{Paint[D_MSG[:query_prefix], :green]} #{msg}#{D_MSG[:prompt_prefix]}"
+        input = Readline.readline(prompt_msg, true)
         break if (input.match?(reg) && !input.empty?) || empty
 
         msg = err_msg
