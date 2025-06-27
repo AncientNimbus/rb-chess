@@ -15,9 +15,9 @@ module ConsoleGame
 
     # Override: Initialise player save data
     def init_data
-      @data = { chess: {
-        1 => { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {} }
-      } }
+      @data = Hash.new do |hash, key|
+        hash[key] = { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {} }
+      end
     end
 
     # Register session data
@@ -41,6 +41,7 @@ module ConsoleGame
 
     # Access player session keys
     def write_metadata(id, key, value)
+      p id
       data[:chess][id][key] = value
     end
   end
