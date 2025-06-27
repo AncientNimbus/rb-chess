@@ -7,9 +7,9 @@ module ConsoleGame
   # Player class
   class Player
     @number_of_player = 0
-    @colors = String.colors[8..15]
+    # @colors = String.colors[8..15]
     class << self
-      attr_reader :colors
+      # attr_reader :colors
 
       # Add Player count
       def add_player
@@ -27,15 +27,15 @@ module ConsoleGame
       end
 
       # Setup color array and remove unwanted color options
-      def setup_color
-        %i[default gray].each { |elem| remove_color(elem) }
-      end
+      # def setup_color
+      #   %i[default gray].each { |elem| remove_color(elem) }
+      # end
 
       # Remove color option to avoid two players share the same color tag
       # @param color [Symbol]
-      def remove_color(color)
-        @colors.delete(color)
-      end
+      # def remove_color(color)
+      #   @colors.delete(color)
+      # end
     end
 
     attr_reader :data, :name, :player_color
@@ -43,9 +43,9 @@ module ConsoleGame
     def initialize(game_manager = nil, name = "")
       @game_manager = game_manager
       @name = name
-      Player.setup_color
+      # Player.setup_color
       Player.add_player
-      @player_color = Player.remove_color(Player.colors.sample)
+      @player_color = Paint.random
       edit_name(name)
       init_data
     end
@@ -61,7 +61,7 @@ module ConsoleGame
       if new_name.empty?
         new_name = name.empty? ? "Player #{Player.total_player}" : name
       end
-      @name = new_name.colorize(player_color)
+      @name = Paint[new_name, player_color]
     end
 
     # Store player's move
