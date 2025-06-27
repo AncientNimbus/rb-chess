@@ -58,14 +58,14 @@ module ConsoleGame
     def assign_user_profile
       print_msg(s("cli.new.msg"), pre: "* ")
 
-      mode = base_input.handle_input(s("cli.new.msg2"), reg: [1, 2], input_type: :range).to_i
+      mode = base_input.ask(s("cli.new.msg2"), reg: [1, 2], input_type: :range).to_i
       mode == 1 ? new_profile : load_profile
     end
 
     # Arcade lobby
     def lobby
       print_msg(s("cli.menu"))
-      cli.handle_input(empty: true) while running
+      cli.ask(empty: true) while running
     end
 
     # Exit Arcade
@@ -140,18 +140,24 @@ module ConsoleGame
       print_msg(s("cli.load.msg"))
 
       folder_path = F.filepath("", "user_data")
-      profile_names = F.file_list(folder_path, extname: extname)
+      profiles = F.file_list(folder_path, extname: extname)
       # Print the list
-      print_file_list(folder_path, profile_names)
-      num = base_input.handle_input(s("cli.new.msg2"), reg: [1, profile_names.size], input_type: :range).to_i - 1
-
-      folder_path + profile_names[num]
+      print_file_list(folder_path, profiles)
+      # Handle selection
+      max = profiles.size
+      until profiles.fetch(
+        num = base_input.ask(s("cli.new.msg2"), reg: [1, max], input_type: :range).to_i - 1, nil
+      )
+        puts "Not a valid number, try again."
+      end
+      # Returns a valid filename
+      folder_path + profiles[num]
     end
 
     # Get username from prompt
     # @return [String] username
     def grab_username
-      base_input.handle_input(s("cli.new.msg3"), reg: F::FILENAME_REG, input_type: :custom, empty: true)
+      base_input.ask(s("cli.new.msg3"), reg: F::FILENAME_REG, input_type: :custom, empty: true)
     end
 
     # Simple usage stats counting
