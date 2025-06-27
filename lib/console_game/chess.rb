@@ -11,13 +11,15 @@ module ConsoleGame
     # Textfile head
     TF = "app.chess"
 
-    attr_reader :mode, :p1, :p2
+    attr_reader :mode, :p1, :p2, :side
 
     def initialize(game_manager = nil, title = "Base Game")
       super(game_manager, title, ChessInput.new(game_manager))
       Player.player_count(0)
       @p1 = ChessPlayer.new(game_manager, user.profile[:username])
       @p2 = nil
+      @side = { white: nil, black: nil }
+      user.profile[:appdata][:chess] = {}
     end
 
     private
@@ -47,7 +49,10 @@ module ConsoleGame
     def new_game
       print_msg(s("new.f1"))
       @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
-      setup_players
+      @p1, @p2 = setup_players
+      start_order
+      user.profile[:appdata][:chess][1] = create_session(1)
+      # [p1, p2].each { |player| print_msg(s("order.f2", { player: [player.name], color: [player.side] }), pre: "* ") }
     end
 
     # Handle load game sequence
@@ -56,9 +61,10 @@ module ConsoleGame
     end
 
     # == Utilities ==
+
     # Setup players
     def setup_players
-      [p1, p2].map! { |player| player_profile(player) }
+      [p1, p2].map { |player| player_profile(player) }
     end
 
     # Set up player profile
@@ -66,7 +72,7 @@ module ConsoleGame
     # @param [ChessPlayer, ChessComputer]
     def player_profile(player)
       player ||= mode == 1 ? ChessPlayer.new(game_manager, "") : ChessComputer.new(game_manager)
-      return player if player.is_a?(Computer)
+      return player if player.is_a?(ChessComputer)
 
       # flow 2: name players
       f2 = s("new.f2", { count: [Player.total_player], name: [player.name] })
@@ -74,6 +80,23 @@ module ConsoleGame
       puts "Player is renamed to: #{player.name}"
 
       player
+    end
+
+    # Set start order
+    def start_order
+      f1, f1a, f1a_err = tf_fetcher("order", *%w[.f1 .f1a .f1a_err])
+      print_msg(f1)
+      opt = controller.ask(f1a, err_msg: f1a_err, reg: [1, 3], input_type: :range).to_i
+      opt = rand(1..2) if opt == 3
+      players = [p1, p2]
+      side[:white], side[:black] = opt == 1 ? players : players.reverse
+    end
+
+    # Create session data
+    def create_session(id)
+      sides = side.keys
+      p1.side, p2.side = side[:white] == p1 ? sides : sides.reverse
+      p1.register_session(id, p2.name)
     end
 
     # Override: s

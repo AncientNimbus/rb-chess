@@ -131,7 +131,7 @@ en:
         * 4. You can choose to play as White or Black, or let the game decide randomly.
         *    • [1] Play as White
         *    • [2] Play as Black
-        *    • [3] Let the game decide
+        *    • [3] Choose for me
         *
         * 5. A game save will be created, and it is stored locally at the ./data folder.
         *
@@ -221,6 +221,15 @@ en:
         f1a: "Please select a game mode: "
         f1a_err: "Invalid input, please choose between 1 or 2"
         f2: "Please name Player %{count} (Default: %{name})"
+      order:
+        f1: |
+          * You can choose to play as White or Black, or let the game decide randomly.
+          *   • [1] Play as White
+          *   • [2] Play as Black
+          *   • [3] Choose for me
+        f1a: "Please enter a number: "
+        f1a_err: "Invalid input, please choose between 1 or 3"
+        f2: "%{player} will play as %{color}"
       board:
         frame:
           h: "═"

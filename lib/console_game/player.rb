@@ -76,6 +76,8 @@ module ConsoleGame
     # def update_turn_count
     #   data[:turn] = data.fetch(:moves).size
     # end
+
+    # == Utilities ==
   end
 
   # Computer player class

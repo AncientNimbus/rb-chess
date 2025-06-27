@@ -37,7 +37,7 @@ module ConsoleGame
             else
               reg
             end
-      p "location: #{self.class}, reg: #{reg}"
+      # p "location: #{self.class}, reg: #{reg}"
       super(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
     end
 
