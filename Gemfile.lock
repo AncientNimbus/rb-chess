@@ -3,6 +3,7 @@ GEM
   specs:
     ast (2.4.3)
     diff-lcs (1.6.2)
+    docile (1.4.1)
     json (2.12.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
@@ -47,6 +48,12 @@ GEM
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.1)
+    simplecov_json_formatter (0.1.4)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
@@ -61,6 +68,7 @@ DEPENDENCIES
   rspec (~> 3.13)
   rubocop (~> 1.76)
   rubocop-performance (~> 1.25)
+  simplecov
   yard (~> 0.9.37)
 
 BUNDLED WITH

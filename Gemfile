@@ -12,4 +12,6 @@ gem "rspec", "~> 3.13"
 
 gem "yard", "~> 0.9.37", require: false
 
+gem "simplecov", require: false, group: :test
+
 gem "paint", "~> 2.3"
