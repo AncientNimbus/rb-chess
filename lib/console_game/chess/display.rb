@@ -20,19 +20,19 @@ module ConsoleGame
 
       # Row formatter
       # @param row_num [Integer] row number
-      # @param pieces [Array<Hash>] expects a 1-element(reprinting) or 8-elements array(In order)
-      # @option pieces [String] :asset element in the cell
-      # @option pieces [Symbol] :color colour of the element
+      # @param items [Array<Hash>] expects a 1-element(reprinting) or 8-elements array(In order)
+      # @option items [String] :asset element in the cell
+      # @option items [Symbol] :color colour of the element
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @param cell_w [Integer] width within each cell
       # @param show_r [Boolean] print ranks on the side?
       # @return [Array<String>] a complete row in a board
-      def format_row(row_num, pieces, colors: BOARD[:bg_theme], cell_w: 3, show_r: false)
+      def format_row(row_num, items, colors: BOARD[:bg_theme], cell_w: 3, show_r: false)
         arr = []
         # Light background colour, dark background colour
         bg1, bg2 = pattern_order(row_num, colors: colors)
         # Build individual cell
-        8.times { |i| arr << paint_cell(pieces[i % pieces.size], cell_w, i.even? ? bg1 : bg2) }
+        8.times { |i| arr << paint_cell(items[i % items.size], cell_w, i.even? ? bg1 : bg2) }
         # Build side borders
         side = [BOARD[:side].call(show_r ? row_num : " ")]
         [side.concat(arr, side).join("")]
