@@ -32,10 +32,7 @@ module ConsoleGame
         # Light background colour, dark background colour
         bg1, bg2 = pattern_order(row_num, colors: colors)
         # Build individual cell
-        8.times do |i|
-          item = pieces[i % pieces.size]
-          arr << Paint[item[:asset].center(cell_w), item[:color], i.even? ? bg1 : bg2]
-        end
+        8.times { |i| arr << paint_cell(pieces[i % pieces.size], cell_w, i.even? ? bg1 : bg2) }
         # Build side borders
         side = [BOARD[:side].call(show_r ? row_num : " ")]
         [side.concat(arr, side).join("")]
@@ -49,6 +46,22 @@ module ConsoleGame
       # @return [Array<Symbol, String>] colour values
       def pattern_order(row_num, colors: BOARD[:bg_theme])
         row_num.even? ? colors : colors.reverse
+      end
+
+      # Helper: Paint cell
+      # @param item [Hash] item hash
+      # @option item [String] :asset element in the cell
+      # @option item [Symbol] :color colour of the element
+      # @param cell_w [Integer] width within each cell
+      # @param bg_color [Symbol, String] expects a colour value
+      # @return [String] coloured string
+      def paint_cell(item, cell_w, bg_color)
+        str, color, bg = if item.is_a?(Hash)
+                           [item[:asset], item[:color], bg_color]
+                         else
+                           [item, :default, bg_color]
+                         end
+        Paint[str.center(cell_w), color, bg]
       end
     end
   end
