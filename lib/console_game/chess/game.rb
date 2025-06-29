@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "../base_game"
+require_relative "logic"
+require_relative "display"
 require_relative "chess_input"
 require_relative "chess_player"
 require_relative "chess_computer"
@@ -12,6 +14,8 @@ module ConsoleGame
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
+      include Logic
+      include Display
       # Textfile head
       TF = "app.chess"
 
