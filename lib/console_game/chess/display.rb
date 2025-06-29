@@ -8,28 +8,47 @@ module ConsoleGame
     module Display
       # Default design for the chessboard
       BOARD = {
-        side: ->(num) { "║ #{num} ║" }
+        head: nil,
+        side: ->(v) { "║ #{v} ║" },
+        tail: nil,
+        bg_theme: %w[#ada493 #847b6a]
       }.freeze
+
       # Print the chessboard
+      def print_board
+      end
 
       # Row formatter
-      # @param row_num [Integer]
-      # @param pieces [Array<String>]
-      # @param color [Symbol, String]
-      # @param bg_colors [Array<Symbol, String>]
-      # @param cell_width [Integer] cell width
-      # @param print_num [Boolean]
-      # @return [Array<String>]
-      def format_row(row_num, pieces, color = :black, bg_colors: %w[#ada493 #847b6a], cell_w: 3, print_num: false)
+      # @param row_num [Integer] row number
+      # @param pieces [Array<Hash>] expects a 1-element(reprinting) or 8-elements array(In order)
+      # @option pieces [String] :asset element in the cell
+      # @option pieces [Symbol] :color colour of the element
+      # @param colors [Array<Symbol, String>] Expects contrasting background colour
+      # @param cell_w [Integer] width within each cell
+      # @param show_r [Boolean] print ranks on the side?
+      # @return [Array<String>] a complete row in a board
+      def format_row(row_num, pieces, colors: BOARD[:bg_theme], cell_w: 3, show_r: false)
         arr = []
-        bg1, bg2 = row_num.even? ? bg_colors : bg_colors.reverse
-        side = BOARD[:side].call(print_num ? row_num : " ")
+        # Light background colour, dark background colour
+        bg1, bg2 = pattern_order(row_num, colors: colors)
+        # Build individual cell
         8.times do |i|
-          bg = i.even? ? bg1 : bg2
-          arr << Paint[pieces[i % pieces.size].center(cell_w), color, bg]
+          item = pieces[i % pieces.size]
+          arr << Paint[item[:asset].center(cell_w), item[:color], i.even? ? bg1 : bg2]
         end
-        row = arr.unshift(side).push(side).join("")
-        [row]
+        # Build side borders
+        side = [BOARD[:side].call(show_r ? row_num : " ")]
+        [side.concat(arr, side).join("")]
+      end
+
+      private
+
+      # Helper: Determine the checker order of a specific row
+      # @param row_num [Integer] row number
+      # @param colors [Array<Symbol, String>] Expects contrasting background colour
+      # @return [Array<Symbol, String>] colour values
+      def pattern_order(row_num, colors: BOARD[:bg_theme])
+        row_num.even? ? colors : colors.reverse
       end
     end
   end
