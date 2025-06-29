@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../nimbus_file_utils/nimbus_file_utils"
-require_relative "console/console"
+require_relative "../console/console"
 
 module ConsoleGame
   # Input class is a base class for various control layouts for ConsoleGame
