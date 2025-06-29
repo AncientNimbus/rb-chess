@@ -18,7 +18,7 @@ module ConsoleGame
       private
 
       # Profile integrity check
-      # @imported_profile [Hash]
+      # @param imported_profile [Hash]
       def integrity_check(imported_profile)
         return nil unless imported_profile.keys == PROFILE.keys
 

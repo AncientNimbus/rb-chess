@@ -7,7 +7,7 @@ require_relative "console_menu"
 require_relative "user_profile"
 require_relative "player"
 require_relative "base_game"
-require_relative "chess"
+require_relative "chess/game"
 
 # Alias for NimbusFileUtils
 F = NimbusFileUtils
@@ -75,7 +75,7 @@ module ConsoleGame
 
     # Run game: Chess
     def chess
-      self.active_game = Chess.new(self)
+      self.active_game = Chess::Game.new(self)
       active_game.start
       puts "Welcome back to the lobby! Hope you have fun playing chess."
       self.active_game = nil
