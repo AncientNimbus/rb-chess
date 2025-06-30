@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-06-30
+
+### 🚀 Features
+
+- #load_profile now display a list of profiles
+- Add the ability to handle --save & --load
+- Add support for command --self
+- Add the ability to use the --play command
+- Add new base class: Input
+- Integrate Input to GameManager
+- Add subclass ChessInput
+- Add #regexp_range to handle range prompts
+- Add override #handle_input to input control
+- Add #game_selection to Chess class
+- Add ChessComputer subclass
+- Add ChessPlayer subclass
+- Add logic for #new_game
+- Add workflow to create play session
+- Add the ability to store multiple sessions
+- Add display.rb and logic.rb to chess
+- Add the ability to colour each cell
+- Add the ability to change side decorator
+- Add #build_board and #frame to display
+- Add the ability to change the board size
+- *(tf)* Update textfile
+
+### 🐛 Bug Fixes
+
+- Improves #regexp_range to support multi digit
+- Resolve a crash issue during load profiles
+- Resolve a crash when user_data is empty
+- Correct ranks display order
+
+### 🚜 Refactor
+
+- Optimise multiple methods in file_utils
+- Optimise #write_to_disk
+- Optimise #load_profile
+- Optimise #setup_commands in console_menu
+- Optimise #regexp_range
+- Decouple file_utils usage from console
+- Change the scope of #print_file_list
+- Add #print_msg to support multiline
+- Improves #prompt_user internal logics
+- Extract logic from #select_profile
+- #pick_from returns value instead of idx
+- Improve prompt flow in chess
+- Update #edit_name logic
+- #create_profile to use default hash
+- #init_data to use default hash
+- Restructure Chess module
+- Update require paths for Console module
+- Update #format_row to take hash and arr
+- Update variable names in display
+- Optimise #build_board
+
+### 📚 Documentation
+
+- Update docstring
+
+### 🎨 Styling
+
+- Rename #handle_input to #ask
+- Improves #prompt_user message styling
+- Add better warning message to #pick_from
+- Migrate from colorize to paint in Player
+
+### ⚙️ Miscellaneous Tasks
+
+- Create CHANGELOG.md for v0.1.0
+- Reorganise files by namespace
+- Add cliff.toml
+- Move ChessComputer to console_game
+- Add new gem: simplecov
+
 ## [0.1.0] - 2025-06-24
 
 ### 🚀 Features
@@ -51,6 +126,7 @@ All notable changes to this project will be documented in this file.
 ### 📚 Documentation
 
 - Update README.md
+- Update README.md
 
 ### 🧪 Testing
 
@@ -58,6 +134,7 @@ All notable changes to this project will be documented in this file.
 - Add new test cases to pgn_utils
 - Add tests for pgn_utils
 - Update test cases in pgn_utils_spec
+- The serialisation format in yaml and json
 - The serialisation format in yaml and json
 
 ### ⚙️ Miscellaneous Tasks
