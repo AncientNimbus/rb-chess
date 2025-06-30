@@ -46,6 +46,7 @@ module ConsoleGame
         # new game or load game
         opt = game_selection
         opt == 1 ? new_game : load_game
+        print_chessboard
       end
 
       # Prompt player for new game or load game
@@ -70,6 +71,12 @@ module ConsoleGame
       end
 
       # == Utilities ==
+
+      # Print the chessboard
+      def print_chessboard
+        chessboard = build_board
+        print_msg(*chessboard, pre: "* ")
+      end
 
       # Setup players
       def setup_players
