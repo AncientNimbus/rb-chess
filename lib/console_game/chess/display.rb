@@ -21,18 +21,18 @@ module ConsoleGame
       # Row formatter
       # @param row_num [Integer] row number
       # @param items [Array<Hash>] expects a 1-element(reprinting) or 8-elements array(In order)
-      # @option items [String] :asset element in the cell
+      # @option items [String] :asset element in the tile
       # @option items [Symbol] :color colour of the element
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
-      # @param cell_w [Integer] width within each cell
+      # @param tile_w [Integer] width of each tile
       # @param show_r [Boolean] print ranks on the side?
       # @return [Array<String>] a complete row in a board
-      def format_row(row_num, items, colors: BOARD[:bg_theme], cell_w: 3, show_r: false)
+      def format_row(row_num, items, colors: BOARD[:bg_theme], tile_w: 3, show_r: false)
         arr = []
         # Light background colour, dark background colour
         bg1, bg2 = pattern_order(row_num, colors: colors)
-        # Build individual cell
-        8.times { |i| arr << paint_cell(items[i % items.size], cell_w, i.even? ? bg1 : bg2) }
+        # Build individual tile
+        8.times { |i| arr << paint_tile(items[i % items.size], tile_w, i.even? ? bg1 : bg2) }
         # Build side borders
         side = [BOARD[:side].call(show_r ? row_num : " ")]
         [side.concat(arr, side).join("")]
@@ -48,20 +48,20 @@ module ConsoleGame
         row_num.even? ? colors : colors.reverse
       end
 
-      # Helper: Paint cell
+      # Helper: Paint tile
       # @param item [Hash] item hash
-      # @option item [String] :asset element in the cell
+      # @option item [String] :asset element in the tile
       # @option item [Symbol] :color colour of the element
-      # @param cell_w [Integer] width within each cell
+      # @param tile_w [Integer] width within each tile
       # @param bg_color [Symbol, String] expects a colour value
       # @return [String] coloured string
-      def paint_cell(item, cell_w, bg_color)
+      def paint_tile(item, tile_w, bg_color)
         str, color, bg = if item.is_a?(Hash)
                            [item[:asset], item[:color], bg_color]
                          else
                            [item, :default, bg_color]
                          end
-        Paint[str.center(cell_w), color, bg]
+        Paint[str.center(tile_w), color, bg]
       end
     end
   end
