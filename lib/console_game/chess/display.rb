@@ -37,8 +37,10 @@ module ConsoleGame
         head_side, tail_side = side == :black ? board_decors : board_decors.reverse
         # Insert head
         board.unshift(frame(:head, side: side, tile_w: tile_w, show_r: show_r, label: head_side))
-        # Push tail and return
+        # Push tail
         board.push(frame(:tail, side: side, tile_w: tile_w, show_r: show_r, label: tail_side))
+        # Return flatten
+        board.flatten
       end
 
       private
