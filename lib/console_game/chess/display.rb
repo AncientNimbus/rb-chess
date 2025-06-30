@@ -21,23 +21,26 @@ module ConsoleGame
 
       # Build the chessboard
       # @param turn_data [Array<Array>] expects an array with 8 elements, each represents a single row
+      # @param side [Symbol] :white or :black, this will flip the board
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @param size [Integer] padding size
       # @param show_r [Boolean] print ranks on the side?
       # @return [Array<String>] a complete board with head and tail
-      def build_board(turn_data = Array.new(8) { [" "] }, colors: BOARD[:bg_theme], size: 1, show_r: true)
+      def build_board(turn_data = Array.new(8) { [" "] }, side: :white, colors: BOARD[:bg_theme], size: 1, show_r: true)
         tile_w = to_quadratic(size)
-        # top
-        board = frame(:head, tile_w: tile_w, show_r: show_r, label: BOARD[:decor2])
+        board = []
         # main
         turn_data.each_with_index do |row, i|
-          rank_num = turn_data.size - i
+          rank_num = i + 1
           rank_row = format_row(rank_num, row, colors: colors, tile_w: tile_w, show_r: show_r)
-          buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w, show_r: false)] * (size - 1)
+          buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w)] * (size - 1)
           board << buffer_row.concat(rank_row, buffer_row)
         end
-        # bottom
-        board.push(frame(:tail, tile_w: tile_w, show_r: show_r, label: BOARD[:decor1]))
+        board.reverse! if side == :white
+        # Insert head
+        board.unshift(frame(:head, side: side, tile_w: tile_w, show_r: show_r, label: BOARD[:decor2]))
+        # Push tail and return
+        board.push(frame(:tail, side: side, tile_w: tile_w, show_r: show_r, label: BOARD[:decor1]))
       end
 
       private
@@ -70,12 +73,12 @@ module ConsoleGame
       # @param show_r [Boolean] print ranks on the side?
       # @param label [String] override the print rank value with custom string
       # @return [Array<String>] the top or bottom section of the board
-      def frame(section = :head, tile_w: BOARD[:std_tile], show_r: true, label: "")
-        arr = []
+      def frame(section = :head, side: :white, tile_w: BOARD[:std_tile], show_r: true, label: "")
         row_values = show_r ? BOARD[:file] : [label]
+        row_values = side == :black ? row_values.reverse : row_values
         ends_l, ends_r = section == :head ? %i[head_l head_r] : %i[tail_l tail_r]
 
-        arr << border(BOARD[ends_l], BOARD[ends_r], tile_w, BOARD[:h])
+        arr = [border(BOARD[ends_l], BOARD[ends_r], tile_w, BOARD[:h])]
         arr << format_row(0, row_values, colors: [nil, nil], tile_w: tile_w, show_r: true, label: label)
         arr << border(BOARD[:sep_l], BOARD[:sep_r], tile_w, BOARD[:h])
 
