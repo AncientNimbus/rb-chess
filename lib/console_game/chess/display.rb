@@ -13,32 +13,42 @@ module ConsoleGame
         std_tile: 3,
         xl_tile: 7,
         h: "═",
+        decor1: "◆", decor2: "◇",
         head_l: "╔═══╦", head_r: "╦═══╗",
         sep_l: "╠═══╬", sep_r: "╬═══╣",
         tail_l: "╚═══╩", tail_r: "╩═══╝",
-        side: ->(v) { "║ #{v} ║" },
-        ends: ->(left, right, length, v) { "#{left}#{v.center(length * 8, v)}#{right}" }
+        side: ->(v) { "║ #{v} ║" }
       }.freeze
 
       # Build the chessboard
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
-      # @param padding [Integer] padding size
+      # @param size [Integer] padding size
       # @param show_r [Boolean] print ranks on the side?
       # @return [Array<String>] a complete board with head and tail
-      def build_board(turn_data = nil, colors: BOARD[:bg_theme], padding: 1, show_r: true)
-        turn_data = Array.new(8) { [" "] } if turn_data.nil?
-        tile_w = 2 * padding + 1
+      def build_board(turn_data = Array.new(8) { [" "] }, colors: BOARD[:bg_theme], size: 1, show_r: true)
+        tile_w = to_quadratic(size)
         board = []
         # top
-        board << frame(:head, tile_w: tile_w, label: "◇")
+        board << frame(:head, tile_w: tile_w, show_r: show_r, label: BOARD[:decor2])
         # main
         turn_data.each_with_index do |row, i|
-          board << format_row(i + 1, row, colors: colors, tile_w: tile_w, show_r: show_r)
+          rank_num = i + 1
+          rank_row = format_row(rank_num, row, colors: colors, tile_w: tile_w, show_r: show_r)
+          buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w, show_r: false)] * (size - 1)
+          board << buffer_row.concat(rank_row, buffer_row)
+          # if size == 1
+          #   board << rank_row
+          # else
+          #   buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w, show_r: false)] * (size - 1)
+          #   board << buffer_row.concat(rank_row, buffer_row)
+          # end
         end
         # bottom
-        board << frame(:tail, tile_w: tile_w, label: "◆")
+        board << frame(:tail, tile_w: tile_w, show_r: show_r, label: BOARD[:decor1])
         board
       end
+
+      private
 
       # Rank formatter
       # @param rank_num [Integer] rank number
@@ -62,8 +72,6 @@ module ConsoleGame
         [side.concat(arr, side).join("")]
       end
 
-      private
-
       # Helper: Build the head and tail section of the chessboard
       # @param section [Symbol] :head or :tail
       # @param tile_w [Integer] width of each tile
@@ -72,11 +80,23 @@ module ConsoleGame
       # @return [Array<String>] the top or bottom section of the board
       def frame(section = :head, tile_w: BOARD[:std_tile], show_r: true, label: "")
         arr = []
+        row_values = show_r ? BOARD[:file] : [label]
         ends_l, ends_r = section == :head ? %i[head_l head_r] : %i[tail_l tail_r]
-        arr << BOARD[:ends].call(BOARD[ends_l], BOARD[ends_r], tile_w, BOARD[:h])
-        arr << format_row(0, BOARD[:file], colors: [nil, nil], tile_w: tile_w, show_r: show_r, label: label)
-        arr << BOARD[:ends].call(BOARD[:sep_l], BOARD[:sep_r], tile_w, BOARD[:h])
+
+        arr << border(BOARD[ends_l], BOARD[ends_r], tile_w, BOARD[:h])
+        arr << format_row(0, row_values, colors: [nil, nil], tile_w: tile_w, show_r: true, label: label)
+        arr << border(BOARD[:sep_l], BOARD[:sep_r], tile_w, BOARD[:h])
+
         section == :head ? arr : arr.reverse
+      end
+
+      # Helper: Build horizontal border
+      # @param left [String] left padding
+      # @param right [String] right padding
+      # @param length [Integer] times of repetition
+      # @param value [String] value to be repeated
+      def border(left, right, length, value)
+        "#{left}#{value.center(length * 8, value)}#{right}"
       end
 
       # Helper: Determine the checker order of a specific rank
@@ -101,6 +121,14 @@ module ConsoleGame
                            [item, :default, bg_color]
                          end
         Paint[str.center(tile_w), color, bg]
+      end
+
+      # Helper: Quadratic expression to maintain tile shape, based on n^2-n+1
+      # @param size [Integer] padding size
+      # @return [Integer] total width of each tile
+      def to_quadratic(size)
+        q = size + 1
+        q**2 - q + 1
       end
     end
   end
