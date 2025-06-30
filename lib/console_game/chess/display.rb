@@ -8,6 +8,8 @@ module ConsoleGame
     module Display
       # Default design for the chessboard
       BOARD = {
+        size: 8,
+        turn_data: Array.new(8) { [" "] },
         bg_theme: %w[#ada493 #847b6a],
         file: [*"a".."h"],
         std_tile: 3,
@@ -26,7 +28,7 @@ module ConsoleGame
       # @param size [Integer] padding size
       # @param show_r [Boolean] print ranks on the side?
       # @return [Array<String>] a complete board with head and tail
-      def build_board(turn_data = Array.new(8) { [" "] }, side: :white, colors: BOARD[:bg_theme], size: 1, show_r: true)
+      def build_board(turn_data = BOARD[:turn_data], side: :white, colors: BOARD[:bg_theme], size: 1, show_r: true)
         tile_w = to_quadratic(size)
         # main
         board = build_main(turn_data, side: side, colors: colors, tile_w: tile_w, size: size, show_r: show_r)
@@ -43,7 +45,7 @@ module ConsoleGame
 
       # Rank formatter
       # @param rank_num [Integer] rank number
-      # @param row_data [Array<Hash>] expects a 1-element(reprinting) or 8-elements array(In order)
+      # @param row_data [Array<Hash>] expects a 1-element(reprinting) or n-elements array(In order)
       # @option row_data [String] :asset element in the tile
       # @option row_data [Symbol] :color colour of the element
       # @param colors [Array<Symbol, String, nil>] Expects contrasting background colour
@@ -56,7 +58,7 @@ module ConsoleGame
         # Light background colour, dark background colour
         bg1, bg2 = pattern_order(rank_num, colors: colors)
         # Build individual tile
-        8.times { |i| arr << paint_tile(row_data[i % row_data.size], tile_w, i.even? ? bg1 : bg2) }
+        BOARD[:size].times { |i| arr << paint_tile(row_data[i % row_data.size], tile_w, i.even? ? bg1 : bg2) }
         # Build side borders
         label = rank_num if label.empty?
         side = [BOARD[:side].call(show_r ? label : " ")]
@@ -64,7 +66,7 @@ module ConsoleGame
       end
 
       # Build the main section of the chessboard
-      # @param turn_data [Array<Array>] expects an array with 8 elements, each represents a single row
+      # @param turn_data [Array<Array>] expects an array with n elements, each represents a single row
       # @param side [Symbol] :white or :black, this will flip the board
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @param tile_w [Integer] width of each tile
@@ -105,7 +107,7 @@ module ConsoleGame
       # @param length [Integer] times of repetition
       # @param value [String] value to be repeated
       def border(left, right, length, value)
-        "#{left}#{value.center(length * 8, value)}#{right}"
+        "#{left}#{value.center(length * BOARD[:size], value)}#{right}"
       end
 
       # Helper: Determine the checker order of a specific rank
