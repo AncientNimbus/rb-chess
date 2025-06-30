@@ -20,6 +20,7 @@ module ConsoleGame
       }.freeze
 
       # Build the chessboard
+      # @param turn_data [Array<Array>] expects an array with 8 elements, each represents a single row
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @param size [Integer] padding size
       # @param show_r [Boolean] print ranks on the side?
@@ -30,7 +31,7 @@ module ConsoleGame
         board = frame(:head, tile_w: tile_w, show_r: show_r, label: BOARD[:decor2])
         # main
         turn_data.each_with_index do |row, i|
-          rank_num = i + 1
+          rank_num = turn_data.size - i
           rank_row = format_row(rank_num, row, colors: colors, tile_w: tile_w, show_r: show_r)
           buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w, show_r: false)] * (size - 1)
           board << buffer_row.concat(rank_row, buffer_row)
@@ -61,10 +62,6 @@ module ConsoleGame
         label = rank_num if label.empty?
         side = [BOARD[:side].call(show_r ? label : " ")]
         [side.concat(arr, side).join("")]
-      end
-
-      # Helper: Add head and tail sections to the board
-      def add_borders(board)
       end
 
       # Helper: Build the head and tail section of the chessboard
