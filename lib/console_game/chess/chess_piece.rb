@@ -2,9 +2,9 @@
 
 module ConsoleGame
   module Chess
-    # Piece is a parent class for the game Chess in Console Game
+    # Chess Piece is a parent class for the game Chess in Console Game
     # @author Ancient Nimbus
-    class Piece
+    class ChessPiece
     end
   end
 end
