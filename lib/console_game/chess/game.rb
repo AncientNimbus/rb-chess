@@ -6,6 +6,7 @@ require_relative "display"
 require_relative "chess_input"
 require_relative "chess_player"
 require_relative "chess_computer"
+require_relative "chess_piece"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
@@ -16,8 +17,6 @@ module ConsoleGame
     class Game < BaseGame
       include Logic
       include Display
-      # Textfile head
-      TF = "app.chess"
 
       attr_reader :mode, :p1, :p2, :side, :sessions
 
@@ -123,7 +122,7 @@ module ConsoleGame
       # @param extname [String]
       # @return [String] the translated and interpolated string
       def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
-        super("#{TF}.#{key_path}", subs, paint_str: paint_str, extname: extname)
+        super("app.chess.#{key_path}", subs, paint_str: paint_str, extname: extname)
       end
     end
   end

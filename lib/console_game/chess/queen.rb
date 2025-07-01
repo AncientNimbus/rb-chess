@@ -7,6 +7,9 @@ module ConsoleGame
     # Queen is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class Queen < ChessPiece
+      def initialize
+        super(:q)
+      end
     end
   end
 end

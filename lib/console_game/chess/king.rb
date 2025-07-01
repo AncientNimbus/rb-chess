@@ -7,6 +7,9 @@ module ConsoleGame
     # King is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class King < ChessPiece
+      def initialize
+        super(:k)
+      end
     end
   end
 end

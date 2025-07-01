@@ -7,6 +7,9 @@ module ConsoleGame
     # Knight is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class Knight < ChessPiece
+      def initialize
+        super(:n)
+      end
     end
   end
 end

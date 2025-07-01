@@ -7,6 +7,9 @@ module ConsoleGame
     # Bishop is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class Bishop < ChessPiece
+      def initialize
+        super(:b)
+      end
     end
   end
 end

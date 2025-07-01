@@ -7,6 +7,9 @@ module ConsoleGame
     # Rook is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class Rook < ChessPiece
+      def initialize
+        super(:r)
+      end
     end
   end
 end

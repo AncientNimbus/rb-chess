@@ -7,6 +7,9 @@ module ConsoleGame
     # Pawn is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class Pawn < ChessPiece
+      def initialize
+        super(:p)
+      end
     end
   end
 end
