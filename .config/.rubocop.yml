@@ -20,7 +20,9 @@ Style/FrozenStringLiteralComment:
 Style/FormatStringToken:
   EnforcedStyle: template
 
-plugins: rubocop-performance
+plugins:
+  - rubocop-performance
+  - rubocop-rspec
 
 Metrics/MethodLength:
   CountAsOne: ["array", "hash", "heredoc", "method_call"]
