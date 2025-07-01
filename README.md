@@ -32,6 +32,8 @@ For more details regarding the development of this project, feel free to checkou
 - RSpec
 - Rubocop
 - Yard
+- Paint
+- SimpleCov
 
 ## Additional Resources
 

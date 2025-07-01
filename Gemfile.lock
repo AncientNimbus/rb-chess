@@ -47,6 +47,9 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
+    rubocop-rspec (3.6.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
     ruby-progressbar (1.13.0)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -68,6 +71,7 @@ DEPENDENCIES
   rspec (~> 3.13)
   rubocop (~> 1.76)
   rubocop-performance (~> 1.25)
+  rubocop-rspec (~> 3.6)
   simplecov
   yard (~> 0.9.37)
 
