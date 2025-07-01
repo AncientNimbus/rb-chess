@@ -7,7 +7,7 @@ describe ConsoleGame::Chess::Logic do
 
   let(:dummy_class) { Class.new { include ConsoleGame::Chess::Logic } }
 
-  describe "#direction" do
+  describe "#pathfinder" do
     context "when starting value is 0, and bound is a 8 x 8 grid, requesting an array with 8 elements" do
       start_value = 0
       arr = nil
@@ -119,58 +119,58 @@ describe ConsoleGame::Chess::Logic do
       end
     end
 
-    context "when starting value is 9, and bound is a 8 x 8 grid, requesting an array with 4 elements" do
+    context "when starting value is 9, and bound is a 8 x 8 grid, requesting an array with max number of elements within bound" do
       start_value = 9
       arr = nil
-      arr_length = 4
+      arr_length = :max
       bound = [8, 8]
 
-      it "returns an empty array when direction is the north west" do
+      it "returns a sequence of positions to the north west" do
         direction = :nw
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([])
+        expect(result).to eq([9, 16])
       end
 
       it "returns a sequence of positions to the north" do
         direction = :n
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([9, 17, 25, 33])
+        expect(result).to eq([9, 17, 25, 33, 41, 49, 57])
       end
 
       it "returns a sequence of positions to the north east" do
         direction = :ne
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([9, 18, 27, 36])
+        expect(result).to eq([9, 18, 27, 36, 45, 54, 63])
       end
 
       it "returns a sequence of positions to the east" do
         direction = :e
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([9, 10, 11, 12])
+        expect(result).to eq([9, 10, 11, 12, 13, 14, 15])
       end
 
-      it "returns an empty array when direction is the south east" do
+      it "returns a sequence of positions to the south east" do
         direction = :se
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([])
+        expect(result).to eq([9, 2])
       end
 
-      it "returns an empty array when direction is the south" do
+      it "returns a sequence of positions to the south" do
         direction = :s
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([])
+        expect(result).to eq([9, 1])
       end
 
-      it "returns an empty array when direction is the south west" do
+      it "returns a sequence of positions to the south west" do
         direction = :sw
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([])
+        expect(result).to eq([9, 0])
       end
 
-      it "returns an empty array when direction is the west" do
+      it "returns a sequence of positions to the west" do
         direction = :w
         result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([])
+        expect(result).to eq([9, 8])
       end
     end
 
