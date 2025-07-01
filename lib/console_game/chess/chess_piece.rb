@@ -30,7 +30,8 @@ module ConsoleGame
       def movements
         # calculate possible movement
         p valid_moves(52, :max)
-        p valid_moves(52, 2)
+        # p valid_moves(52, 2)
+        # p valid_moves(1, :max)
         # p 34
         # p to_coord(34)
         # p 8 - 4
@@ -56,7 +57,7 @@ module ConsoleGame
 
         combination << next_value
 
-        if out_of_bound?(next_value, bound) || not_one_unit_apart?(path, combination, bound[1])
+        if out_of_bound?(next_value, bound) || not_adjacent?(path, combination)
           return length == :max ? combination[0..-2] : []
         end
 

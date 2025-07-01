@@ -26,7 +26,7 @@ module ConsoleGame
       # @param value [Integer] start value
       # @param path [Symbol] see DIRECTIONS for available options. E.g., :e for count from left to right
       # @param combination [Array<Integer>] default value is an empty array
-      # @param length [Integer] expected array length
+      # @param length [Integer] length of the return array
       # @param bound [Array<Integer>] grid size `[row, col]`
       # @return [Array<Integer>] array of numbers
       def direction(value = 0, path = :e, combination = nil, length: PRESET[:length], bound: PRESET[:bound])
@@ -42,10 +42,25 @@ module ConsoleGame
 
         if arr_size >= 1
           return [] if out_of_bound?(next_value, bound)
-          return [] if not_one_unit_apart?(path, combination, bound[1])
+          return [] if not_adjacent?(path, combination)
         end
 
         direction(value, path, combination, length: length, bound: bound)
+      end
+
+      # Calculate valid sequence based on positional value
+      # @param value [Integer] positional value within a matrix
+      # @return [Array<Array<Integer>>] an array of valid directional path within given bound
+      def valid_moves(value = 0, rules = 1)
+        arr = []
+        DIRECTIONS.each_key do |path|
+          # range = rules.is_a?(Integer) ? rules : rules[path]
+          # next if range.nil? || range.zero?
+
+          sequence = direction(value, path, length: rules)
+          arr << sequence unless sequence.empty?
+        end
+        arr
       end
 
       # Convert coordinate array to cell position
@@ -82,15 +97,19 @@ module ConsoleGame
         value.negative? || value > bound.reduce(:*) - 1
       end
 
-      # Helper method to check for out of bound cases for left and right borders
+      # Helper method to check for out of bound cases for left and right borders (Previously: not_one_unit_apart?)
       # @param path [Symbol] see DIRECTIONS for available options. E.g., :e for count from left to right
       # @param values_arr [Array<Integer>]
-      # @param col [Integer] column
       # @return [Boolean]
-      def not_one_unit_apart?(path, values_arr, col)
+      def not_adjacent?(path, values_arr)
         return false unless %i[e w ne nw se sw].include?(path)
 
-        ((values_arr.first % col - values_arr.last % col).abs - (values_arr.size - 1)).abs != 0
+        first_col, prev_col, curr_col = [values_arr.first, *values_arr.last(2)].map { |pos| to_coord(pos)[1] }
+
+        wraps_around_edge = ((first_col - curr_col).abs - (values_arr.size - 1)).abs != 0
+        not_adjacent = (prev_col - curr_col).abs != 1
+
+        wraps_around_edge || not_adjacent
       end
     end
   end
