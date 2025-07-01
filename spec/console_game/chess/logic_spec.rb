@@ -16,49 +16,49 @@ describe ConsoleGame::Chess::Logic do
 
       it "returns an empty array when direction is the north west" do
         direction = :nw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns a sequence of positions to the north" do
         direction = :n
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([0, 8, 16, 24, 32, 40, 48, 56])
       end
 
       it "returns a sequence of positions to the north east" do
         direction = :ne
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([0, 9, 18, 27, 36, 45, 54, 63])
       end
 
       it "returns a sequence of positions to the east" do
         direction = :e
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([0, 1, 2, 3, 4, 5, 6, 7])
       end
 
       it "returns an empty array when direction is the south east" do
         direction = :se
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south" do
         direction = :s
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south west" do
         direction = :sw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the west" do
         direction = :w
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
     end
@@ -72,49 +72,49 @@ describe ConsoleGame::Chess::Logic do
 
       it "returns a sequence of positions to the north west" do
         direction = :nw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([6, 13, 20, 27])
       end
 
       it "returns a sequence of positions to the north" do
         direction = :n
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([6, 14, 22, 30])
       end
 
       it "returns an empty array when direction is the north east" do
         direction = :ne
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the east" do
         direction = :e
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south east" do
         direction = :se
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south" do
         direction = :s
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south west" do
         direction = :sw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns a sequence of positions to the west" do
         direction = :w
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([6, 5, 4, 3])
       end
     end
@@ -127,49 +127,49 @@ describe ConsoleGame::Chess::Logic do
 
       it "returns an empty array when direction is the north west" do
         direction = :nw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns a sequence of positions to the north" do
         direction = :n
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([9, 17, 25, 33])
       end
 
       it "returns a sequence of positions to the north east" do
         direction = :ne
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([9, 18, 27, 36])
       end
 
       it "returns a sequence of positions to the east" do
         direction = :e
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([9, 10, 11, 12])
       end
 
       it "returns an empty array when direction is the south east" do
         direction = :se
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south" do
         direction = :s
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south west" do
         direction = :sw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the west" do
         direction = :w
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
     end
@@ -182,49 +182,49 @@ describe ConsoleGame::Chess::Logic do
 
       it "returns an empty array when direction is the north west" do
         direction = :nw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns a sequence of positions to the north" do
         direction = :n
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([32, 40, 48, 56])
       end
 
       it "returns a sequence of positions to the north east" do
         direction = :ne
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([32, 41, 50, 59])
       end
 
       it "returns a sequence of positions to the east" do
         direction = :e
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([32, 33, 34, 35])
       end
 
       it "returns a sequence of positions to the south east" do
         direction = :se
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([32, 25, 18, 11])
       end
 
       it "returns a sequence of positions to the south" do
         direction = :s
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([32, 24, 16, 8])
       end
 
       it "returns an empty array when direction is the south west" do
         direction = :sw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the west" do
         direction = :w
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
     end
@@ -237,49 +237,49 @@ describe ConsoleGame::Chess::Logic do
 
       it "returns an empty array when direction is the north west" do
         direction = :nw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the north" do
         direction = :n
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the north east" do
         direction = :ne
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the east" do
         direction = :e
-        result = logic_test.direction(5, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(5, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns an empty array when direction is the south east" do
         direction = :se
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
       it "returns a sequence of positions to the south" do
         direction = :s
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([38, 30, 22, 14, 6])
       end
 
       it "returns a sequence of positions to the south west" do
         direction = :sw
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([38, 29, 20, 11, 2])
       end
 
       it "returns a sequence of positions to the west" do
         direction = :w
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([38, 37, 36, 35, 34])
       end
     end
@@ -289,15 +289,15 @@ describe ConsoleGame::Chess::Logic do
       arr_length = 4
       bound = [8, 8]
       it "returns a sequence of positions to the east when no argument is provided" do
-        result = logic_test.direction
-        expect(result).to eq([0, 1, 2, 3])
+        result = logic_test.pathfinder
+        expect(result).to eq([0, 1, 2, 3, 4, 5, 6, 7])
       end
 
       it "returns an empty array when starting value is larger than bound" do
         start_value = 64
         direction = :e
 
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
+        result = logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
         expect(result).to eq([])
       end
 
@@ -305,15 +305,16 @@ describe ConsoleGame::Chess::Logic do
         start_value = -1
         direction = :e
 
-        result = logic_test.direction(start_value, direction, arr, length: arr_length, bound: bound)
-        expect(result).to eq([])
+        expect do
+          logic_test.pathfinder(start_value, direction, arr, length: arr_length, bound: bound)
+        end.to raise_error(ArgumentError, "#{start_value} is out of bound!")
       end
 
       it "raise an error when direction symbol is incorrect" do
         start_value = 41
         direction = :test
         expect do
-          logic_test.direction(start_value, direction)
+          logic_test.pathfinder(start_value, direction)
         end.to raise_error(ArgumentError, "Invalid path: test")
       end
     end
@@ -348,145 +349,141 @@ describe ConsoleGame::Chess::Logic do
     end
   end
 
-  describe "#not_one_unit_apart?" do
+  describe "#not_adjacent?" do
     context "when direction is east and start value is 5, where bound is a 8 x 8 grid" do
       direction = :e
-      row = 8
       it "returns true when the last array value is out of bound" do
         arr = [5, 6, 7, 8]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns true when the last array value is not the next immediate value of the previous value" do
         arr = [5, 7]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns false when the last array value is the next immediate value of the previous value" do
         arr = [5, 6]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end
 
     context "when direction is west and start value is 42, where bound is a 8 x 8 grid" do
       direction = :w
-      row = 8
       it "returns true when the last array value is out of bound" do
         arr = [42, 41, 40, 39]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns true when the last array value is not the next immediate value of the previous value" do
         arr = [42, 40]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns false when the last array value is the next immediate value of the previous value" do
         arr = [42, 41]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end
 
     context "when direction is north east and start value is 29, where bound is a 8 x 8 grid" do
       direction = :ne
-      row = 8
       it "returns true when the last array value is out of bound" do
         arr = [29, 38, 47, 56]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns true when the last array value is not the next immediate value one row above" do
         arr = [29, 39]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns false when the last array value is the next immediate value one row above" do
         arr = [29, 38]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end
 
     context "when direction is north west and start value is 25, where bound is a 8 x 8 grid" do
       direction = :nw
-      row = 8
+
       it "returns true when the last array value is out of bound" do
         arr = [25, 32, 39]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns true when the last array value is not the next immediate value one row above" do
         arr = [25, 31]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns false when the last array value is the next immediate value one row above" do
         arr = [25, 32]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end
 
     context "when direction is south east and start value is 42, where bound is a 8 x 8 grid" do
       direction = :se
-      row = 8
+
       it "returns true when the last array value is out of bound" do
         arr = [42, 33, 24, 15]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns true when the last array value is not the next immediate value one row below" do
         arr = [42, 32]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns false when the last array value is the next immediate value one row below" do
         arr = [42, 33]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end
 
     context "when direction is south west and start value is 25, where bound is a 8 x 8 grid" do
       direction = :sw
-      row = 8
+
       it "returns true when the last array value is out of bound" do
-        arr = [25, 16, 7, -2]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        arr = [25, 16, 7]
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns true when the last array value is not the next immediate value one row below" do
         arr = [25, 16, 6]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be true
       end
 
       it "returns false when the last array value is the next immediate value one row below" do
         arr = [25, 16]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end
 
     context "when it is an edge case, and bound is a 8 x 8 grid" do
-      row = 8
       it "returns false when direction is out of scope" do
         direction = :n
         arr = [0, 1, 2, 3]
-        result = logic_test.send(:not_one_unit_apart?, direction, arr, row)
+        result = logic_test.send(:not_adjacent?, direction, arr)
         expect(result).to be false
       end
     end

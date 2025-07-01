@@ -22,30 +22,29 @@ module ConsoleGame
         nw: ->(value, step, row) { value + row * step - step }
       }.freeze
 
-      # Recursively find the next value depending on direction
-      # @param value [Integer] start value
+      # Recursively find the next position depending on direction
+      # @param pos [Integer] start position
       # @param path [Symbol] see DIRECTIONS for available options. E.g., :e for count from left to right
       # @param combination [Array<Integer>] default value is an empty array
-      # @param length [Integer] length of the return array
+      # @param length [Symbol, Integer] :nax for maximum range within bound or custom length of the sequence
       # @param bound [Array<Integer>] grid size `[row, col]`
       # @return [Array<Integer>] array of numbers
-      def direction(value = 0, path = :e, combination = nil, length: PRESET[:length], bound: PRESET[:bound])
-        combination ||= [value]
+      def pathfinder(pos = 0, path = :e, combination = nil, length: :max, bound: PRESET[:bound])
+        combination ||= [pos]
         arr_size = combination.size
         return combination if arr_size == length
 
         next_value = DIRECTIONS.fetch(path) do |key|
           raise ArgumentError, "Invalid path: #{key}"
-        end.call(value, arr_size, bound[0])
+        end.call(pos, arr_size, bound[0])
 
         combination << next_value
 
-        if arr_size >= 1
-          return [] if out_of_bound?(next_value, bound)
-          return [] if not_adjacent?(path, combination)
+        if out_of_bound?(next_value, bound) || not_adjacent?(path, combination)
+          return length == :max ? combination[0..-2] : []
         end
 
-        direction(value, path, combination, length: length, bound: bound)
+        pathfinder(pos, path, combination, length: length, bound: bound)
       end
 
       # Calculate valid sequence based on positional value
@@ -57,7 +56,7 @@ module ConsoleGame
           # range = rules.is_a?(Integer) ? rules : rules[path]
           # next if range.nil? || range.zero?
 
-          sequence = direction(value, path, length: rules)
+          sequence = pathfinder(value, path, length: rules)
           arr << sequence unless sequence.empty?
         end
         arr
