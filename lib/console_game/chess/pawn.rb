@@ -8,7 +8,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Pawn < ChessPiece
       def initialize
-        super(:p)
+        super(:p, movements: %i[n], range: 1)
       end
     end
   end

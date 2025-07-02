@@ -8,7 +8,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Bishop < ChessPiece
       def initialize
-        super(:b)
+        super(:b, movements: %i[ne se sw nw], range: :max)
       end
     end
   end

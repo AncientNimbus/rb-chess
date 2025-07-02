@@ -8,7 +8,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Queen < ChessPiece
       def initialize
-        super(:q)
+        super(:q, range: :max)
       end
     end
   end

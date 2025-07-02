@@ -8,7 +8,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Rook < ChessPiece
       def initialize
-        super(:r)
+        super(:r, movements: %i[n e s w], range: :max)
       end
     end
   end

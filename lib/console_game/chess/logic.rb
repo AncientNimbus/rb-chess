@@ -49,21 +49,6 @@ module ConsoleGame
         pathfinder(pos, path, combination, length: length, bound: bound)
       end
 
-      # Calculate valid sequence based on positional value
-      # @param value [Integer] positional value within a matrix
-      # @return [Array<Array<Integer>>] an array of valid directional path within given bound
-      def valid_moves(value = 0, rules = 1)
-        arr = []
-        DIRECTIONS.each_key do |path|
-          # range = rules.is_a?(Integer) ? rules : rules[path]
-          # next if range.nil? || range.zero?
-
-          sequence = pathfinder(value, path, length: rules)
-          arr << sequence unless sequence.empty?
-        end
-        arr
-      end
-
       # Convert coordinate array to cell position
       # @param coord [Array<Integer>] `[row, col]`
       # @param bound [Array<Integer>] `[row, col]`

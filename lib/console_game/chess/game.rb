@@ -11,7 +11,7 @@ require_relative "chess_piece"
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
   # @author Ancient Nimbus
-  # @version v0.1.0
+  # @version 0.3.0
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame

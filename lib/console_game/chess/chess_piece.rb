@@ -15,34 +15,62 @@ module ConsoleGame
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
       attr_accessor :start_pos
-      attr_reader :notation, :name, :icon, :pts
+      attr_reader :notation, :name, :icon, :pts, :movements
 
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
-      def initialize(notation = :q)
+      def initialize(notation = :k, movements: %i[n ne e se s sw w nw], range: 1)
         @notation = s("#{notation}.notation")
         @name = s("#{notation}.name")
         @icon = s("#{notation}.style1")
         @pts = PTS_VALUES[notation]
         @start_pos = true
+        @movements = possible_movements(movements, range: range)
       end
 
-      # Movements for the given pieces
-      def movements
-        # calculate possible movement
-        p valid_moves(52, :max)
-        p pathfinder
-        # p valid_moves(52, 2)
-        # p valid_moves(1, :max)
-        # p 34
-        # p to_coord(34)
-        # p 8 - 4
-        # p valid_moves(4, 1)
-        # p valid_moves(0, 1)
+      # Calculate valid sequence based on positional value
+      # @param pos [Integer] positional value within a matrix
+      # @return [Hash<Array<Integer>>] an array of valid directional path within given bound
+      def all_paths(pos = 0)
+        paths = Hash.new { |h, k| h[k] = nil }
+        movements.each do |path, range|
+          next if range.nil?
+
+          sequence = path(pos, path, range: range)
+          paths[path] = sequence unless sequence.empty?
+        end
+        paths
       end
+
+      # Path via Pathfinder
+      # @param pos [Integer] board positional value
+      # @param path [Symbol] compass direction
+      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
+      # @return [Array<Integer>]
+      def path(pos = 0, path = :e, range: 1)
+        seq_length = range.is_a?(Integer) ? range + 1 : range
+        path = pathfinder(pos, path, length: seq_length)
+        path.size > 1 ? path : []
+      end
+
+      # Valid movement
+      # @param pos1 [Integer] original board positional value
+      # @param pos2 [Integer] new board positional value
+      # @return [Boolean]
+      def valid_moves?(pos1, pos2); end
 
       # == Utilities ==
 
       private
+
+      # Possible movement direction for the given piece
+      # @param directions [Array<Symbol>] possible paths
+      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
+      def possible_movements(directions = [], range: 1)
+        movements = Hash.new { |h, k| h[k] = nil }
+        DIRECTIONS.each_key { |k| movements[k] }
+        directions.each { |dir| movements[dir] = range }
+        movements
+      end
 
       # Override: s
       # Retrieves a localized string and perform String interpolation and paint text if needed.

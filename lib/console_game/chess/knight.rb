@@ -14,18 +14,18 @@ module ConsoleGame
       # Knight Movement via pathfinder
       # @param pos [Integer] board positional value
       # @param path [Symbol] compass direction
+      # @param range [Symbol, Integer] movement range of the given piece
       # @return [Array<Integer>]
-      def explore_path(pos = 0, path = :e)
+      def path(pos = 0, path = :e, range: 1)
         dirs_keys = DIRECTIONS.keys
         offset_dirs = dirs_keys.rotate(1)
-        length = 2
-        offset_pos = pathfinder(pos, offset_dirs[dirs_keys.index(path)], length: length).last
+        offset_pos = super(pos, offset_dirs[dirs_keys.index(path)], range: range).last
         return [] if offset_pos.nil?
 
-        next_pos = pathfinder(offset_pos, path, length: length).last
+        next_pos = super(offset_pos, path, range: range).last
         return [] if next_pos.nil?
 
-        [pos, next_pos]
+        valid_moves?(pos, next_pos) ? [pos, next_pos] : []
       end
 
       # Valid movement for Knight
@@ -33,8 +33,7 @@ module ConsoleGame
       # @param pos2 [Integer] new board positional value
       # @return [Boolean]
       def valid_moves?(pos1, pos2)
-        r1, c1 = to_coord(pos1)
-        r2, c2 = to_coord(pos2)
+        r1, c1, r2, c2 = [pos1, pos2].map { |pos| to_coord(pos) }.flatten
 
         ((r1 - r2).abs == 2 && (c1 - c2).abs == 1) || ((r1 - r2).abs == 1 && (c1 - c2).abs == 2)
       end
