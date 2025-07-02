@@ -49,6 +49,17 @@ module ConsoleGame
         pathfinder(pos, path, combination, length: length, bound: bound)
       end
 
+      # Algebraic chess notation to positional value generator
+      # @return [Hash] Algebraic notation to positional values map
+      def algebraic_notation_generator
+        alg_map = {}
+        [*"a".."h"].each_with_index do |file, idx|
+          col = pathfinder(idx, :n, length: :max)
+          [*"#{file}1".."#{file}8"].each_with_index { |alg, i| alg_map[alg.to_sym] = col[i] }
+        end
+        alg_map
+      end
+
       # Convert coordinate array to cell position
       # @param coord [Array<Integer>] `[row, col]`
       # @param bound [Array<Integer>] `[row, col]`
