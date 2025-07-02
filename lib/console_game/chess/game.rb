@@ -28,6 +28,7 @@ module ConsoleGame
         @side = { white: nil, black: nil }
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
+        alg_map
       end
 
       private

@@ -14,17 +14,28 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :start_pos
-      attr_reader :notation, :name, :icon, :pts, :movements
+      attr_accessor :at_start, :curr_pos
+      attr_reader :notation, :name, :icon, :pts, :movements, :start_pos, :side
 
+      # @param alg_pos [Symbol] expects board position in Algebraic notation
+      # @param side [Symbol] specify unit side :black or :white
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
-      def initialize(notation = :k, movements: %i[n ne e se s sw w nw], range: 1)
+      def initialize(alg_pos = :e1, side = :white, notation = :k, movements: %i[n ne e se s sw w nw], range: 1)
+        alg_map
+        @side = side
         @notation = s("#{notation}.notation")
         @name = s("#{notation}.name")
         @icon = s("#{notation}.style1")
         @pts = PTS_VALUES[notation]
-        @start_pos = true
+        @start_pos = alg_map[alg_pos]
+        @curr_pos = start_pos
+        @at_start = true
         @movements = possible_movements(movements, range: range)
+      end
+
+      # Debug
+      def debug
+        all_paths(chess_piece.start_pos)
       end
 
       # Calculate valid sequence based on positional value

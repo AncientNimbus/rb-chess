@@ -28,7 +28,7 @@ module ConsoleGame
       # @param pos [Integer] start position
       # @param path [Symbol] see DIRECTIONS for available options. E.g., :e for count from left to right
       # @param combination [Array<Integer>] default value is an empty array
-      # @param length [Symbol, Integer] :nax for maximum range within bound or custom length of the sequence
+      # @param length [Symbol, Integer] :max for maximum range within bound or custom length of the sequence
       # @param bound [Array<Integer>] grid size `[row, col]`
       # @return [Array<Integer>] array of numbers
       def pathfinder(pos = 0, path = :e, combination = nil, length: :max, bound: PRESET[:bound])
@@ -49,15 +49,9 @@ module ConsoleGame
         pathfinder(pos, path, combination, length: length, bound: bound)
       end
 
-      # Algebraic chess notation to positional value generator
-      # @return [Hash] Algebraic notation to positional values map
-      def algebraic_notation_generator
-        alg_map = {}
-        [*"a".."h"].each_with_index do |file, idx|
-          col = pathfinder(idx, :n, length: :max)
-          [*"#{file}1".."#{file}8"].each_with_index { |alg, i| alg_map[alg.to_sym] = col[i] }
-        end
-        alg_map
+      # Generate and memorize the algebraic chess notation to positional value reference hash
+      def alg_map
+        @alg_map ||= algebraic_notation_generator
       end
 
       # Convert coordinate array to cell position
@@ -107,6 +101,17 @@ module ConsoleGame
         not_adjacent = (prev_col - curr_col).abs != 1
 
         wraps_around_edge || not_adjacent
+      end
+
+      # Algebraic chess notation to positional value generator
+      # @return [Hash] Algebraic notation to positional values map
+      def algebraic_notation_generator
+        alg_map = {}
+        [*"a".."h"].each_with_index do |file, idx|
+          col = pathfinder(idx, :n, length: :max)
+          [*"#{file}1".."#{file}8"].each_with_index { |alg, i| alg_map[alg.to_sym] = col[i] }
+        end
+        alg_map
       end
     end
   end

@@ -7,8 +7,10 @@ module ConsoleGame
     # Knight is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class Knight < ChessPiece
-      def initialize
-        super(:n)
+      # @param alg_pos [Symbol] expects board position in Algebraic notation
+      # @param side [Symbol] specify unit side :black or :white
+      def initialize(alg_pos = :b1, side = :white)
+        super(alg_pos, side, :n)
       end
 
       # Knight Movement via pathfinder
