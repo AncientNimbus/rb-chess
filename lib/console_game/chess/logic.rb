@@ -3,6 +3,8 @@
 module ConsoleGame
   module Chess
     # Logic module for the game Chess in Console Game
+    # @author Ancient Nimbus
+    # @version 1.0.0
     module Logic
       # Default values
       PRESET = {
