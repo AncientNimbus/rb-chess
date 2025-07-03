@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require_relative "../../nimbus_file_utils/nimbus_file_utils"
 require_relative "logic"
+require_relative "display"
 
 module ConsoleGame
   module Chess
     # Chess Piece is a parent class for the game Chess in Console Game
     # @author Ancient Nimbus
     class ChessPiece
-      include NimbusFileUtils
       include Logic
+      include Display
 
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
@@ -21,11 +21,11 @@ module ConsoleGame
       # @param side [Symbol] specify unit side :black or :white
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
       def initialize(alg_pos = :e1, side = :white, notation = :k, movements: %i[n ne e se s sw w nw], range: 1)
-        alg_map
         @side = side
-        @notation = s("#{notation}.notation")
-        @name = s("#{notation}.name")
-        @icon = s("#{notation}.style1")
+        @color = THEME[:classic][side]
+        @notation = PIECES[notation][:notation]
+        @name = PIECES[notation][:name]
+        @icon = PIECES[notation][:style1]
         @pts = PTS_VALUES[notation]
         @start_pos = alg_map[alg_pos]
         @curr_pos = start_pos
@@ -81,17 +81,6 @@ module ConsoleGame
         DIRECTIONS.each_key { |k| movements[k] }
         directions.each { |dir| movements[dir] = range }
         movements
-      end
-
-      # Override: s
-      # Retrieves a localized string and perform String interpolation and paint text if needed.
-      # @param key_path [String] textfile keypath
-      # @param subs [Hash] `{ demo: ["some text", :red] }`
-      # @param paint_str [Array<Symbol, String, nil>]
-      # @param extname [String]
-      # @return [String] the translated and interpolated string
-      def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
-        super("app.chess.pieces.#{key_path}", subs, paint_str: paint_str, extname: extname)
       end
     end
   end

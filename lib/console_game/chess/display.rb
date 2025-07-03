@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 require "paint"
+require_relative "../../nimbus_file_utils/nimbus_file_utils"
 
 module ConsoleGame
   module Chess
     # Display module for the game Chess in Console Game
     module Display
+      include NimbusFileUtils
       # Default design for the chessboard
       BOARD = {
         size: 8,
         turn_data: Array.new(8) { [" "] },
-        bg_theme: %w[#ada493 #847b6a],
         file: [*"a".."h"],
         std_tile: 3,
         h: "═",
@@ -21,6 +22,21 @@ module ConsoleGame
         side: ->(v) { "║ #{v} ║" }
       }.freeze
 
+      # Default design for chess pieces
+      PIECES = {
+        k: { name: "King", notation: "K", style1: "♚", style2: "♔" },
+        q: { name: "Queen", notation: "Q", style1: "♛", style2: "♕" },
+        r: { name: "Rook", notation: "R", style1: "♜", style2: "♖" },
+        b: { name: "Bishop", notation: "B", style1: "♝", style2: "♗" },
+        n: { name: "Knight", notation: "N", style1: "♞", style2: "♘" },
+        p: { name: "Pawn", notation: "P", style1: "♟", style2: "♙" }
+
+      }.freeze
+
+      # Default theme
+      THEME = {
+        classic: { bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF" }
+      }.freeze
       # Build the chessboard
       # @param turn_data [Array<Array>] expects an array with 8 elements, each represents a single row
       # @param side [Symbol] :white or :black, this will flip the board
@@ -28,7 +44,7 @@ module ConsoleGame
       # @param size [Integer] padding size
       # @param show_r [Boolean] print ranks on the side?
       # @return [Array<String>] a complete board with head and tail
-      def build_board(turn_data = BOARD[:turn_data], side: :white, colors: BOARD[:bg_theme], size: 1, show_r: true)
+      def build_board(turn_data = BOARD[:turn_data], side: :white, colors: THEME[:classic][:bg], size: 1, show_r: true)
         tile_w = to_quadratic(size)
         # main
         board = build_main(turn_data, side: side, colors: colors, tile_w: tile_w, size: size, show_r: show_r)
@@ -43,6 +59,17 @@ module ConsoleGame
         board.flatten
       end
 
+      # Override: s
+      # Retrieves a localized string and perform String interpolation and paint text if needed.
+      # @param key_path [String] textfile keypath
+      # @param subs [Hash] `{ demo: ["some text", :red] }`
+      # @param paint_str [Array<Symbol, String, nil>]
+      # @param extname [String]
+      # @return [String] the translated and interpolated string
+      def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
+        super("app.chess.#{key_path}", subs, paint_str: paint_str, extname: extname)
+      end
+
       private
 
       # Rank formatter
@@ -55,7 +82,8 @@ module ConsoleGame
       # @param show_r [Boolean] print ranks on the side?
       # @param label [String] override the print rank value with custom string
       # @return [Array<String>] a complete row of a specific rank within the board
-      def format_row(rank_num, row_data, colors: BOARD[:bg_theme], tile_w: BOARD[:std_tile], show_r: false, label: "")
+      def format_row(rank_num, row_data, colors: THEME[:classic][:bg], tile_w: BOARD[:std_tile], show_r: false,
+                     label: "")
         arr = []
         # Light background colour, dark background colour
         bg1, bg2 = pattern_order(rank_num, colors: colors)
@@ -74,7 +102,8 @@ module ConsoleGame
       # @param tile_w [Integer] width of each tile
       # @param size [Integer] padding size
       # @param show_r [Boolean] print ranks on the side?
-      def build_main(turn_data, side: :white, colors: BOARD[:bg_theme], tile_w: BOARD[:std_tile], size: 1, show_r: true)
+      def build_main(turn_data, side: :white, colors: THEME[:classic][:bg], tile_w: BOARD[:std_tile], size: 1,
+                     show_r: true)
         board = []
         turn_data.each_with_index do |row, i|
           rank_num = i + 1
@@ -116,7 +145,7 @@ module ConsoleGame
       # @param rank_num [Integer] rank number
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @return [Array<Symbol, String>] colour values
-      def pattern_order(rank_num, colors: BOARD[:bg_theme])
+      def pattern_order(rank_num, colors: THEME[:classic][:bg])
         rank_num.even? ? colors : colors.reverse
       end
 
