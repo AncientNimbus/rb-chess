@@ -15,7 +15,7 @@ module ConsoleGame
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
       attr_accessor :at_start, :curr_pos
-      attr_reader :notation, :name, :icon, :pts, :movements, :start_pos, :side
+      attr_reader :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -27,7 +27,7 @@ module ConsoleGame
         @name = PIECES[notation][:name]
         @icon = PIECES[notation][:style1]
         @pts = PTS_VALUES[notation]
-        @start_pos = alg_map[alg_pos]
+        @start_pos = alg_pos.is_a?(Symbol) ? alg_map[alg_pos] : alg_pos
         @curr_pos = start_pos
         @at_start = true
         @movements = possible_movements(movements, range: range)

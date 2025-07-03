@@ -9,7 +9,14 @@ module ConsoleGame
       # Default values
       PRESET = {
         length: 4,
-        bound: [8, 8]
+        bound: [8, 8],
+        fen_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        k: { class: "King", notation: :k },
+        q: { class: "Queen", notation: :q },
+        r: { class: "Rook", notation: :r },
+        b: { class: "Bishop", notation: :b },
+        n: { class: "Knight", notation: :n },
+        p: { class: "Pawn", notation: :p }
       }.freeze
 
       # A hash of lambda functions for calculating movement in 8 directions on a grid
@@ -52,6 +59,50 @@ module ConsoleGame
       # Generate and memorize the algebraic chess notation to positional value reference hash
       def alg_map
         @alg_map ||= algebraic_notation_generator
+      end
+
+      # Initialize chess piece via string value
+      # @param pos [Integer] positional value
+      # @param notation [String] expects a single letter that follows the FEN standard
+      # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
+      def piece_maker(pos, notation)
+        side = notation == notation.capitalize ? :white : :black
+        class_name = PRESET[notation.downcase.to_sym][:class]
+        Chess.const_get(class_name).new(pos, side)
+      end
+
+      # FEN Raw data parser
+      # @fen_str [String] expects a string in FEN format
+      def parse_fen(fen_str = PRESET[:fen_start])
+        fen = fen_str.split
+        return nil if fen.size != 6
+
+        fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
+      end
+
+      # Process FEN board data
+      # @param fen_board [Array<String>] expects an Array with FEN positions data
+      def to_turn_data(fen_board)
+        turn_data = Array.new { {} }
+        count = 0
+        ranks_arr = fen_board.split("/")
+        ranks_arr.reverse.each_with_index do |rank, row|
+          turn_data[row] = []
+          processed_rank = rank.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
+          # puts "#{row}: #{processed_rank} | Size: #{processed_rank.size}"
+          processed_rank.each_with_index do |unit, col|
+            # p "#{unit}, #{chess_piece.to_pos([row, col])}, count: #{count}"
+            if /\A\d\z/.match?(unit)
+              turn_data[row][col] = ""
+            else
+              piece = piece_maker(count, unit)
+              turn_data[row][col] = { asset: piece.icon, color: piece.color }
+              # puts "Created a #{piece.side} #{piece.name} at '#{piece.alg_map.key(piece.curr_pos)}'"
+            end
+            count += 1
+          end
+        end
+        turn_data
       end
 
       # Convert coordinate array to cell position
