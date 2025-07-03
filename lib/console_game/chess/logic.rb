@@ -61,16 +61,6 @@ module ConsoleGame
         @alg_map ||= algebraic_notation_generator
       end
 
-      # Initialize chess piece via string value
-      # @param pos [Integer] positional value
-      # @param notation [String] expects a single letter that follows the FEN standard
-      # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
-      def piece_maker(pos, notation)
-        side = notation == notation.capitalize ? :white : :black
-        class_name = PRESET[notation.downcase.to_sym][:class]
-        Chess.const_get(class_name).new(pos, side)
-      end
-
       # FEN Raw data parser
       # @fen_str [String] expects a string in FEN format
       def parse_fen(fen_str = PRESET[:fen_start])
@@ -82,24 +72,15 @@ module ConsoleGame
 
       # Process FEN board data
       # @param fen_board [Array<String>] expects an Array with FEN positions data
+      # @return [Array<Array<ChessPiece, String>>] chess position data starts from a1..h8
       def to_turn_data(fen_board)
         turn_data = Array.new { {} }
-        count = 0
-        ranks_arr = fen_board.split("/")
-        ranks_arr.reverse.each_with_index do |rank, row|
+        pos_value = 0
+        fen_board.split("/").reverse.each_with_index do |rank, row|
           turn_data[row] = []
-          processed_rank = rank.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
-          # puts "#{row}: #{processed_rank} | Size: #{processed_rank.size}"
-          processed_rank.each_with_index do |unit, col|
-            # p "#{unit}, #{chess_piece.to_pos([row, col])}, count: #{count}"
-            if /\A\d\z/.match?(unit)
-              turn_data[row][col] = ""
-            else
-              piece = piece_maker(count, unit)
-              turn_data[row][col] = { asset: piece.icon, color: piece.color }
-              # puts "Created a #{piece.side} #{piece.name} at '#{piece.alg_map.key(piece.curr_pos)}'"
-            end
-            count += 1
+          normalise_fen_rank(rank).each_with_index do |unit, col|
+            turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit)
+            pos_value += 1
           end
         end
         turn_data
@@ -131,6 +112,8 @@ module ConsoleGame
 
       private
 
+      # == Pathfinder ==
+
       # Helper method to check for out of bound cases for top and bottom borders
       # @param value [Integer]
       # @param bound [Array<Integer>] grid size `[row, col]`
@@ -154,6 +137,8 @@ module ConsoleGame
         wraps_around_edge || not_adjacent
       end
 
+      # == Algebraic natation ==
+
       # Algebraic chess notation to positional value generator
       # @return [Hash] Algebraic notation to positional values map
       def algebraic_notation_generator
@@ -163,6 +148,25 @@ module ConsoleGame
           [*"#{file}1".."#{file}8"].each_with_index { |alg, i| alg_map[alg.to_sym] = col[i] }
         end
         alg_map
+      end
+
+      # == FEN Parser ==
+
+      # Initialize chess piece via string value
+      # @param pos [Integer] positional value
+      # @param notation [String] expects a single letter that follows the FEN standard
+      # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
+      def piece_maker(pos, notation)
+        side = notation == notation.capitalize ? :white : :black
+        class_name = PRESET[notation.downcase.to_sym][:class]
+        Chess.const_get(class_name).new(pos, side)
+      end
+
+      # Helper method to uncompress FEN empty cell values so that all arrays share the same size
+      # @param fen_rank_str [String]
+      # @return [Array] processed rank data array
+      def normalise_fen_rank(fen_rank_str)
+        fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
       end
     end
   end

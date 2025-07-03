@@ -38,7 +38,7 @@ module ConsoleGame
         classic: { bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF" }
       }.freeze
       # Build the chessboard
-      # @param turn_data [Array<Array>] expects an array with 8 elements, each represents a single row
+      # @param turn_data [Array<Array<ChessPiece, String>>] expects an array with 8 elements, each represents a single row
       # @param side [Symbol] :white or :black, this will flip the board
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @param size [Integer] padding size
@@ -74,9 +74,7 @@ module ConsoleGame
 
       # Rank formatter
       # @param rank_num [Integer] rank number
-      # @param row_data [Array<Hash>] expects a 1-element(reprinting) or n-elements array(In order)
-      # @option row_data [String] :asset element in the tile
-      # @option row_data [Symbol] :color colour of the element
+      # @param row_data [Array<ChessPiece, String>] expects a 1-element(reprinting) or n-elements array(In order)
       # @param colors [Array<Symbol, String, nil>] Expects contrasting background colour
       # @param tile_w [Integer] width of each tile
       # @param show_r [Boolean] print ranks on the side?
@@ -150,15 +148,13 @@ module ConsoleGame
       end
 
       # Helper: Paint tile
-      # @param item [Hash] item hash
-      # @option item [String] :asset element in the tile
-      # @option item [Symbol] :color colour of the element
+      # @param item [ChessPiece, String] item
       # @param tile_w [Integer] width within each tile
       # @param bg_color [Symbol, String] expects a colour value
       # @return [String] coloured string
       def paint_tile(item, tile_w, bg_color)
-        str, color, bg = if item.is_a?(Hash)
-                           [item[:asset], item[:color], bg_color]
+        str, color, bg = if item.is_a?(ChessPiece)
+                           [item.icon, item.color, bg_color]
                          else
                            [item, :default, bg_color]
                          end
