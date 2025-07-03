@@ -68,6 +68,8 @@ module ConsoleGame
         return nil if fen.size != 6
 
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
+
+        # turn_data = to_turn_data(fen_board)
       end
 
       # Process FEN board data

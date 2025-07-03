@@ -7,6 +7,7 @@ require_relative "chess_input"
 require_relative "chess_player"
 require_relative "chess_computer"
 require_relative "chess_piece"
+require_relative "level"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
@@ -28,15 +29,15 @@ module ConsoleGame
         @side = { white: nil, black: nil }
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
-        alg_map
       end
 
       private
 
       def boot
         super
-        boot, intro, help = tf_fetcher("", *%w[boot intro help])
-        print_msg(boot, intro, help)
+        # boot, intro, help = tf_fetcher("", *%w[boot intro help])
+        # print_msg(boot, intro, help)
+        print_msg(s("boot"))
       end
 
       # == Flow ==
@@ -46,7 +47,7 @@ module ConsoleGame
         # new game or load game
         opt = game_selection
         opt == 1 ? new_game : load_game
-        print_chessboard
+        Level.new(mode, controller, side, sessions).open_level
       end
 
       # Prompt player for new game or load game
@@ -113,17 +114,6 @@ module ConsoleGame
         sides = side.keys
         p1.side, p2.side = side[:white] == p1 ? sides : sides.reverse
         sessions[id] = p1.register_session(id, p2.name)
-      end
-
-      # Override: s
-      # Retrieves a localized string and perform String interpolation and paint text if needed.
-      # @param key_path [String] textfile keypath
-      # @param subs [Hash] `{ demo: ["some text", :red] }`
-      # @param paint_str [Array<Symbol, String, nil>]
-      # @param extname [String]
-      # @return [String] the translated and interpolated string
-      def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
-        super("app.chess.#{key_path}", subs, paint_str: paint_str, extname: extname)
       end
     end
   end
