@@ -38,23 +38,30 @@ module ConsoleGame
         # pieces = turn_data.reject { |elem| elem.is_a?(String) }
 
         # p pieces.size
-        piece_input = "b1"
+        piece_input = "b2"
         assign_piece(piece_input)
-        move_input = "c3"
+        p active_piece.movements
+        p active_piece.at_start
+        p active_piece.query_moves
+        move_input = "b4"
         active_piece.move(move_input.to_sym)
         print_chessboard
+        p active_piece.query_moves
         move_input = "b5"
         active_piece.move(move_input.to_sym)
         print_chessboard
-        move_input = "c7"
+        p active_piece.query_moves
+        move_input = "b6"
         active_piece.move(move_input.to_sym)
         print_chessboard
+        p active_piece.query_moves
+        # move_input = "c7"
+        # active_piece.move(move_input.to_sym)
+        # print_chessboard
 
-        moves = active_piece.query_moves
-        p moves
-        p active_piece.possible_moves
-        # p active_piece.targets
-        # p active_piece.at_start # @todo fix this
+        # p active_piece.possible_moves
+        p active_piece.targets
+        p active_piece.at_start # @todo fix this
         # print_chessboard
       end
 

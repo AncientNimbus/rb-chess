@@ -55,20 +55,6 @@ module ConsoleGame
         # level.turn_data[new_pos] = self
       end
 
-      # Process movement
-      # @param turn_data [Array<ChessPiece, String>]
-      # @param old_pos [Integer]
-      # @param new_pos [Integer]
-      def process_movement(turn_data, old_pos, new_pos)
-        new_tile = turn_data[new_pos]
-
-        turn_data[old_pos] = ""
-        turn_data[new_pos] = self
-        return if new_tile.is_a?(String)
-
-        captured << new_tile if new_tile.is_a?(ChessPiece)
-      end
-
       # Query and update possible_moves
       def query_moves
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
@@ -85,29 +71,18 @@ module ConsoleGame
         @icon = PIECES[notation][:style1]
       end
 
-      # Calculate valid sequence based on positional value
-      # @param pos [Integer] positional value within a matrix
-      # @return [Hash<Array<Integer>>] an array of valid directional path within given bound
-      def all_paths(pos = curr_pos)
-        paths = Hash.new { |h, k| h[k] = nil }
-        movements.each do |path, range|
-          next if range.nil?
+      # Process movement
+      # @param turn_data [Array<ChessPiece, String>]
+      # @param old_pos [Integer]
+      # @param new_pos [Integer]
+      def process_movement(turn_data, old_pos, new_pos)
+        new_tile = turn_data[new_pos]
 
-          sequence = path(pos, path, range: range)
-          paths[path] = sequence unless sequence.empty?
-        end
-        paths
-      end
+        turn_data[old_pos] = ""
+        turn_data[new_pos] = self
+        return if new_tile.is_a?(String)
 
-      # Path via Pathfinder
-      # @param pos [Integer] board positional value
-      # @param path [Symbol] compass direction
-      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
-      # @return [Array<Integer>]
-      def path(pos = 0, path = :e, range: 1)
-        seq_length = range.is_a?(Integer) ? range + 1 : range
-        path = pathfinder(pos, path, length: seq_length)
-        path.size > 1 ? path : []
+        captured << new_tile if new_tile.is_a?(ChessPiece)
       end
 
       # Valid movement
@@ -144,6 +119,31 @@ module ConsoleGame
           break
         end
         new_positions
+      end
+
+      # Calculate valid sequence based on positional value
+      # @param pos [Integer] positional value within a matrix
+      # @return [Hash<Array<Integer>>] an array of valid directional path within given bound
+      def all_paths(pos = curr_pos)
+        paths = Hash.new { |h, k| h[k] = nil }
+        movements.each do |path, range|
+          next if range.nil?
+
+          sequence = path(pos, path, range: range)
+          paths[path] = sequence unless sequence.empty?
+        end
+        paths
+      end
+
+      # Path via Pathfinder
+      # @param pos [Integer] board positional value
+      # @param path [Symbol] compass direction
+      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
+      # @return [Array<Integer>]
+      def path(pos = 0, path = :e, range: 1)
+        seq_length = range.is_a?(Integer) ? range + 1 : range
+        path = pathfinder(pos, path, length: seq_length)
+        path.size > 1 ? path : []
       end
 
       # Possible movement direction for the given piece
