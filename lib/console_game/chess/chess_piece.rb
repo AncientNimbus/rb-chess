@@ -15,7 +15,7 @@ module ConsoleGame
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
       attr_accessor :at_start, :curr_pos
-      attr_reader :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color
+      attr_reader :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color, :possible_moves
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -30,18 +30,41 @@ module ConsoleGame
         @start_pos = alg_pos.is_a?(Symbol) ? alg_map[alg_pos] : alg_pos
         @curr_pos = start_pos
         @at_start = true
-        @movements = possible_movements(movements, range: range)
+        @movements = movement_range(movements, range: range)
       end
 
-      # Debug
-      def debug
-        all_paths(chess_piece.start_pos)
+      # Move the chess piece to a new valid location
+      # @param alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
+      # @param level [Chess::Level] active chess level
+      def move(level, alg_pos)
+        validate_moves(level.turn_data, curr_pos)
+        old_pos = curr_pos
+        new_pos = alg_map[alg_pos]
+        return "This is not a valid move" unless possible_moves.include?(new_pos)
+
+        p "Moving to #{alg_pos}"
+        self.at_start = false
+        self.curr_pos = new_pos
+        # refresh turn_data
+        level.turn_data[old_pos] = ""
+        level.turn_data[new_pos] = self
+      end
+
+      # Store all valid placement
+      # @param pos [Integer] positional value within a matrix
+      def validate_moves(turn_data, pos = curr_pos)
+        possible_moves = all_paths(pos)
+        possible_moves.each do |path, positions|
+          # remove blocked spot and onwards
+          possible_moves[path] = detect_occupied_tiles(turn_data, positions)
+        end
+        @possible_moves = possible_moves.values.flatten
       end
 
       # Calculate valid sequence based on positional value
       # @param pos [Integer] positional value within a matrix
       # @return [Hash<Array<Integer>>] an array of valid directional path within given bound
-      def all_paths(pos = 0)
+      def all_paths(pos = curr_pos)
         paths = Hash.new { |h, k| h[k] = nil }
         movements.each do |path, range|
           next if range.nil?
@@ -73,10 +96,26 @@ module ConsoleGame
 
       private
 
+      # Detect blocked tile based on the given positions
+      # @param turn_data [Array] board data array
+      # @return [Array]
+      def detect_occupied_tiles(turn_data, positions)
+        new_positions = positions[1..]
+        positions.each_with_index do |pos, idx|
+          # tile = turn_data.dig(*to_coord(pos))
+          tile = turn_data[pos]
+          next unless tile != self && tile.is_a?(ChessPiece)
+
+          new_positions = positions[1...idx]
+          break
+        end
+        new_positions
+      end
+
       # Possible movement direction for the given piece
       # @param directions [Array<Symbol>] possible paths
       # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
-      def possible_movements(directions = [], range: 1)
+      def movement_range(directions = [], range: 1)
         movements = Hash.new { |h, k| h[k] = nil }
         DIRECTIONS.each_key { |k| movements[k] }
         directions.each { |dir| movements[dir] = range }

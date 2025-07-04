@@ -73,12 +73,6 @@ module ConsoleGame
 
       # == Utilities ==
 
-      # Print the chessboard
-      def print_chessboard
-        chessboard = build_board
-        print_msg(*chessboard, pre: "* ")
-      end
-
       # Setup players
       def setup_players
         [p1, p2].map { |player| player_profile(player) }

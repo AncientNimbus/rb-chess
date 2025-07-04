@@ -38,7 +38,7 @@ module ConsoleGame
         classic: { bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF" }
       }.freeze
       # Build the chessboard
-      # @param turn_data [Array<Array<ChessPiece, String>>] expects an array with 8 elements, each represents a single row
+      # @param turn_data [Array<Array<ChessPiece, String>>] expects an 8 by 8 array, each represents a whole rank
       # @param side [Symbol] :white or :black, this will flip the board
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @param size [Integer] padding size

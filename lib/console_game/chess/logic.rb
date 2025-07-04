@@ -8,27 +8,17 @@ module ConsoleGame
     module Logic
       # Default values
       PRESET = {
-        length: 4,
-        bound: [8, 8],
-        fen_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-        k: { class: "King", notation: :k },
-        q: { class: "Queen", notation: :q },
-        r: { class: "Rook", notation: :r },
-        b: { class: "Bishop", notation: :b },
-        n: { class: "Knight", notation: :n },
-        p: { class: "Pawn", notation: :p }
+        length: 4, bound: [8, 8], fen_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        k: { class: "King", notation: :k }, q: { class: "Queen", notation: :q }, r: { class: "Rook", notation: :r },
+        b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
       }.freeze
 
       # A hash of lambda functions for calculating movement in 8 directions on a grid
       DIRECTIONS = {
-        n: ->(value, step, row) { value + row * step },
-        ne: ->(value, step, row) { value + row * step + step },
-        e: ->(value, step, _row) { value + step },
-        se: ->(value, step, row) { value - row * step + step },
-        s: ->(value, step, row) { value - row * step },
-        sw: ->(value, step, row) { value - row * step - step },
-        w: ->(value, step, _row) { value - step },
-        nw: ->(value, step, row) { value + row * step - step }
+        n: ->(value, step, row) { value + row * step }, ne: ->(value, step, row) { value + row * step + step },
+        e: ->(value, step, _row) { value + step }, se: ->(value, step, row) { value - row * step + step },
+        s: ->(value, step, row) { value - row * step }, sw: ->(value, step, row) { value - row * step - step },
+        w: ->(value, step, _row) { value - step }, nw: ->(value, step, row) { value + row * step - step }
       }.freeze
 
       # Recursively find the next position depending on direction
@@ -85,7 +75,7 @@ module ConsoleGame
             pos_value += 1
           end
         end
-        turn_data
+        to_1d(turn_data)
       end
 
       # Convert coordinate array to cell position
