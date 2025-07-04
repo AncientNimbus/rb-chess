@@ -14,13 +14,13 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :at_start, :curr_pos
+      attr_accessor :at_start, :curr_pos, :targets
       attr_reader :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color, :possible_moves
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
-      def initialize(alg_pos = :e1, side = :white, notation = :k, movements: %i[n ne e se s sw w nw], range: 1)
+      def initialize(alg_pos = :e1, side = :white, notation = :k, movements: DIRECTIONS.keys, range: 1)
         @side = side
         @color = THEME[:classic][side]
         @notation = PIECES[notation][:notation]
@@ -31,35 +31,34 @@ module ConsoleGame
         @curr_pos = start_pos
         @at_start = true
         @movements = movement_range(movements, range: range)
+        @targets = movement_range(movements, range: nil)
       end
 
       # Move the chess piece to a new valid location
-      # @param alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       # @param level [Chess::Level] active chess level
-      def move(level, alg_pos)
-        validate_moves(level.turn_data, curr_pos)
+      # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
+      def move(level, new_alg_pos)
+        query_moves(level)
         old_pos = curr_pos
-        new_pos = alg_map[alg_pos]
+        new_pos = alg_map[new_alg_pos]
         return "This is not a valid move" unless possible_moves.include?(new_pos)
 
-        p "Moving to #{alg_pos}"
         self.at_start = false
         self.curr_pos = new_pos
+        # print user message
+        p "Moving to #{new_alg_pos}"
         # refresh turn_data
         level.turn_data[old_pos] = ""
         level.turn_data[new_pos] = self
       end
 
-      # Store all valid placement
-      # @param pos [Integer] positional value within a matrix
-      def validate_moves(turn_data, pos = curr_pos)
-        possible_moves = all_paths(pos)
-        possible_moves.each do |path, positions|
-          # remove blocked spot and onwards
-          possible_moves[path] = detect_occupied_tiles(turn_data, positions)
-        end
-        @possible_moves = possible_moves.values.flatten
+      # Query and update possible_moves
+      # @param level [Chess::Level] active chess level
+      def query_moves(level)
+        validate_moves(level.turn_data, curr_pos)
       end
+
+      private
 
       # Calculate valid sequence based on positional value
       # @param pos [Integer] positional value within a matrix
@@ -92,21 +91,31 @@ module ConsoleGame
       # @return [Boolean]
       def valid_moves?(pos1, pos2); end
 
-      # == Utilities ==
-
-      private
+      # Store all valid placement
+      # @param pos [Integer] positional value within a matrix
+      def validate_moves(turn_data, pos = curr_pos)
+        targets.default
+        possible_moves = all_paths(pos)
+        possible_moves.each do |path, positions|
+          # remove blocked spot and onwards
+          possible_moves[path] = detect_occupied_tiles(path, turn_data, positions)
+        end
+        @possible_moves = possible_moves.values.flatten
+      end
 
       # Detect blocked tile based on the given positions
+      # @param path [Symbol]
       # @param turn_data [Array] board data array
+      # @param positions [Array] rank array
       # @return [Array]
-      def detect_occupied_tiles(turn_data, positions)
+      def detect_occupied_tiles(path, turn_data, positions)
         new_positions = positions[1..]
         positions.each_with_index do |pos, idx|
-          # tile = turn_data.dig(*to_coord(pos))
           tile = turn_data[pos]
           next unless tile != self && tile.is_a?(ChessPiece)
 
-          new_positions = positions[1...idx]
+          targets[path] = pos if tile.side != side
+          new_positions = positions[1..idx]
           break
         end
         new_positions

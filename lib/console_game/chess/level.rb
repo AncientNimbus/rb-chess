@@ -13,7 +13,7 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn_data
+      attr_accessor :turn_data, :active_piece
       attr_reader :mode, :controller, :w_player, :b_player, :sessions
 
       def initialize(mode, input, side, sessions, turn_data = nil)
@@ -22,7 +22,7 @@ module ConsoleGame
         @w_player = side[:white]
         @b_player = side[:black]
         @session = sessions
-        @turn_data = turn_data.nil? ? parse_fen : turn_data
+        @turn_data = turn_data.nil? ? parse_fen : parse_fen(turn_data)
       end
 
       # Start level
@@ -34,10 +34,13 @@ module ConsoleGame
       # Initialise the chessboard
       def init_level
         print_chessboard
-        piece_input = "d2"
-        piece = turn_data[alg_map[piece_input.to_sym]]
+        piece_input = "d5"
+        assign_piece(piece_input)
         move_input = "d3"
-        piece.move(self, move_input.to_sym)
+        # active_piece.move(self, move_input.to_sym)
+        moves = active_piece.query_moves(self).map { |pos| alg_map.key(pos) }
+        p moves
+        p active_piece.targets
         print_chessboard
       end
 
@@ -47,6 +50,17 @@ module ConsoleGame
       # Endgame handling
 
       # == Utilities ==
+
+      # Handling piece assignment
+      # @param alg_pos [Symbol] algebraic notation
+      def assign_piece(alg_pos)
+        # add player side validation
+        piece = turn_data[alg_map[alg_pos.to_sym]]
+        return puts "'#{alg_pos}' is empty, please enter a correct notation" if piece == ""
+
+        p "active piece: #{piece.side} #{piece.name}"
+        self.active_piece = piece
+      end
 
       # Print the chessboard
       def print_chessboard
