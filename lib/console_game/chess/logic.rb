@@ -69,7 +69,7 @@ module ConsoleGame
 
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
 
-        # turn_data = to_turn_data(fen_board)
+        turn_data = to_turn_data(fen_board)
       end
 
       # Process FEN board data
@@ -110,6 +110,23 @@ module ConsoleGame
 
         grid_width, _grid_height = bound
         pos.divmod(grid_width)
+      end
+
+      # Convert a 2D array to a 1D array
+      # @param nested_arr [Array]
+      # @return [Array] flatten array
+      def to_1d(nested_arr)
+        nested_arr.flatten
+      end
+
+      # Convert a 1D array to 2D array based on bound's row value
+      # @param flat_arr [Array]
+      # @param bound [Array<Integer>] `[row, col]`
+      # @return [Array] nested array
+      def to_matrix(flat_arr, bound: PRESET[:bound])
+        nested_arr = []
+        flat_arr.each_slice(bound[0]) { |row| nested_arr.push(row) }
+        nested_arr
       end
 
       private
