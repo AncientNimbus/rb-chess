@@ -14,15 +14,16 @@ module ConsoleGame
       include Display
 
       attr_accessor :turn_data, :active_piece
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :default_board
 
-      def initialize(mode, input, side, sessions, turn_data = nil)
+      def initialize(mode, input, side, sessions, import_fen = nil)
         @mode = mode
         @controller = input
         @w_player = side[:white]
         @b_player = side[:black]
         @session = sessions
-        @turn_data = turn_data.nil? ? parse_fen : parse_fen(turn_data)
+        @default_board = parse_fen(self)
+        @turn_data = import_fen.nil? ? default_board : parse_fen(self, import_fen)
       end
 
       # Start level
@@ -34,14 +35,27 @@ module ConsoleGame
       # Initialise the chessboard
       def init_level
         print_chessboard
-        piece_input = "d5"
+        # pieces = turn_data.reject { |elem| elem.is_a?(String) }
+
+        # p pieces.size
+        piece_input = "b1"
         assign_piece(piece_input)
-        move_input = "d3"
-        # active_piece.move(self, move_input.to_sym)
-        moves = active_piece.query_moves(self).map { |pos| alg_map.key(pos) }
-        p moves
-        p active_piece.targets
+        move_input = "c3"
+        active_piece.move(move_input.to_sym)
         print_chessboard
+        move_input = "b5"
+        active_piece.move(move_input.to_sym)
+        print_chessboard
+        move_input = "c7"
+        active_piece.move(move_input.to_sym)
+        print_chessboard
+
+        moves = active_piece.query_moves
+        p moves
+        p active_piece.possible_moves
+        # p active_piece.targets
+        # p active_piece.at_start # @todo fix this
+        # print_chessboard
       end
 
       # Game loop

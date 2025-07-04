@@ -9,8 +9,8 @@ module ConsoleGame
     class Rook < ChessPiece
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
-      def initialize(alg_pos = :a1, side = :white)
-        super(alg_pos, side, :r, movements: %i[n e s w], range: :max)
+      def initialize(alg_pos = :a1, side = :white, level: nil)
+        super(alg_pos, side, :r, movements: %i[n e s w], range: :max, level: level)
       end
     end
   end

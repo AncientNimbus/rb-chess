@@ -52,26 +52,28 @@ module ConsoleGame
       end
 
       # FEN Raw data parser
-      # @fen_str [String] expects a string in FEN format
-      def parse_fen(fen_str = PRESET[:fen_start])
+      # @param level [Chess::Level] Chess level object
+      # @param fen_str [String] expects a string in FEN format
+      def parse_fen(level, fen_str = PRESET[:fen_start])
         fen = fen_str.split
         return nil if fen.size != 6
 
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
 
-        turn_data = to_turn_data(fen_board)
+        turn_data = to_turn_data(fen_board, level)
       end
 
       # Process FEN board data
       # @param fen_board [Array<String>] expects an Array with FEN positions data
+      # @param level [Chess::Level] Chess level object
       # @return [Array<Array<ChessPiece, String>>] chess position data starts from a1..h8
-      def to_turn_data(fen_board)
+      def to_turn_data(fen_board, level)
         turn_data = Array.new { {} }
         pos_value = 0
         fen_board.split("/").reverse.each_with_index do |rank, row|
           turn_data[row] = []
           normalise_fen_rank(rank).each_with_index do |unit, col|
-            turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit)
+            turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit, level)
             pos_value += 1
           end
         end
@@ -164,11 +166,12 @@ module ConsoleGame
       # Initialize chess piece via string value
       # @param pos [Integer] positional value
       # @param notation [String] expects a single letter that follows the FEN standard
+      # @param level [Chess::Level] Chess level object
       # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
-      def piece_maker(pos, notation)
+      def piece_maker(pos, notation, level)
         side = notation == notation.capitalize ? :white : :black
         class_name = PRESET[notation.downcase.to_sym][:class]
-        Chess.const_get(class_name).new(pos, side)
+        Chess.const_get(class_name).new(pos, side, level: level)
       end
 
       # Helper method to uncompress FEN empty cell values so that all arrays share the same size
