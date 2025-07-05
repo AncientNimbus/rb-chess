@@ -22,10 +22,20 @@ module ConsoleGame
       # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       def move(new_alg_pos)
         super(new_alg_pos)
-        at_end?
+        promote_to if at_end?
       end
 
       private
+
+      # Perform pawn promotion
+      # @param notation [Symbol]
+      def promote_to(notation = :q)
+        return puts "Invalid option for promotion!" unless %i[q r b n].include?(notation)
+
+        class_name = PRESET[notation][:class]
+        new_unit = Chess.const_get(class_name).new(curr_pos, side, level: level)
+        level.turn_data[curr_pos] = new_unit
+      end
 
       # Check if the pawn is at the other end of the board
       def at_end?

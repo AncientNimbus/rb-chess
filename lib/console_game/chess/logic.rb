@@ -165,12 +165,12 @@ module ConsoleGame
 
       # Initialize chess piece via string value
       # @param pos [Integer] positional value
-      # @param notation [String] expects a single letter that follows the FEN standard
+      # @param fen_notation [String] expects a single letter that follows the FEN standard
       # @param level [Chess::Level] Chess level object
       # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
-      def piece_maker(pos, notation, level)
-        side = notation == notation.capitalize ? :white : :black
-        class_name = PRESET[notation.downcase.to_sym][:class]
+      def piece_maker(pos, fen_notation, level)
+        side = fen_notation == fen_notation.capitalize ? :white : :black
+        class_name = PRESET[fen_notation.downcase.to_sym][:class]
         Chess.const_get(class_name).new(pos, side, level: level)
       end
 
