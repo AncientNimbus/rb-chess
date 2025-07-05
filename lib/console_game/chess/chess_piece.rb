@@ -21,15 +21,17 @@ module ConsoleGame
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
-      # @param level [Chess::Level] Chess level object
-      def initialize(alg_pos = :e1, side = :white, notation = :k, movements: DIRECTIONS.keys, range: 1, level: nil)
+      # @param level [Chess::Level] chess level object
+      # @param at_start [Boolean] determine if the piece is at its start location
+      def initialize(alg_pos = :e1, side = :white, notation = :k, movements: DIRECTIONS.keys, range: 1, level: nil,
+                     at_start: false)
         @level = level
         @side = side
         @pts = PTS_VALUES[notation]
         piece_styling(notation)
         @start_pos = alg_pos.is_a?(Symbol) ? alg_map[alg_pos] : alg_pos
         @curr_pos = start_pos
-        @at_start = start_pos == curr_pos
+        @at_start = at_start.nil? ? false : at_start
         @movements = movement_range(movements, range: range)
         @targets = movement_range(movements, range: nil)
         @captured = []
@@ -51,8 +53,6 @@ module ConsoleGame
 
         # refresh turn_data
         process_movement(level.turn_data, old_pos, new_pos)
-        # level.turn_data[old_pos] = ""
-        # level.turn_data[new_pos] = self
       end
 
       # Query and update possible_moves
@@ -94,7 +94,7 @@ module ConsoleGame
       # Store all valid placement
       # @param pos [Integer] positional value within a matrix
       def validate_moves(turn_data, pos = curr_pos)
-        targets.default
+        targets.transform_values! { |_| nil }
         possible_moves = all_paths(pos)
         possible_moves.each do |path, positions|
           # remove blocked spot and onwards
