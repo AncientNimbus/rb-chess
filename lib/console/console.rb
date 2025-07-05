@@ -93,12 +93,13 @@ module Console
   # @param empty [Boolean] allow empty input value, default to false
   # @return [String] user input
   def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
+    # p reg
     input = ""
     query_symbol = Paint[D_MSG[:query_prefix], :green]
     loop do
       prompt_msg = "#{query_symbol}#{msg}#{D_MSG[:prompt_prefix]}"
       input = Readline.readline(prompt_msg, true)
-      break if (input.match?(reg) && !input.empty?) || empty
+      break if input.match?(reg) || (input.empty? if empty)
 
       query_symbol = Paint[D_MSG[:warn_prefix], :red]
       msg = err_msg
