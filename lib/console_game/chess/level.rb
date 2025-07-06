@@ -14,7 +14,7 @@ module ConsoleGame
       include Display
 
       attr_accessor :turn_data, :active_piece, :en_passant
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states
 
       def initialize(mode, input, side, sessions, import_fen = nil)
         @mode = mode
@@ -24,6 +24,7 @@ module ConsoleGame
         @session = sessions
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @en_passant = nil
+        @castling_states = { K: nil, Q: nil, k: nil, q: nil }
       end
 
       # Start level
@@ -35,6 +36,8 @@ module ConsoleGame
       # Initialise the chessboard
       def init_level
         print_chessboard
+
+        all_pieces = generate_moves
       end
 
       # Game loop
@@ -66,6 +69,23 @@ module ConsoleGame
       def print_chessboard
         chessboard = build_board(to_matrix(turn_data))
         print_msg(*chessboard, pre: "* ")
+      end
+
+      # Generate possible moves & targets for all pieces, all whites or all blacks
+      # @param side [Symbol] expects :all, :white or :black
+      def generate_moves(side = :all)
+        side = :all unless %i[black white].include?(side)
+        fetch_all(side).each(&:query_moves)
+      end
+
+      # Grab all pieces, only whites or only blacks
+      # @param side [Symbol] expects :all, :white or :black
+      # @return [Array<ChessPiece>] a list of chess pieces
+      def fetch_all(side = :all)
+        all_pieces = turn_data.select { |tile| tile if tile.is_a?(ChessPiece) }
+        return all_pieces unless %i[black white].include?(side)
+
+        all_pieces.select { |piece| piece if piece.side == side }
       end
 
       # Update turn data

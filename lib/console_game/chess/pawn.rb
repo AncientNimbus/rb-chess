@@ -54,7 +54,7 @@ module ConsoleGame
       # Helper: Return valid adjacent tiles
       def fetch_adjacent_tiles
         tiles_to_query = [curr_pos - 1, curr_pos + 1].map { |pos| level.turn_data.fetch(pos) }
-        tiles_to_query.select { |tile| tile.is_a?(Pawn) && tile.rank == rank && tile.side != side }
+        tiles_to_query.select { |tile| tile.is_a?(Pawn) && tile.info(:rank) == info(:rank) && tile.side != side }
       end
 
       # Perform pawn promotion

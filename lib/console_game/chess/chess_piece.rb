@@ -31,10 +31,8 @@ module ConsoleGame
         piece_styling(notation)
         @start_pos = alg_pos.is_a?(Symbol) ? alg_map[alg_pos] : alg_pos
         @curr_pos = start_pos
-        @at_start = at_start.nil? ? false : at_start
-        @movements = movement_range(movements, range: range)
-        @targets = movement_range(movements, range: nil)
-        @captured = []
+        @at_start = at_start.nil? ? false : at_start # @todo Better logic??
+        movements_trackers(movements, range)
       end
 
       # Move the chess piece to a new valid location
@@ -61,13 +59,15 @@ module ConsoleGame
       end
 
       # Return alg notation of current position
-      def info
-        alg_map.key(curr_pos).to_s
-      end
-
-      # Return the rank of current position
-      def rank
-        info[1]
+      # @param query [Symbol] expects `:file`, `:rank` or `:all`
+      # @return [String] file, rank, or full algebraic position
+      def info(query = :all)
+        alg_pos = alg_map.key(curr_pos).to_s
+        case query
+        when :file then alg_pos[0]
+        when :rank then alg_pos[1]
+        else alg_pos
+        end
       end
 
       private
@@ -79,6 +79,15 @@ module ConsoleGame
         @color = THEME[:classic][side]
         @name = PIECES[notation][:name]
         @icon = PIECES[notation][:style1]
+      end
+
+      # Initialize piece movements trackers
+      # @param movements [Array]
+      # @param range [Integer, Symbol]
+      def movements_trackers(movements, range)
+        @movements = movement_range(movements, range: range)
+        @targets = movement_range(movements, range: nil)
+        @captured = []
       end
 
       # Process movement
