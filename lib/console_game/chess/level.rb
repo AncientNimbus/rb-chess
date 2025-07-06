@@ -13,8 +13,8 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn_data, :active_piece
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :default_board
+      attr_accessor :turn_data, :active_piece, :en_passant
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions
 
       def initialize(mode, input, side, sessions, import_fen = nil)
         @mode = mode
@@ -22,8 +22,8 @@ module ConsoleGame
         @w_player = side[:white]
         @b_player = side[:black]
         @session = sessions
-        @default_board = parse_fen(self)
-        @turn_data = import_fen.nil? ? default_board : parse_fen(self, import_fen)
+        @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
+        @en_passant = nil
       end
 
       # Start level
@@ -35,34 +35,6 @@ module ConsoleGame
       # Initialise the chessboard
       def init_level
         print_chessboard
-        # pieces = turn_data.reject { |elem| elem.is_a?(String) }
-
-        # p pieces.size
-        piece_input = "b2"
-        assign_piece(piece_input)
-        p active_piece.movements
-        p active_piece.at_start
-        p active_piece.query_moves
-        move_input = "b4"
-        active_piece.move(move_input.to_sym)
-        print_chessboard
-        p active_piece.query_moves
-        move_input = "b5"
-        active_piece.move(move_input.to_sym)
-        print_chessboard
-        p active_piece.query_moves
-        move_input = "b6"
-        active_piece.move(move_input.to_sym)
-        print_chessboard
-        p active_piece.query_moves
-        # move_input = "c7"
-        # active_piece.move(move_input.to_sym)
-        # print_chessboard
-
-        # p active_piece.possible_moves
-        p active_piece.targets
-        p active_piece.at_start # @todo fix this
-        # print_chessboard
       end
 
       # Game loop
@@ -71,6 +43,13 @@ module ConsoleGame
       # Endgame handling
 
       # == Utilities ==
+
+      # Reset En Passant status when it is not used at the following turn
+      def reset_en_passant
+        return if en_passant.nil?
+
+        self.en_passant = nil if active_piece.curr_pos != en_passant[1]
+      end
 
       # Handling piece assignment
       # @param alg_pos [Symbol] algebraic notation

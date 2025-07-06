@@ -19,6 +19,7 @@ module ConsoleGame
         at_end?
       end
 
+      # Override move
       # Move the chess piece to a new valid location
       # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       def move(new_alg_pos)

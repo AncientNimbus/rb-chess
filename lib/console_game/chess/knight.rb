@@ -13,6 +13,9 @@ module ConsoleGame
         super(alg_pos, side, :n, level: level)
       end
 
+      private
+
+      # Override path
       # Knight Movement via pathfinder
       # @param pos [Integer] board positional value
       # @param path [Symbol] compass direction
