@@ -65,6 +65,11 @@ module ConsoleGame
         alg_map.key(curr_pos).to_s
       end
 
+      # Return the rank of current position
+      def rank
+        info[1]
+      end
+
       private
 
       # Initialize piece styling

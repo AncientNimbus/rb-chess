@@ -14,7 +14,6 @@ module ConsoleGame
       # @param side [Symbol] specify unit side :black or :white
       def initialize(alg_pos = :a2, side = :white, level: nil)
         movements = side == :white ? %i[n ne nw] : %i[s se sw]
-        @at_end = false
         super(alg_pos, side, :p, movements: movements, range: 1, level: level)
         self.at_start = at_rank?(%i[a2 h2], %i[a7 h7])
         at_end?
@@ -36,8 +35,7 @@ module ConsoleGame
 
       # Handle En Passant detection event
       def en_passant_reg
-        tiles_to_query = [curr_pos - 1, curr_pos + 1].map { |pos| level.turn_data.fetch(pos) }
-        tiles_to_query.select! { |tile| tile.is_a?(Pawn) && tile.info[1] == info[1] && tile.side != side }
+        tiles_to_query = fetch_adjacent_tiles
 
         ghost_pos = side == :white ? curr_pos - 8 : curr_pos + 8
         level.en_passant = [self, ghost_pos] unless tiles_to_query.empty?
@@ -45,11 +43,17 @@ module ConsoleGame
 
       # Handle En Passant capture event
       def en_passant_capture
-        return unless curr_pos == level.en_passant[1]
+        captured_pawn, ghost_pos = level.en_passant
+        return unless curr_pos == ghost_pos
 
-        captured_pawn = level.en_passant[0]
         level.turn_data[captured_pawn.curr_pos] = ""
         level.en_passant = nil
+      end
+
+      # Helper: Return valid adjacent tiles
+      def fetch_adjacent_tiles
+        tiles_to_query = [curr_pos - 1, curr_pos + 1].map { |pos| level.turn_data.fetch(pos) }
+        tiles_to_query.select { |tile| tile.is_a?(Pawn) && tile.rank == rank && tile.side != side }
       end
 
       # Perform pawn promotion
