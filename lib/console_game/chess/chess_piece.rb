@@ -15,8 +15,8 @@ module ConsoleGame
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
       attr_accessor :at_start, :curr_pos, :targets
-      attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color, :possible_moves,
-                  :captured
+      attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color, :captured,
+                  :possible_moves
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -60,6 +60,11 @@ module ConsoleGame
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
       end
 
+      # Return alg notation of current position
+      def info
+        alg_map.key(curr_pos).to_s
+      end
+
       private
 
       # Initialize piece styling
@@ -100,7 +105,7 @@ module ConsoleGame
           # remove blocked spot and onwards
           possible_moves[path] = detect_occupied_tiles(path, turn_data, positions)
         end
-        @possible_moves = possible_moves.values.flatten + targets.values.compact
+        @possible_moves = (possible_moves.values.flatten + targets.values.compact).to_set
       end
 
       # Detect blocked tile based on the given positions

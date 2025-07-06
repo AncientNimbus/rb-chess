@@ -10,10 +10,12 @@ module ConsoleGame
       attr_reader :at_end
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
+      # @param level [Chess::Level] chess level object
       # @param side [Symbol] specify unit side :black or :white
       def initialize(alg_pos = :a2, side = :white, level: nil)
+        movements = side == :white ? %i[n ne nw] : %i[s se sw]
         @at_end = false
-        super(alg_pos, side, :p, movements: %i[n ne nw], range: 1, level: level)
+        super(alg_pos, side, :p, movements: movements, range: 1, level: level)
         self.at_start = at_rank?(%i[a2 h2], %i[a7 h7])
         at_end?
       end
@@ -21,11 +23,34 @@ module ConsoleGame
       # Move the chess piece to a new valid location
       # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       def move(new_alg_pos)
+        old_pos = curr_pos
         super(new_alg_pos)
-        promote_to if at_end?
+
+        en_passant_reg if (old_pos - curr_pos).abs == 16
+        en_passant_capture unless level.en_passant.nil?
+
+        promote_to if at_end? # @todo Missing input selection
       end
 
       private
+
+      # Handle En Passant detection event
+      def en_passant_reg
+        tiles_to_query = [curr_pos - 1, curr_pos + 1].map { |pos| level.turn_data.fetch(pos) }
+        tiles_to_query.select! { |tile| tile.is_a?(Pawn) && tile.info[1] == info[1] && tile.side != side }
+
+        ghost_pos = side == :white ? curr_pos - 8 : curr_pos + 8
+        level.en_passant = [self, ghost_pos] unless tiles_to_query.empty?
+      end
+
+      # Handle En Passant capture event
+      def en_passant_capture
+        return unless curr_pos == level.en_passant[1]
+
+        captured_pawn = level.en_passant[0]
+        level.turn_data[captured_pawn.curr_pos] = ""
+        level.en_passant = nil
+      end
 
       # Perform pawn promotion
       # @param notation [Symbol]
@@ -64,12 +89,13 @@ module ConsoleGame
       def detect_occupied_tiles(path, turn_data, positions)
         new_positions = super(path, turn_data, positions)
         tile_data = new_positions.empty? ? nil : turn_data[new_positions.first]
-        if path == :n
+        if %i[n s].include?(path)
           new_positions = [] if tile_data.is_a?(ChessPiece)
           targets[path] = nil
         elsif tile_data.is_a?(String)
           new_positions = []
         end
+        new_positions << level.en_passant[1] unless level.en_passant.nil?
         new_positions
       end
 
@@ -80,7 +106,7 @@ module ConsoleGame
       # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
       # @return [Array<Integer>]
       def path(pos = 0, path = :e, range: 1)
-        range = 2 if at_start && path == :n
+        range = 2 if at_start && %i[n s].include?(path)
         super(pos, path, range: range)
       end
     end
