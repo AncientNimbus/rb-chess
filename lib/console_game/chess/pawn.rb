@@ -98,10 +98,15 @@ module ConsoleGame
           new_positions = [] if tile_data.is_a?(ChessPiece)
           targets[path] = nil
         elsif tile_data.is_a?(String)
+          sights.push(*new_positions)
           new_positions = []
         end
-        new_positions << level.en_passant[1] unless level.en_passant.nil?
-        new_positions
+        new_positions.push(en_passant_add)
+      end
+
+      # Helper: add en passant capture position to possible moves
+      def en_passant_add
+        level.en_passant[1] unless level.en_passant.nil?
       end
 
       # Override path

@@ -7,10 +7,13 @@ module ConsoleGame
     # King is a sub-class of ChessPiece for the game Chess in Console Game
     # @author Ancient Nimbus
     class King < ChessPiece
+      attr_accessor :checked
+
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
       def initialize(alg_pos = :e1, side = :white, level: nil)
         super(alg_pos, side, :k, level: level)
+        @checked = false
       end
     end
   end

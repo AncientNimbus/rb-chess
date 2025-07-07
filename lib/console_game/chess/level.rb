@@ -13,7 +13,7 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn_data, :active_piece, :en_passant
+      attr_accessor :turn_data, :active_piece, :en_passant, :all_blunder_tiles
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states
 
       def initialize(mode, input, side, sessions, import_fen = nil)
@@ -25,7 +25,10 @@ module ConsoleGame
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @en_passant = nil
         @castling_states = { K: nil, Q: nil, k: nil, q: nil }
+        @all_blunder_tiles = { white: [], black: [] }
       end
+
+      # == Flow ==
 
       # Start level
       def open_level
@@ -38,6 +41,18 @@ module ConsoleGame
         print_chessboard
 
         all_pieces = generate_moves
+        p all_pieces.size
+        piece_input = "a2"
+        assign_piece(piece_input)
+        blunder_tiles
+
+        p in_check?
+        p checkmate?
+
+        all_blunder_tiles[:black].each { |pos| p alg_map.key(pos) if alg_map.key(pos) == :f2 }
+
+        # p active_piece.movements
+        # p active_piece.curr_pos
       end
 
       # Game loop
@@ -55,11 +70,10 @@ module ConsoleGame
       end
 
       # Handling piece assignment
-      # @param alg_pos [Symbol] algebraic notation
+      # @param alg_pos [String] algebraic notation
       def assign_piece(alg_pos)
         # add player side validation
-        piece = turn_data[alg_map[alg_pos.to_sym]]
-        return puts "'#{alg_pos}' is empty, please enter a correct notation" if piece == ""
+        piece = fetch_piece(alg_pos)
 
         p "active piece: #{piece.side} #{piece.name}"
         self.active_piece = piece
@@ -78,6 +92,50 @@ module ConsoleGame
         fetch_all(side).each(&:query_moves)
       end
 
+      # Determine if the King is in a checkmate position
+      # @param king_in_distress [King] expects a King object
+      # @return [Boolean] true if it is a checkmate
+      def checkmate?(king_in_distress = fetch_piece([King, :white]))
+        return false unless in_check?(king_in_distress)
+
+        opposite_side = king_in_distress.side == :white ? :black : :white
+        p king_in_distress.possible_moves
+        p all_blunder_tiles[opposite_side]
+        king_in_distress.possible_moves - all_blunder_tiles[opposite_side]
+      end
+
+      # Determine if the King is in check
+      # @param king [King] expects a King object
+      # @return [Boolean] true if the king is in check
+      def in_check?(king = fetch_piece([King, :white]))
+        return unless king.is_a?(King)
+
+        opposite_side = king.side == :white ? :black : :white
+        all_blunder_tiles[opposite_side].include?(king.curr_pos)
+      end
+
+      # Calculate all blunder tile for each side
+      def blunder_tiles
+        all_blunder_tiles.transform_values! { |_| [] }
+        grouped_pieces = { white: nil, black: nil }
+        grouped_pieces[:white], grouped_pieces[:black] = generate_moves(:all).partition { |piece| piece.side == :white }
+        grouped_pieces.each { |side, pieces| add_pos_to_blunder_tracker(side, pieces) }
+      end
+
+      # Helper: add blunder tiles to session variable
+      # @param side [Symbol] expects :all, :white or :black
+      # @param pieces [ChessPiece]
+      def add_pos_to_blunder_tracker(side, pieces)
+        bad_moves = []
+        pawns, back_row = pieces.partition { |piece| piece.is_a?(Pawn) }
+        pawns.each { |piece| bad_moves << piece.sights }
+        back_row.each do |piece|
+          bad_moves << piece.sights
+          bad_moves << piece.possible_moves.compact
+        end
+        all_blunder_tiles[side] = bad_moves.flatten.sort.to_set
+      end
+
       # Grab all pieces, only whites or only blacks
       # @param side [Symbol] expects :all, :white or :black
       # @return [Array<ChessPiece>] a list of chess pieces
@@ -86,6 +144,21 @@ module ConsoleGame
         return all_pieces unless %i[black white].include?(side)
 
         all_pieces.select { |piece| piece if piece.side == side }
+      end
+
+      # Fetch a single chess piece
+      # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
+      # @return [ChessPiece]
+      def fetch_piece(query)
+        if query.is_a?(String)
+          piece = turn_data[alg_map[query.to_sym]]
+          return puts "'#{query}' is empty, please enter a correct notation" if piece == ""
+        elsif query.is_a?(Array)
+          obj, side = query
+          piece = fetch_all(side).find { |piece| piece.is_a?(obj) }
+          # @todo add error handling
+        end
+        piece
       end
 
       # Update turn data

@@ -14,7 +14,7 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :at_start, :curr_pos, :targets
+      attr_accessor :at_start, :curr_pos, :targets, :sights
       attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color, :captured,
                   :possible_moves
 
@@ -87,6 +87,7 @@ module ConsoleGame
       def movements_trackers(movements, range)
         @movements = movement_range(movements, range: range)
         @targets = movement_range(movements, range: nil)
+        @sights = []
         @captured = []
       end
 
@@ -113,6 +114,7 @@ module ConsoleGame
       # Store all valid placement
       # @param pos [Integer] positional value within a matrix
       def validate_moves(turn_data, pos = curr_pos)
+        self.sights = []
         targets.transform_values! { |_| nil }
         possible_moves = all_paths(pos)
         possible_moves.each do |path, positions|
@@ -133,7 +135,8 @@ module ConsoleGame
           tile = turn_data[pos]
           next unless tile != self && tile.is_a?(ChessPiece)
 
-          targets[path] = pos if tile.side != side
+          tile.side == side ? sights.push(pos) : targets[path] = pos
+          # p "#{side} #{name} at #{alg_map.key(curr_pos)} is watching over #{sights}"
           new_positions = positions[1...idx]
           break
         end
