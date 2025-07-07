@@ -13,8 +13,8 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn_data, :active_piece, :previous_piece, :en_passant, :threats_map
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states
+      attr_accessor :turn_data, :active_piece, :previous_piece, :en_passant
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states, :threats_map, :checked_status
 
       def initialize(mode, input, side, sessions, import_fen = nil)
         @mode = mode
@@ -26,6 +26,7 @@ module ConsoleGame
         @en_passant = nil
         @castling_states = { K: nil, Q: nil, k: nil, q: nil }
         @threats_map = { white: [], black: [] }
+        @checked_status = { king: nil, attackers: [] }
       end
 
       # == Flow ==
@@ -40,21 +41,17 @@ module ConsoleGame
       def init_level
         print_chessboard
 
-        assign_piece("g8")
+        assign_piece("g5")
+        # assign_piece("g8")
         p active_piece.query_moves
-        blunder_tiles
-        p checkmate?
 
-        active_piece.move(:g1)
+        # active_piece.move(:g1)
+        blunder_tiles
         print_chessboard
-        blunder_tiles
-        p checkmate?
-        threats_map[:black].each { |pos| p alg_map.key(pos) if alg_map.key(pos) == :f2 }
-
-        # assign_piece("a1")
-        # assign_piece("h7")
-        # assign_piece("f2")
-        # puts "Previous piece is #{previous_piece.side.capitalize} #{previous_piece.name}"
+        p "checkmate?: #{checkmate?}"
+        # blunder_tiles
+        # p "checkmate?: #{checkmate?}"
+        # threats_map[:black].each { |pos| p alg_map.key(pos) if alg_map.key(pos) == :f2 }
       end
 
       # Game loop
@@ -102,27 +99,75 @@ module ConsoleGame
       def checkmate?(king_in_distress = fetch_piece([King, :white]))
         return false unless in_check?(king_in_distress)
 
-        opposite_side = king_in_distress.side == :white ? :black : :white
+        opposite_side = opposite_of(king_in_distress.side)
         # p "king_in_distress.possible_moves: #{king_in_distress.possible_moves}"
         # p "threats_map[king_in_distress.side]: #{threats_map[king_in_distress.side]}"
         # p "threats_map[opposite_side]: #{threats_map[opposite_side]}"
-        # find out which piece is checking the King, solved with var: previous_piece
-        # Add a check to see if the immediate check can be neutralise by other piece
-        return false if threats_map[king_in_distress.side].include?(previous_piece.curr_pos)
+        # Detect if the check can be neutralise by other piece
+        checked_status[:attackers].each do |attacker|
+          next unless !under_attack?(attacker) && no_escape_route?(king_in_distress, opposite_side)
 
-        (king_in_distress.possible_moves - threats_map[opposite_side]).empty? # No safe square for King to go
+          # Check if there are any friendlies that can blocked the path
+          any_saviours = fetch_all(king_in_distress.side).any? do |piece|
+            !(piece.possible_moves & attacker.possible_moves).empty?
+          end
+          return false if any_saviours
+        end
+        true
+      end
+
+      # Determine if the King can escape
+      # @param king_in_distress [King] expects a King object
+      # @param offensive_side [Symbol] expects :white or :black
+      # @return [Boolean] true if the King can escape
+      def no_escape_route?(king_in_distress, offensive_side)
+        (king_in_distress.possible_moves - threats_map[offensive_side]).empty? # empty means no escape route
       end
 
       # Determine if the King is in check
       # @param king [King] expects a King object
       # @return [Boolean] true if the king is in check
       def in_check?(king = fetch_piece([King, :white]))
-        return unless king.is_a?(King)
+        return false unless king.is_a?(King)
 
-        opposite_side = king.side == :white ? :black : :white
-        is_checked = threats_map[opposite_side].include?(king.curr_pos)
-        puts "#{king.side.capitalize} #{king.name} is checked by #{previous_piece.side.capitalize} #{previous_piece.name}."
+        is_checked = under_attack?(king)
+
+        if is_checked
+          checked_status[:king] = king
+          find_checking_pieces(king)
+          puts "#{king.side} #{king.name} is checked by #{checked_status[:attackers].map(&:info).join(', ')}."
+        end
+
         is_checked
+      end
+
+      # Find the pieces that is checking the King
+      # @param king_in_distress [King] expects a King object
+      # @return [nil, ChessPiece, Array<ChessPiece>]
+      def find_checking_pieces(king_in_distress)
+        return checked_status[:attackers] << previous_piece if attacking?(previous_piece, king_in_distress)
+
+        fetch_all(opposite_of(king_in_distress.side)).select do |piece|
+          checked_status[:attackers] << piece if piece.targets.value?(king_in_distress.curr_pos)
+        end
+      end
+
+      # Determine if a certain piece is attacking another piece
+      # @param attacker [ChessPiece] expects a chess piece from the offensive side
+      # @param target [ChessPiece] expects a chess piece from the opposite side
+      # @return [Boolean] true if it can attack
+      def attacking?(attacker, target)
+        return false if attacker.side == target.side
+
+        true if attacker.targets.value?(target.curr_pos)
+      end
+
+      # Determine if a piece might get attacked
+      # @param piece [ChessPiece]
+      # @return [Boolean]
+      def under_attack?(piece)
+        opposite_side = opposite_of(piece.side)
+        threats_map[opposite_side].include?(piece.curr_pos)
       end
 
       # Calculate all blunder tile for each side

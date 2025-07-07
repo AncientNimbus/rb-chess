@@ -59,12 +59,12 @@ module ConsoleGame
         return nil if fen.size != 6
 
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
-
+        parse_castling_str(c_state, level)
         turn_data = to_turn_data(fen_board, level)
       end
 
       # Process FEN board data
-      # @param fen_board [Array<String>] expects an Array with FEN positions data
+      # @param fen_board [String] expects an Array with FEN positions data
       # @param level [Chess::Level] Chess level object
       # @return [Array<Array<ChessPiece, String>>] chess position data starts from a1..h8
       def to_turn_data(fen_board, level)
@@ -78,6 +78,13 @@ module ConsoleGame
           end
         end
         to_1d(turn_data)
+      end
+
+      # Process FEN castling states
+      # @param c_state [String] expects an Array with FEN positions data
+      # @param level [Chess::Level] Chess level object
+      def parse_castling_str(c_state, level)
+        p c_state
       end
 
       # Convert coordinate array to cell position
@@ -119,6 +126,15 @@ module ConsoleGame
         nested_arr = []
         flat_arr.each_slice(bound[0]) { |row| nested_arr.push(row) }
         nested_arr
+      end
+
+      # Flip-flop, return :black if it is :white
+      # @param side [Symbol] expects argument to be :black or :white
+      # @return [Symbol] :black or :white
+      def opposite_of(side = :white)
+        return nil unless %i[black white].include?(side)
+
+        side == :white ? :black : :white
       end
 
       private
