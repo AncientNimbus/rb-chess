@@ -13,7 +13,7 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn_data, :active_piece, :en_passant, :all_blunder_tiles
+      attr_accessor :turn_data, :active_piece, :previous_piece, :en_passant, :threats_map
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states
 
       def initialize(mode, input, side, sessions, import_fen = nil)
@@ -25,7 +25,7 @@ module ConsoleGame
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @en_passant = nil
         @castling_states = { K: nil, Q: nil, k: nil, q: nil }
-        @all_blunder_tiles = { white: [], black: [] }
+        @threats_map = { white: [], black: [] }
       end
 
       # == Flow ==
@@ -40,19 +40,21 @@ module ConsoleGame
       def init_level
         print_chessboard
 
-        all_pieces = generate_moves
-        p all_pieces.size
-        piece_input = "a2"
-        assign_piece(piece_input)
+        assign_piece("g8")
+        p active_piece.query_moves
         blunder_tiles
-
-        p in_check?
         p checkmate?
 
-        all_blunder_tiles[:black].each { |pos| p alg_map.key(pos) if alg_map.key(pos) == :f2 }
+        active_piece.move(:g1)
+        print_chessboard
+        blunder_tiles
+        p checkmate?
+        threats_map[:black].each { |pos| p alg_map.key(pos) if alg_map.key(pos) == :f2 }
 
-        # p active_piece.movements
-        # p active_piece.curr_pos
+        # assign_piece("a1")
+        # assign_piece("h7")
+        # assign_piece("f2")
+        # puts "Previous piece is #{previous_piece.side.capitalize} #{previous_piece.name}"
       end
 
       # Game loop
@@ -76,12 +78,14 @@ module ConsoleGame
         piece = fetch_piece(alg_pos)
 
         p "active piece: #{piece.side} #{piece.name}"
-        self.active_piece = piece
+        @previous_piece = active_piece
+        @active_piece = piece
+        self.previous_piece ||= active_piece
       end
 
       # Print the chessboard
       def print_chessboard
-        chessboard = build_board(to_matrix(turn_data))
+        chessboard = build_board(to_matrix(turn_data), size: 1)
         print_msg(*chessboard, pre: "* ")
       end
 
@@ -99,9 +103,14 @@ module ConsoleGame
         return false unless in_check?(king_in_distress)
 
         opposite_side = king_in_distress.side == :white ? :black : :white
-        p king_in_distress.possible_moves
-        p all_blunder_tiles[opposite_side]
-        king_in_distress.possible_moves - all_blunder_tiles[opposite_side]
+        # p "king_in_distress.possible_moves: #{king_in_distress.possible_moves}"
+        # p "threats_map[king_in_distress.side]: #{threats_map[king_in_distress.side]}"
+        # p "threats_map[opposite_side]: #{threats_map[opposite_side]}"
+        # find out which piece is checking the King, solved with var: previous_piece
+        # Add a check to see if the immediate check can be neutralise by other piece
+        return false if threats_map[king_in_distress.side].include?(previous_piece.curr_pos)
+
+        (king_in_distress.possible_moves - threats_map[opposite_side]).empty? # No safe square for King to go
       end
 
       # Determine if the King is in check
@@ -111,12 +120,14 @@ module ConsoleGame
         return unless king.is_a?(King)
 
         opposite_side = king.side == :white ? :black : :white
-        all_blunder_tiles[opposite_side].include?(king.curr_pos)
+        is_checked = threats_map[opposite_side].include?(king.curr_pos)
+        puts "#{king.side.capitalize} #{king.name} is checked by #{previous_piece.side.capitalize} #{previous_piece.name}."
+        is_checked
       end
 
       # Calculate all blunder tile for each side
       def blunder_tiles
-        all_blunder_tiles.transform_values! { |_| [] }
+        threats_map.transform_values! { |_| [] }
         grouped_pieces = { white: nil, black: nil }
         grouped_pieces[:white], grouped_pieces[:black] = generate_moves(:all).partition { |piece| piece.side == :white }
         grouped_pieces.each { |side, pieces| add_pos_to_blunder_tracker(side, pieces) }
@@ -133,7 +144,7 @@ module ConsoleGame
           bad_moves << piece.sights
           bad_moves << piece.possible_moves.compact
         end
-        all_blunder_tiles[side] = bad_moves.flatten.sort.to_set
+        threats_map[side] = bad_moves.flatten.sort.to_set
       end
 
       # Grab all pieces, only whites or only blacks
