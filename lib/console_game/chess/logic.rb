@@ -84,7 +84,7 @@ module ConsoleGame
       # @param c_state [String] expects an Array with FEN positions data
       # @param level [Chess::Level] Chess level object
       def parse_castling_str(c_state, level)
-        p c_state
+        # p c_state
       end
 
       # Convert coordinate array to cell position

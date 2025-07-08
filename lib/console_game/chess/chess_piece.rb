@@ -70,6 +70,21 @@ module ConsoleGame
         end
       end
 
+      # Determine if a piece is currently under threats
+      # #param piece [ChessPiece]
+      def under_threat?
+        opposite_side = opposite_of(side)
+        level.threats_map[opposite_side].include?(curr_pos)
+      end
+
+      # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
+      # @param threat_side [Array<ChessPiece>]
+      # @param target [ChessPiece]
+      # @return [Boolean]
+      def under_threat_by?(threat_side, target)
+        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
+      end
+
       private
 
       # Initialize piece styling

@@ -14,21 +14,21 @@ module ConsoleGame
       include Display
 
       attr_accessor :turn, :turn_data, :active_piece, :previous_piece, :en_passant
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states, :threats_map, :checked_status,
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :kings, :castling_states, :threats_map,
                   :usable_pieces
 
-      def initialize(mode, input, side, sessions, import_fen = nil)
+      def initialize(mode, input, sides, sessions, import_fen = nil)
         @mode = mode
         @controller = input
-        @w_player = side[:white]
-        @b_player = side[:black]
-        @turn = :white
+        @w_player = sides[:white]
+        @b_player = sides[:black]
         @session = sessions
+        @turn = :white
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @en_passant = nil
         @castling_states = { K: nil, Q: nil, k: nil, q: nil }
         @threats_map = { white: [], black: [] }
-        @checked_status = { king: nil, attackers: [], saviours: [] }
+        @kings = { white: nil, black: nil }
         @usable_pieces = { white: [], black: [] }
       end
 
@@ -42,20 +42,23 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
+        kings_table
+        # p kings[:white].side
         update_board_state
         p usable_pieces
         print_chessboard
 
-        assign_piece("h1")
-        assign_piece("g1")
+        # assign_piece("h1")
+        assign_piece("g5")
 
+        active_piece.move(:g1)
+        update_board_state
+        print_chessboard
+        p usable_pieces
         # p active_piece.query_moves
         # assign_piece("g8")
 
-        # active_piece.move(:g1)
-        # print_chessboard
-
-        p "checkmate?: #{checkmate?}"
+        p "checkmate: #{any_checkmate?}"
       end
 
       # Game loop
@@ -98,104 +101,17 @@ module ConsoleGame
         fetch_all(side).each(&:query_moves)
       end
 
-      # Determine if the King is in a checkmate position
-      # @param king_in_distress [King] expects a King object
-      # @return [Boolean] true if it is a checkmate
-      def checkmate?(king_in_distress = fetch_piece([King, :white]))
-        return false unless in_check?(king_in_distress)
-
-        allies = fetch_all(king_in_distress.side).select { |ally| ally unless ally.is_a?(King) }
-        checked_status[:attackers].each do |attacker|
-          return false if under_threat_by?(allies, attacker)
-          return false if any_saviours?(allies, attacker, king_in_distress)
-        end
-        no_escape_route?(king_in_distress)
-      end
-
-      # Determine if there are no escape route for the King
-      # @param king_in_distress [King] expects a King object
-      # @return [Boolean] true if King cannot escape
-      def no_escape_route?(king_in_distress)
-        (king_in_distress.possible_moves - threats_map[opposite_of(king_in_distress.side)]).empty?
-      end
-
-      # Determine if there are any saviour
-      # @param king_allies [Array<ChessPiece>] expects an array of King's army
-      # @param attacker [ChessPiece]
-      # @param king [King]
-      # @return [Boolean] true if someone can come save the King
-      def any_saviours?(king_allies, attacker, king)
-        attacker_dir = attacker.targets.key(king.curr_pos)
-        attack_path = pathfinder(attacker.curr_pos, attacker_dir, length: attacker.movements[attacker_dir])
-        saviours = usable_pieces[king.side] = king_allies.map do |ally|
-          ally.info unless (ally.possible_moves & attack_path).empty?
-        end.compact
-        !saviours.empty?
-      end
-
-      # Determine if the King is in check
-      # @param king [King] expects a King object
-      # @return [Boolean] true if the king is in check
-      def in_check?(king = fetch_piece([King, :white]))
-        return false unless king.is_a?(King)
-
-        checked_status.transform_values! { |_| [] }
-
-        is_checked = under_threat?(king)
-        checked_event(king) if is_checked
-        is_checked
-      end
-
-      # Process the checked event
-      # @param king [King]
-      def checked_event(king)
-        checked_status[:king] = king
-        find_checking_pieces(king)
-        puts "#{king.side} #{king.name} is checked by #{checked_status[:attackers].map(&:info).join(', ')}."
-      end
-
-      # Find the pieces that is checking the King
-      # @param king_in_distress [King] expects a King object
-      # @return [nil, ChessPiece, Array<ChessPiece>]
-      def find_checking_pieces(king_in_distress)
-        # return checked_status[:attackers] << previous_piece if attacking?(previous_piece, king_in_distress)
-
-        fetch_all(opposite_of(king_in_distress.side)).select do |piece|
-          checked_status[:attackers] << piece if piece.targets.value?(king_in_distress.curr_pos)
-        end
-      end
-
-      # Determine if a piece is currently under threats
-      # #param piece [ChessPiece]
-      def under_threat?(piece)
-        opposite_side = opposite_of(piece.side)
-        threats_map[opposite_side].include?(piece.curr_pos)
-      end
-
-      # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
-      # @param threat_side [Array<ChessPiece>]
-      # @param target [ChessPiece]
-      # @return [Boolean]
-      def under_threat_by?(threat_side, target)
-        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
-      end
-
-      # Determine if a certain piece is attacking another piece
-      # @param attacker [ChessPiece] expects a chess piece from the offensive side
-      # @param target [ChessPiece] expects a chess piece from the opposite side
-      # @return [Boolean] true if it can attack
-      def attacking?(attacker, target)
-        return false if attacker.side == target.side
-
-        true if attacker.targets.value?(target.curr_pos)
-      end
-
       # Board state refresher
       def update_board_state
         grouped_pieces = pieces_group
         blunder_tiles(grouped_pieces)
         calculate_usable_pieces(grouped_pieces)
-        checkmate?
+        any_checkmate?
+      end
+
+      # Get and store both Kings
+      def kings_table
+        fetch_all(type: King).each { |king| kings[king.side] = king }
       end
 
       # Refresh possible move and split chess pieces into two group
@@ -235,15 +151,26 @@ module ConsoleGame
         threats_map[side] = bad_moves.flatten.sort.to_set
       end
 
+      # End game if either side achieved a checkmate
+      # @param grouped_pieces [Hash<ChessPiece>]
+      def any_checkmate?
+        kings.values.any?(&:checkmate?)
+      end
+
       # Grab all pieces, only whites or only blacks
       # @param side [Symbol] expects :all, :white or :black
+      # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
       # @return [Array<ChessPiece>] a list of chess pieces
-      def fetch_all(side = :all)
-        all_pieces = turn_data.select { |tile| tile if tile.is_a?(ChessPiece) }
+      def fetch_all(side = :all, type: ChessPiece)
+        all_pieces = turn_data.select { |tile| tile if tile.is_a?(type) }
         return all_pieces unless %i[black white].include?(side)
 
         all_pieces.select { |piece| piece if piece.side == side }
       end
+
+      # == Utilities ==
+
+      private
 
       # Fetch a single chess piece
       # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
@@ -260,8 +187,6 @@ module ConsoleGame
         end
         piece
       end
-
-      # == Utilities ==
 
       # Update turn data
       # Update chessboard display
