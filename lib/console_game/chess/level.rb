@@ -48,6 +48,7 @@ module ConsoleGame
         # active_piece.move(:g1)
         blunder_tiles
         print_chessboard
+
         p "checkmate?: #{checkmate?}"
         # blunder_tiles
         # p "checkmate?: #{checkmate?}"
@@ -99,29 +100,30 @@ module ConsoleGame
       def checkmate?(king_in_distress = fetch_piece([King, :white]))
         return false unless in_check?(king_in_distress)
 
-        opposite_side = opposite_of(king_in_distress.side)
-        # p "king_in_distress.possible_moves: #{king_in_distress.possible_moves}"
-        # p "threats_map[king_in_distress.side]: #{threats_map[king_in_distress.side]}"
-        # p "threats_map[opposite_side]: #{threats_map[opposite_side]}"
-        # Detect if the check can be neutralise by other piece
+        allies = fetch_all(king_in_distress.side).select { |ally| ally unless ally.is_a?(King) }
         checked_status[:attackers].each do |attacker|
-          next unless !under_attack?(attacker) && no_escape_route?(king_in_distress, opposite_side)
-
-          # Check if there are any friendlies that can blocked the path
-          any_saviours = fetch_all(king_in_distress.side).any? do |piece|
-            !(piece.possible_moves & attacker.possible_moves).empty?
-          end
-          return false if any_saviours
+          return false if under_threat_by?(allies, attacker)
+          return false if any_saviours?(allies, attacker, king_in_distress)
         end
-        true
+        no_escape_route?(king_in_distress)
       end
 
-      # Determine if the King can escape
+      # Determine if there are no escape route for the King
       # @param king_in_distress [King] expects a King object
-      # @param offensive_side [Symbol] expects :white or :black
-      # @return [Boolean] true if the King can escape
-      def no_escape_route?(king_in_distress, offensive_side)
-        (king_in_distress.possible_moves - threats_map[offensive_side]).empty? # empty means no escape route
+      # @return [Boolean] true if King cannot escape
+      def no_escape_route?(king_in_distress)
+        (king_in_distress.possible_moves - threats_map[opposite_of(king_in_distress.side)]).empty?
+      end
+
+      # Determine if there are any saviour
+      # @param king_allies [Array<ChessPiece>] expects an array of King's army
+      # @param attacker [ChessPiece]
+      # @param king [King]
+      # @return [Boolean] true if someone is coming to save the King
+      def any_saviours?(king_allies, attacker, king)
+        attacker_dir = attacker.targets.key(king.curr_pos)
+        attack_path = pathfinder(attacker.curr_pos, attacker_dir, length: attacker.movements[attacker_dir])
+        king_allies.any? { |ally| !(ally.possible_moves & attack_path).empty? }
       end
 
       # Determine if the King is in check
@@ -130,8 +132,7 @@ module ConsoleGame
       def in_check?(king = fetch_piece([King, :white]))
         return false unless king.is_a?(King)
 
-        is_checked = under_attack?(king)
-
+        is_checked = under_threat?(king)
         if is_checked
           checked_status[:king] = king
           find_checking_pieces(king)
@@ -152,6 +153,21 @@ module ConsoleGame
         end
       end
 
+      # Determine if a piece is currently under threats
+      # #param piece [ChessPiece]
+      def under_threat?(piece)
+        opposite_side = opposite_of(piece.side)
+        threats_map[opposite_side].include?(piece.curr_pos)
+      end
+
+      # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
+      # @param threat_side [Array<ChessPiece>]
+      # @param target [ChessPiece]
+      # @return [Boolean]
+      def under_threat_by?(threat_side, target)
+        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
+      end
+
       # Determine if a certain piece is attacking another piece
       # @param attacker [ChessPiece] expects a chess piece from the offensive side
       # @param target [ChessPiece] expects a chess piece from the opposite side
@@ -160,14 +176,6 @@ module ConsoleGame
         return false if attacker.side == target.side
 
         true if attacker.targets.value?(target.curr_pos)
-      end
-
-      # Determine if a piece might get attacked
-      # @param piece [ChessPiece]
-      # @return [Boolean]
-      def under_attack?(piece)
-        opposite_side = opposite_of(piece.side)
-        threats_map[opposite_side].include?(piece.curr_pos)
       end
 
       # Calculate all blunder tile for each side
@@ -219,7 +227,6 @@ module ConsoleGame
 
       # Update turn data
       # Update chessboard display
-
       # User data handling
     end
   end
