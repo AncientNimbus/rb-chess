@@ -13,20 +13,23 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn_data, :active_piece, :previous_piece, :en_passant
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states, :threats_map, :checked_status
+      attr_accessor :turn, :turn_data, :active_piece, :previous_piece, :en_passant
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :castling_states, :threats_map, :checked_status,
+                  :usable_pieces
 
       def initialize(mode, input, side, sessions, import_fen = nil)
         @mode = mode
         @controller = input
         @w_player = side[:white]
         @b_player = side[:black]
+        @turn = :white
         @session = sessions
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @en_passant = nil
         @castling_states = { K: nil, Q: nil, k: nil, q: nil }
         @threats_map = { white: [], black: [] }
-        @checked_status = { king: nil, attackers: [] }
+        @checked_status = { king: nil, attackers: [], saviours: [] }
+        @usable_pieces = { white: [], black: [] }
       end
 
       # == Flow ==
@@ -39,20 +42,20 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
+        update_board_state
+        p usable_pieces
         print_chessboard
 
-        assign_piece("g5")
+        assign_piece("h1")
+        assign_piece("g1")
+
+        # p active_piece.query_moves
         # assign_piece("g8")
-        p active_piece.query_moves
 
         # active_piece.move(:g1)
-        blunder_tiles
-        print_chessboard
+        # print_chessboard
 
         p "checkmate?: #{checkmate?}"
-        # blunder_tiles
-        # p "checkmate?: #{checkmate?}"
-        # threats_map[:black].each { |pos| p alg_map.key(pos) if alg_map.key(pos) == :f2 }
       end
 
       # Game loop
@@ -60,7 +63,7 @@ module ConsoleGame
 
       # Endgame handling
 
-      # == Utilities ==
+      # == Board Logic ==
 
       # Reset En Passant status when it is not used at the following turn
       def reset_en_passant
@@ -74,6 +77,7 @@ module ConsoleGame
       def assign_piece(alg_pos)
         # add player side validation
         piece = fetch_piece(alg_pos)
+        return if piece.nil?
 
         p "active piece: #{piece.side} #{piece.name}"
         @previous_piece = active_piece
@@ -119,11 +123,14 @@ module ConsoleGame
       # @param king_allies [Array<ChessPiece>] expects an array of King's army
       # @param attacker [ChessPiece]
       # @param king [King]
-      # @return [Boolean] true if someone is coming to save the King
+      # @return [Boolean] true if someone can come save the King
       def any_saviours?(king_allies, attacker, king)
         attacker_dir = attacker.targets.key(king.curr_pos)
         attack_path = pathfinder(attacker.curr_pos, attacker_dir, length: attacker.movements[attacker_dir])
-        king_allies.any? { |ally| !(ally.possible_moves & attack_path).empty? }
+        saviours = usable_pieces[king.side] = king_allies.map do |ally|
+          ally.info unless (ally.possible_moves & attack_path).empty?
+        end.compact
+        !saviours.empty?
       end
 
       # Determine if the King is in check
@@ -132,21 +139,26 @@ module ConsoleGame
       def in_check?(king = fetch_piece([King, :white]))
         return false unless king.is_a?(King)
 
-        is_checked = under_threat?(king)
-        if is_checked
-          checked_status[:king] = king
-          find_checking_pieces(king)
-          puts "#{king.side} #{king.name} is checked by #{checked_status[:attackers].map(&:info).join(', ')}."
-        end
+        checked_status.transform_values! { |_| [] }
 
+        is_checked = under_threat?(king)
+        checked_event(king) if is_checked
         is_checked
+      end
+
+      # Process the checked event
+      # @param king [King]
+      def checked_event(king)
+        checked_status[:king] = king
+        find_checking_pieces(king)
+        puts "#{king.side} #{king.name} is checked by #{checked_status[:attackers].map(&:info).join(', ')}."
       end
 
       # Find the pieces that is checking the King
       # @param king_in_distress [King] expects a King object
       # @return [nil, ChessPiece, Array<ChessPiece>]
       def find_checking_pieces(king_in_distress)
-        return checked_status[:attackers] << previous_piece if attacking?(previous_piece, king_in_distress)
+        # return checked_status[:attackers] << previous_piece if attacking?(previous_piece, king_in_distress)
 
         fetch_all(opposite_of(king_in_distress.side)).select do |piece|
           checked_status[:attackers] << piece if piece.targets.value?(king_in_distress.curr_pos)
@@ -178,11 +190,34 @@ module ConsoleGame
         true if attacker.targets.value?(target.curr_pos)
       end
 
-      # Calculate all blunder tile for each side
-      def blunder_tiles
-        threats_map.transform_values! { |_| [] }
+      # Board state refresher
+      def update_board_state
+        grouped_pieces = pieces_group
+        blunder_tiles(grouped_pieces)
+        calculate_usable_pieces(grouped_pieces)
+        checkmate?
+      end
+
+      # Refresh possible move and split chess pieces into two group
+      # @return [Hash]
+      def pieces_group
         grouped_pieces = { white: nil, black: nil }
         grouped_pieces[:white], grouped_pieces[:black] = generate_moves(:all).partition { |piece| piece.side == :white }
+        grouped_pieces
+      end
+
+      # Calculate usable pieces of the given turn
+      # @param grouped_pieces [Hash<ChessPiece>]
+      def calculate_usable_pieces(grouped_pieces)
+        grouped_pieces.each do |side, pieces|
+          usable_pieces[side] = pieces.map { |piece| piece.info unless piece.possible_moves.empty? }.compact
+        end
+      end
+
+      # Calculate all blunder tile for each side
+      # @param grouped_pieces [Hash<ChessPiece>]
+      def blunder_tiles(grouped_pieces)
+        threats_map.transform_values! { |_| [] }
         grouped_pieces.each { |side, pieces| add_pos_to_blunder_tracker(side, pieces) }
       end
 
@@ -214,16 +249,19 @@ module ConsoleGame
       # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
       # @return [ChessPiece]
       def fetch_piece(query)
-        if query.is_a?(String)
+        if query.is_a?(String) && usable_pieces[turn].include?(query)
           piece = turn_data[alg_map[query.to_sym]]
-          return puts "'#{query}' is empty, please enter a correct notation" if piece == ""
         elsif query.is_a?(Array)
           obj, side = query
           piece = fetch_all(side).find { |piece| piece.is_a?(obj) }
           # @todo add error handling
+        else
+          return puts "'#{query}' is invalid, please enter a correct notation"
         end
         piece
       end
+
+      # == Utilities ==
 
       # Update turn data
       # Update chessboard display

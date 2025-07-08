@@ -15,6 +15,13 @@ module ConsoleGame
         super(alg_pos, side, :k, level: level)
         @checked = false
       end
+
+      # Store all valid placement
+      # @param pos [Integer] positional value within a matrix
+      def validate_moves(turn_data, pos = curr_pos)
+        super(turn_data, pos)
+        @possible_moves = possible_moves - level.threats_map[opposite_of(side)]
+      end
     end
   end
 end
