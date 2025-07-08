@@ -35,6 +35,8 @@ module ConsoleGame
         movements_trackers(movements, range)
       end
 
+      # == Public methods ==
+
       # Move the chess piece to a new valid location
       # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       def move(new_alg_pos)
@@ -70,22 +72,9 @@ module ConsoleGame
         end
       end
 
-      # Determine if a piece is currently under threats
-      # #param piece [ChessPiece]
-      def under_threat?
-        opposite_side = opposite_of(side)
-        level.threats_map[opposite_side].include?(curr_pos)
-      end
-
-      # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
-      # @param threat_side [Array<ChessPiece>]
-      # @param target [ChessPiece]
-      # @return [Boolean]
-      def under_threat_by?(threat_side, target)
-        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
-      end
-
       private
+
+      # == Setup ==
 
       # Initialize piece styling
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
@@ -106,6 +95,8 @@ module ConsoleGame
         @captured = []
       end
 
+      # == Move logic ==
+
       # Process movement
       # @param turn_data [Array<ChessPiece, String>]
       # @param old_pos [Integer]
@@ -125,6 +116,33 @@ module ConsoleGame
       # @param pos2 [Integer] new board positional value
       # @return [Boolean]
       def valid_moves?(pos1, pos2); end
+
+      # == Threat Query ==
+
+      # Determine if a piece is currently under threats
+      # #param piece [ChessPiece]
+      def under_threat?
+        opposite_side = opposite_of(side)
+        level.threats_map[opposite_side].include?(curr_pos)
+      end
+
+      # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
+      # @param threat_side [Array<ChessPiece>]
+      # @param target [ChessPiece]
+      # @return [Boolean]
+      def under_threat_by?(threat_side, target)
+        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
+      end
+
+      # Returns the path of an attacking chess piece based on the current position of self
+      # @param attacker [ChessPiece]
+      # @return [Array<Integer>]
+      def find_attacker_path(attacker)
+        atk_direction = attacker.targets.key(curr_pos)
+        pathfinder(attacker.curr_pos, atk_direction, length: attacker.movements[atk_direction])
+      end
+
+      # == Pathfinder related ==
 
       # Store all valid placement
       # @param pos [Integer] positional value within a matrix
