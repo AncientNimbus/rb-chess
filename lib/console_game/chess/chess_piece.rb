@@ -24,7 +24,7 @@ module ConsoleGame
       # @param level [Chess::Level] chess level object
       # @param at_start [Boolean] determine if the piece is at its start location
       def initialize(alg_pos = :e1, side = :white, notation = :k, movements: DIRECTIONS.keys, range: 1, level: nil,
-                     at_start: false)
+                     at_start: true)
         @level = level
         @side = side
         @pts = PTS_VALUES[notation]
@@ -38,11 +38,10 @@ module ConsoleGame
       # == Public methods ==
 
       # Move the chess piece to a new valid location
-      # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
+      # @param new_alg_pos [Symbol, Integer] expects board position in Algebraic notation, e.g., :e3
       def move(new_alg_pos)
-        query_moves
         old_pos = curr_pos
-        new_pos = alg_map[new_alg_pos]
+        new_pos = new_alg_pos.is_a?(Integer) ? new_alg_pos : alg_map[new_alg_pos.to_sym]
         return puts "This is not a valid move!" unless possible_moves.include?(new_pos)
 
         self.at_start = false

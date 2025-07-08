@@ -8,17 +8,65 @@ module ConsoleGame
     # @author Ancient Nimbus
     class King < ChessPiece
       attr_accessor :checked
-      attr_reader :checked_status
+      attr_reader :checked_status, :castle_dirs
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
       def initialize(alg_pos = :e1, side = :white, level: nil)
         super(alg_pos, side, :k, level: level)
+        @castle_dirs = %i[e w]
         @checked = false
         @checked_status = { checked: checked, attackers: [] }
       end
 
+      # Override move
+      # Move the chess piece to a new valid location
+      # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
+      def move(new_alg_pos)
+        old_pos = curr_pos
+        super(new_alg_pos)
+
+        castling_event(old_pos)
+      end
+
+      # Override query_moves
+      # Query and update possible_moves
+      def query_moves
+        can_castle?
+        super
+      end
+
       # == King specific logics ==
+
+      # Determine if the King can perform castling
+      def can_castle?
+        return false unless at_start
+
+        castle_key = side == :white ? %i[K Q] : %i[k q]
+        castle_config = castle_key.zip(castle_dirs)
+        castle_config.each do |set|
+          key, dir = set
+          castle_dirs.delete(dir) if level.castling_states[key] == false
+        end
+        # p castle_dirs
+        true
+      end
+
+      # Process castling event
+      # @param old_pos [Integer] previous position
+      def castling_event(old_pos)
+        distance = curr_pos - old_pos
+        return unless distance.abs == 2
+
+        file, rank = info.split("")
+        alg_pos = distance.positive? ? "h#{rank}" : "a#{rank}"
+
+        rook_query, rook_pos = file == "g" ? [alg_pos, curr_pos - 1] : [alg_pos, curr_pos + 1]
+        rook = level.fetch_piece(rook_query)
+        rook.move(rook_pos)
+
+        p "King is castling"
+      end
 
       # Determine if the King is in a checkmate position
       # @return [Boolean] true if it is a checkmate
@@ -42,6 +90,17 @@ module ConsoleGame
       def validate_moves(turn_data, pos = curr_pos)
         super(turn_data, pos)
         @possible_moves = possible_moves - level.threats_map[opposite_of(side)]
+      end
+
+      # Override path
+      # Path via Pathfinder
+      # @param pos [Integer] board positional value
+      # @param path [Symbol] compass direction
+      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
+      # @return [Array<Integer>]
+      def path(pos = 0, path = :e, range: 1)
+        range = 2 if at_start && castle_dirs.include?(path)
+        super(pos, path, range: range)
       end
 
       # == Checkmate event flow ==

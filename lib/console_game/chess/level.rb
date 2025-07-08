@@ -26,7 +26,7 @@ module ConsoleGame
         @turn = :white
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @en_passant = nil
-        @castling_states = { K: nil, Q: nil, k: nil, q: nil }
+        @castling_states = { K: true, Q: true, k: true, q: true }
         @threats_map = { white: [], black: [] }
         @kings = { white: nil, black: nil }
         @usable_pieces = { white: [], black: [] }
@@ -47,15 +47,24 @@ module ConsoleGame
         update_board_state
         p usable_pieces
         print_chessboard
-
+        self.turn = :black
+        assign_piece("g8")
+        # p active_piece.query_moves
+        p active_piece.possible_moves
+        p active_piece.at_start
         # assign_piece("h1")
-        assign_piece("g5")
+        # assign_piece("g5")
 
-        active_piece.move(:g1)
+        active_piece.move(:f6)
+        # active_piece.move(:c1)
         update_board_state
         print_chessboard
-        p usable_pieces
-        # p active_piece.query_moves
+        assign_piece("e8")
+        active_piece.move("g8")
+        update_board_state
+        print_chessboard
+        p active_piece.possible_moves
+        # p usable_pieces
         # assign_piece("g8")
 
         p "checkmate: #{any_checkmate?}"
@@ -169,8 +178,6 @@ module ConsoleGame
       end
 
       # == Utilities ==
-
-      private
 
       # Fetch a single chess piece
       # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
