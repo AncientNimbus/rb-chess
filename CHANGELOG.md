@@ -2,6 +2,77 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2025-07-08
+
+### 🚀 Features
+
+- Add logic to flip the board (a-h, h-a)
+- Setup class files for various pieces
+- Add init values to chess pieces
+- Add logic to calculate valid movements
+- Add movement logic for Knight
+- Add logic to calculate all pieces movements
+- Add algebraic notation generator
+- Integrate algebraic map into chess piece
+- Add coloring to chess pieces
+- Add the ability parse FEN and print board
+- Add Level class to handle core game loop
+- Add utility methods #to_1d & #to_matrix
+- Add the ability to move K, Q, B, R & P
+- Add logic to store capture positions
+- Add Pawn double move and capturing logics
+- Add the ability check pawn's position
+- Add the ability to promote pawn
+- Add logics to perform En passant
+- Add en passant reset when move is not used
+- Add the ability to generate all valid moves
+- Add the ability to calculate blunders
+- Improve checkmate logic
+- Further improve checkmate logic
+- Add all logic needed for detecting checkmate
+- Add the ability to limit piece selections
+- Add logic to support castling
+
+### 🐛 Bug Fixes
+
+- Address a crash related to filename creation
+- Resolve an issue found in targets variable
+
+### 💼 Other
+
+- Create LICENSE
+
+### 🚜 Refactor
+
+- Optimise #build_board
+- Cleanup and remove magic numbers
+- Modify #build_board output value
+- Optimise #not_adjacent?
+- Rename #movements to #explore_path
+- Optimise #to_turn_data
+- Optimise how pieces reference level obj
+- Optimise En passant logics
+- Move checkmate logic to King class
+- Optimise King and ChessPiece class
+
+### 📚 Documentation
+
+- Update CHANGELOG
+- Update docstring
+
+### 🧪 Testing
+
+- Add test cases for Chess logic
+- Update test cases for chess logic
+- Update logic test cases to test new feature
+- Add new test case for chess logic
+
+### ⚙️ Miscellaneous Tasks
+
+- Rename class for extra clarity
+- Migrate reusable logics from past project
+- Update Gemfile and README
+
 ## [0.2.0] - 2025-06-30
 
 ### 🚀 Features
