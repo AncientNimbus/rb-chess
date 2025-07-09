@@ -13,23 +13,23 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :turn, :turn_data, :active_piece, :previous_piece, :en_passant
+      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :kings, :castling_states, :threats_map,
                   :usable_pieces
 
+      # @param mode [Integer]
+      # @param input [ChessInput]
+      # @param sides [hash]
+      #   @option sides [ChessPlayer, ChessComputer] :white Player who plays as White
+      #   @option sides [ChessPlayer, ChessComputer] :black Player who plays as Black
+      # @param sessions [hash]
+      # @param import_fen [String] expects a valid FEN string
       def initialize(mode, input, sides, sessions, import_fen = nil)
         @mode = mode
         @controller = input
-        @w_player = sides[:white]
-        @b_player = sides[:black]
+        @w_player, @b_player = sides.values
         @session = sessions
-        @turn = :white
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
-        @en_passant = nil
-        @castling_states = { K: true, Q: true, k: true, q: true }
-        @threats_map = { white: [], black: [] }
-        @kings = { white: nil, black: nil }
-        @usable_pieces = { white: [], black: [] }
       end
 
       # == Flow ==
@@ -38,57 +38,61 @@ module ConsoleGame
       def open_level
         p "Setting up game level"
         init_level
+        p "Entering level"
+        play_chess
+        p "Game session complete"
+        end_game
       end
 
       # Initialise the chessboard
       def init_level
+        @white_turn = true
+        @castling_states = { K: true, Q: true, k: true, q: true }
+        @kings = { white: nil, black: nil }
+        @threats_map = { white: [], black: [] }
+        @usable_pieces = { white: [], black: [] }
+        @en_passant = nil
         kings_table
+        update_board_state
+        print_chessboard
+        # assign_piece("f5")
         # p kings[:white].side
-        p usable_pieces
-        print_chessboard
-        # self.turn = :black
-        update_board_state
-        assign_piece("f5")
-        active_piece.move(:f6)
-        # p active_piece.query_moves
-        p active_piece.possible_moves
-
-        # p active_piece.at_start
-        update_board_state
-        print_chessboard
-        assign_piece("h2")
-        # p active_piece.possible_moves
-        update_board_state
-        print_chessboard
-
-        # assign_piece("h1")
-        assign_piece("f3")
-        p active_piece.possible_moves
-        update_board_state
-        print_chessboard
-
-        # active_piece.move(:g5)
-        # active_piece.move(:c1)
-        # update_board_state
-
-        # assign_piece("e1")
-        # update_board_state
-        # active_piece.at_start
-        # active_piece.move("c1")
-        # update_board_state
-        # print_chessboard
-        # p active_piece.possible_moves
-        # p castling_states
         # p usable_pieces
-        # assign_piece("g8")
-
-        p "checkmate: #{any_checkmate?}"
+        # p "checkmate: #{any_checkmate?}"
       end
 
-      # Game loop
-      def game_loop; end
+      # Play a the level
+      def play_chess
+        play_turn until any_checkmate?
+      end
+
+      # Play a turn (Game loop)
+      def play_turn
+        @player = white_turn ? w_player : b_player
+
+        p player.side
+        # get piece selection from player
+        player_selection = controller.ask("#{player.name}: Pick a piece")
+        # validate player's selection
+        assign_piece(player_selection)
+        # Print move preview
+        print_chessboard
+        # process move
+        player_move = controller.ask("#{player.name}: Make a move")
+        # validate player's move
+        active_piece.move(player_move)
+        # update game state
+        self.active_piece = nil
+        update_board_state
+        print_chessboard
+        # Change turn
+        self.white_turn = !white_turn
+      end
 
       # Endgame handling
+      def end_game
+        p "Should return to game.rb"
+      end
 
       # == Board Logic ==
 
@@ -110,6 +114,7 @@ module ConsoleGame
         @previous_piece = active_piece
         @active_piece = piece
         self.previous_piece ||= active_piece
+        update_board_state
       end
 
       # Print the chessboard
@@ -215,7 +220,7 @@ module ConsoleGame
       # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
       # @return [ChessPiece]
       def fetch_piece(query)
-        if query.is_a?(String) && usable_pieces[turn].include?(query)
+        if query.is_a?(String) && usable_pieces[player.side].include?(query)
           piece = turn_data[alg_map[query.to_sym]]
         elsif query.is_a?(Array)
           obj, side = query
