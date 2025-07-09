@@ -14,9 +14,9 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :at_start, :curr_pos, :targets, :sights
-      attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :color, :captured,
-                  :possible_moves
+      attr_accessor :at_start, :curr_pos, :targets, :sights, :color
+      attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :captured, :possible_moves,
+                  :std_color, :highlight
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -57,6 +57,7 @@ module ConsoleGame
       # Query and update possible_moves
       def query_moves
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
+        threat_response
       end
 
       # Return alg notation of current position
@@ -78,10 +79,9 @@ module ConsoleGame
       # Initialize piece styling
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
       def piece_styling(notation)
-        @notation = PIECES[notation][:notation]
-        @color = THEME[:classic][side]
-        @name = PIECES[notation][:name]
-        @icon = PIECES[notation][:style1]
+        @notation, @name, @icon = PIECES[notation].slice(:notation, :name, :style1)
+        @std_color, @highlight = THEME[:classic].slice(side, :highlight).values
+        @color = std_color
       end
 
       # Initialize piece movements trackers
@@ -118,6 +118,12 @@ module ConsoleGame
 
       # == Threat Query ==
 
+      # Handle events when the opposite active piece can capture self in the upcoming turn
+      def threat_response
+        # Switch color when under threat
+        self.color = under_threat_by?([level.active_piece], self) ? highlight : std_color
+      end
+
       # Determine if a piece is currently under threats
       # #param piece [ChessPiece]
       def under_threat?
@@ -130,6 +136,8 @@ module ConsoleGame
       # @param target [ChessPiece]
       # @return [Boolean]
       def under_threat_by?(threat_side, target)
+        return false unless target.is_a?(ChessPiece) && !threat_side.compact.empty?
+
         threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
       end
 
@@ -153,7 +161,7 @@ module ConsoleGame
           # remove blocked spot and onwards
           possible_moves[path] = detect_occupied_tiles(path, turn_data, positions)
         end
-        @possible_moves = (possible_moves.values.flatten + targets.values.compact).to_set
+        @possible_moves = (possible_moves.values.flatten + targets.values).compact.to_set
       end
 
       # Detect blocked tile based on the given positions

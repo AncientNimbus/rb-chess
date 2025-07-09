@@ -34,9 +34,12 @@ module ConsoleGame
       }.freeze
 
       # Default theme
+      # Note: on other good options: bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF"
       THEME = {
-        classic: { bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF" }
+        classic: { bg: %w[#cdaa7d #8b5742], black: "#000000", white: "#f0ffff", icon: "◇", highlight: "#00ff7f" },
+        navy: { bg: %w[#cdaa7d #8b5742], black: "#191970", white: "#f0ffff", icon: "◇", highlight: "#00ff7f" }
       }.freeze
+
       # Build the chessboard
       # @param turn_data [Array<Array<ChessPiece, String>>] expects an 8 by 8 array, each represents a whole rank
       # @param side [Symbol] :white or :black, this will flip the board
@@ -153,10 +156,15 @@ module ConsoleGame
       # @param bg_color [Symbol, String] expects a colour value
       # @return [String] coloured string
       def paint_tile(item, tile_w, bg_color)
-        str, color, bg = if item.is_a?(ChessPiece)
-                           [item.icon, item.color, bg_color]
-                         else
-                           [item, :default, bg_color]
+        # str, color, bg = if item.is_a?(ChessPiece)
+        #                    [item.icon, item.color, bg_color]
+        #                  else
+        #                    [item, :default, bg_color]
+        #                  end
+        str, color, bg = case item
+                         when ChessPiece then [item.icon, item.color, bg_color]
+                         when Hash then [item[:icon], item[:highlight], bg_color]
+                         when String then [item, :default, bg_color]
                          end
         Paint[str.center(tile_w), color, bg]
       end

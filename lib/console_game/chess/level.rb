@@ -44,26 +44,41 @@ module ConsoleGame
       def init_level
         kings_table
         # p kings[:white].side
-        update_board_state
         p usable_pieces
         print_chessboard
-        self.turn = :black
-        assign_piece("g8")
+        # self.turn = :black
+        update_board_state
+        assign_piece("f5")
+        active_piece.move(:f6)
         # p active_piece.query_moves
         p active_piece.possible_moves
-        p active_piece.at_start
-        # assign_piece("h1")
-        # assign_piece("g5")
 
-        active_piece.move(:f6)
-        # active_piece.move(:c1)
+        # p active_piece.at_start
         update_board_state
         print_chessboard
-        assign_piece("e8")
-        active_piece.move("g8")
+        assign_piece("h2")
+        # p active_piece.possible_moves
         update_board_state
         print_chessboard
+
+        # assign_piece("h1")
+        assign_piece("f3")
         p active_piece.possible_moves
+        update_board_state
+        print_chessboard
+
+        # active_piece.move(:g5)
+        # active_piece.move(:c1)
+        # update_board_state
+
+        # assign_piece("e1")
+        # update_board_state
+        # active_piece.at_start
+        # active_piece.move("c1")
+        # update_board_state
+        # print_chessboard
+        # p active_piece.possible_moves
+        # p castling_states
         # p usable_pieces
         # assign_piece("g8")
 
@@ -99,8 +114,25 @@ module ConsoleGame
 
       # Print the chessboard
       def print_chessboard
-        chessboard = build_board(to_matrix(turn_data), size: 1)
+        chessboard = build_board(rendering_data, size: 1)
         print_msg(*chessboard, pre: "* ")
+      end
+
+      # Pre-process turn data before sending it to display module
+      # @return [Array] 2D array respect to bound limit
+      def rendering_data
+        display_data = highlight_moves(turn_data.dup)
+        to_matrix(display_data)
+      end
+
+      # Temporary display move indicator highlight on the board
+      # @param display_data [Array<ChessPiece, String>] 1D copied of turn_data
+      def highlight_moves(display_data)
+        return display_data if active_piece.nil?
+
+        highlight ||= THEME[:classic].slice(:icon, :highlight)
+        active_piece.possible_moves.each { |move| display_data[move] = highlight if display_data[move].is_a?(String) }
+        display_data
       end
 
       # Generate possible moves & targets for all pieces, all whites or all blacks
