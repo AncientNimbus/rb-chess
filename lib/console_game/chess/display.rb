@@ -156,11 +156,6 @@ module ConsoleGame
       # @param bg_color [Symbol, String] expects a colour value
       # @return [String] coloured string
       def paint_tile(item, tile_w, bg_color)
-        # str, color, bg = if item.is_a?(ChessPiece)
-        #                    [item.icon, item.color, bg_color]
-        #                  else
-        #                    [item, :default, bg_color]
-        #                  end
         str, color, bg = case item
                          when ChessPiece then [item.icon, item.color, bg_color]
                          when Hash then [item[:icon], item[:highlight], bg_color]

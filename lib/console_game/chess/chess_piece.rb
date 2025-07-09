@@ -79,7 +79,7 @@ module ConsoleGame
       # Initialize piece styling
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
       def piece_styling(notation)
-        @notation, @name, @icon = PIECES[notation].slice(:notation, :name, :style1)
+        @notation, @name, @icon = PIECES[notation].slice(:notation, :name, :style1).values
         @std_color, @highlight = THEME[:classic].slice(side, :highlight).values
         @color = std_color
       end
