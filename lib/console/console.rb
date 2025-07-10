@@ -59,7 +59,7 @@ module Console
   # @param flag [String, Regexp] regexp flag
   # @return [Regexp]
   def regexp_formatter(cmd_pattern = D_MSG[:cmd_pattern], reg = "reg", pre: '\A', suf: '\z', flag: "")
-    Regexp.new("#{pre}#{reg}|#{cmd_pattern}#{suf}", flag)
+    Regexp.new("#{pre}(#{reg}|#{cmd_pattern})#{suf}", flag)
   end
 
   # Shorthand method: handle range selections prompt, current number limit is up to 99.
