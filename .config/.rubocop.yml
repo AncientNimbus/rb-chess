@@ -26,6 +26,7 @@ plugins:
 
 Metrics/MethodLength:
   CountAsOne: ["array", "hash", "heredoc", "method_call"]
+  ExcludedMethods: ["case", "in"]
 
 Metrics/ParameterLists:
   CountKeywordArgs: false

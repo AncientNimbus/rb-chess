@@ -93,18 +93,26 @@ module Console
   # @param empty [Boolean] allow empty input value, default to false
   # @return [String] user input
   def prompt_user(msg = "", err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
-    # p reg
     input = ""
     query_symbol = Paint[D_MSG[:query_prefix], :green]
     loop do
       prompt_msg = "#{query_symbol}#{msg}#{D_MSG[:prompt_prefix]}"
       input = Readline.readline(prompt_msg, true)
-      break if input.match?(reg) || (input.empty? if empty)
+      break if met_requirement?(input, reg, empty)
 
       query_symbol = Paint[D_MSG[:warn_prefix], :red]
       msg = err_msg
     end
     input.rstrip
+  end
+
+  # Handle prompt exit condition in a more precises manner
+  # @param input [String] user input to verify
+  # @param reg [Regexp] pattern to match
+  # @param empty [Boolean] allow empty input value, default to false
+  # @return [Boolean] true when requirement is met
+  def met_requirement?(input, reg, empty)
+    input.match?(reg) || (input.empty? if empty)
   end
 
   # returns true if user input matches available commands
