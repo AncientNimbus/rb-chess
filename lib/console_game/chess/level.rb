@@ -55,10 +55,6 @@ module ConsoleGame
         kings_table
         update_board_state
         print_chessboard
-        # assign_piece("f5")
-        # p kings[:white].side
-        # p usable_pieces
-        # p "checkmate: #{any_checkmate?}"
       end
 
       # Play a the level

@@ -6,6 +6,33 @@ module ConsoleGame
   module Chess
     # Input controller for the game Chess
     class ChessInput < Input
+      # Algebraic Input Regexp pattern
+      # @return [Hash<Symbol, Regexp>] patterns required to construct algebraic notation input.
+      #
+      #  Keys:
+      #   :pieces - Piece notations.
+      #
+      #   :disambiguation - Useful when two (or more) identical pieces can move to the same square.
+      #
+      #   :capture - Indicate the move is a capture.
+      #
+      #   :destination - Indicate destination square.
+      #
+      #   :promotion - Pawn specific pattern, usable when Pawn reaches the other end of the board.
+      #
+      #   :check - Optional check and checkmate indicator.
+      #
+      #   :castling - King specific pattern usable when Castling move is possible.
+      ALG_PATTERN = {
+        pieces: /[KQRBN]?/,
+        disambiguation: /[a-h]?[1-8]?/,
+        capture: /x?/,
+        destination: /[a-h][1-8]/,
+        promotion: /(?:=[QRBN])?/,
+        check: /[+#]?/,
+        castling: /O-O(?:-O)?/
+      }.freeze
+
       # == Console Commands ==
 
       # Exit sequences | command patterns: `exit`

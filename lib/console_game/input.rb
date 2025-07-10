@@ -15,7 +15,7 @@ module ConsoleGame
     def initialize(game_manager = nil)
       @game_manager = game_manager
       @commands = setup_commands
-      @cmd_pattern = regexp_capturing_gp(commands.keys, pre: "--", suf: ".*?")
+      @cmd_pattern = regexp_capturing_gp(commands.keys, pre: "--", suf: '(\s.*)?')
       @input_is_cmd = false
     end
 
@@ -38,6 +38,7 @@ module ConsoleGame
               reg
             end
       # p "location: #{self.class}, reg: #{reg}"
+      p reg
       super(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
     end
 
