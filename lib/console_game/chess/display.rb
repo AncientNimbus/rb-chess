@@ -84,7 +84,7 @@ module ConsoleGame
       # @param label [String] override the print rank value with custom string
       # @return [Array<String>] a complete row of a specific rank within the board
       def format_row(rank_num, row_data, colors: THEME[:classic][:bg], tile_w: BOARD[:std_tile], show_r: false,
-                     label: "")
+                     label: "", flipped: false)
         arr = []
         # Light background colour, dark background colour
         bg1, bg2 = pattern_order(rank_num, colors: colors)
@@ -92,8 +92,15 @@ module ConsoleGame
         BOARD[:size].times { |i| arr << paint_tile(row_data[i % row_data.size], tile_w, i.even? ? bg1 : bg2) }
         # Build side borders
         label = rank_num if label.empty?
-        side = [BOARD[:side].call(show_r ? label : " ")]
-        [side.concat(arr, side).join("")]
+        border = [BOARD[:side].call(show_r ? label : " ")]
+        add_borders(arr, border, flipped: flipped)
+      end
+
+      # Return a formatted row with borders
+      def add_borders(arr_data, border, flipped: false)
+        formatted_row = border.concat(arr_data, border)
+        formatted_row.reverse! if flipped
+        [formatted_row.join("")]
       end
 
       # Build the main section of the chessboard
@@ -106,13 +113,14 @@ module ConsoleGame
       def build_main(turn_data, side: :white, colors: THEME[:classic][:bg], tile_w: BOARD[:std_tile], size: 1,
                      show_r: true)
         board = []
+        flip = true if side == :black
         turn_data.each_with_index do |row, i|
           rank_num = i + 1
-          rank_row = format_row(rank_num, row, colors: colors, tile_w: tile_w, show_r: show_r)
+          rank_row = format_row(rank_num, row, colors: colors, tile_w: tile_w, show_r: show_r, flipped: flip)
           buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w)] * (size - 1)
           board << buffer_row.concat(rank_row, buffer_row)
         end
-        side == :black ? board : board.reverse
+        flip ? board : board.reverse
       end
 
       # Helper: Build the head and tail section of the chessboard
@@ -123,11 +131,11 @@ module ConsoleGame
       # @return [Array<String>] the top or bottom section of the board
       def frame(section = :head, side: :white, tile_w: BOARD[:std_tile], show_r: true, label: "")
         row_values = show_r ? BOARD[:file] : [label]
-        row_values = side == :black ? row_values.reverse : row_values
+        flip = true if side == :black
         ends_l, ends_r = section == :head ? %i[head_l head_r] : %i[tail_l tail_r]
 
         arr = [border(BOARD[ends_l], BOARD[ends_r], tile_w, BOARD[:h])]
-        arr << format_row(0, row_values, colors: [nil, nil], tile_w: tile_w, show_r: true, label: label)
+        arr << format_row(0, row_values, colors: [nil, nil], tile_w: tile_w, show_r: true, label: label, flipped: flip)
         arr << border(BOARD[:sep_l], BOARD[:sep_r], tile_w, BOARD[:h])
 
         section == :head ? arr : arr.reverse

@@ -39,7 +39,7 @@ module ConsoleGame
         p "Setting up game level"
         init_level
         p "Entering level"
-        play_chess
+        play_chess until any_checkmate?
         p "Game session complete"
         end_game
       end
@@ -53,27 +53,24 @@ module ConsoleGame
         @threats_map = { white: [], black: [] }
         @usable_pieces = { white: [], black: [] }
         @en_passant = nil
+        @player = w_player
         kings_table
-        ops_successful
+        # ops_successful
       end
 
-      # Play a the level
+      # Main Game Loop
       def play_chess
-        play_turn until any_checkmate?
-      end
-
-      # Play a turn (Game loop)
-      def play_turn
         @player = white_turn ? w_player : b_player
-
         puts "It is #{player.side}'s turn."
-        # get piece selection from player
-        controller.turn_action
-        controller.make_a_move unless active_piece.nil?
-
         ops_successful
-        # Change turn
+        # Prompt player to enter notation value
+        controller.turn_action
+        # Prompt player to enter move value when preview mode is used
+        controller.make_a_move unless active_piece.nil?
+        # Pass control to the other side
         self.white_turn = !white_turn
+        # Turn end handling
+        ops_successful
       end
 
       # Endgame handling
@@ -87,7 +84,6 @@ module ConsoleGame
       # @param curr_alg_pos [String] algebraic position
       # @return [Boolean] true if the operation is a success
       def preview_move(curr_alg_pos)
-        puts active_piece # debug
         return false unless assign_piece(curr_alg_pos)
 
         puts "Previewing #{active_piece.name} at #{active_piece.info}." # @todo Proper feedback
@@ -111,7 +107,6 @@ module ConsoleGame
       # @param new_alg_pos [String] algebraic position
       # @return [Boolean] true if the operation is a success
       def direct_move(curr_alg_pos, new_alg_pos)
-        puts active_piece # debug
         return false unless assign_piece(curr_alg_pos)
         return false unless move_piece(new_alg_pos)
 
@@ -157,7 +152,7 @@ module ConsoleGame
 
       # Print the chessboard
       def print_chessboard
-        chessboard = build_board(rendering_data, size: 1)
+        chessboard = build_board(rendering_data, side: player.side, size: 1)
         print_msg(*chessboard, pre: "* ")
       end
 
