@@ -14,7 +14,7 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :at_start, :curr_pos, :targets, :sights, :color
+      attr_accessor :at_start, :curr_pos, :targets, :sights, :color, :moved
       attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :captured, :possible_moves,
                   :std_color, :highlight
 
@@ -42,16 +42,17 @@ module ConsoleGame
       def move(new_alg_pos)
         old_pos = curr_pos
         new_pos = new_alg_pos.is_a?(Integer) ? new_alg_pos : alg_map[new_alg_pos.to_sym]
-        return puts "This is not a valid move!" unless possible_moves.include?(new_pos)
-
-        self.at_start = false
-        self.curr_pos = new_pos
+        # return puts "This is not a valid move!" unless possible_moves.include?(new_pos)
+        unless possible_moves.include?(new_pos)
+          puts "This is not a valid move!"
+          return self.moved = false
+        end
 
         # print user message
-        p "Moving to #{new_alg_pos}"
+        p "Moving to #{new_alg_pos}" # @todo: better feedback
 
-        # refresh turn_data
         process_movement(level.turn_data, old_pos, new_pos)
+        self.moved = true
       end
 
       # Query and update possible_moves
@@ -92,6 +93,7 @@ module ConsoleGame
         @targets = movement_range(movements, range: nil)
         @sights = []
         @captured = []
+        @moved = false
       end
 
       # == Move logic ==
@@ -100,14 +102,18 @@ module ConsoleGame
       # @param turn_data [Array<ChessPiece, String>]
       # @param old_pos [Integer]
       # @param new_pos [Integer]
+      # @return [Integer] new location's positional value
       def process_movement(turn_data, old_pos, new_pos)
+        self.at_start = false
+        self.curr_pos = new_pos
         new_tile = turn_data[new_pos]
 
         turn_data[old_pos] = ""
         turn_data[new_pos] = self
-        return if new_tile.is_a?(String)
+        return curr_pos if new_tile.is_a?(String)
 
         captured << new_tile if new_tile.is_a?(ChessPiece)
+        curr_pos
       end
 
       # Valid movement

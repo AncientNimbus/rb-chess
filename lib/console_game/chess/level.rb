@@ -46,6 +46,7 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
+        controller.link_level(self)
         @white_turn = true
         @castling_states = { K: true, Q: true, k: true, q: true }
         @kings = { white: nil, black: nil }
@@ -53,8 +54,7 @@ module ConsoleGame
         @usable_pieces = { white: [], black: [] }
         @en_passant = nil
         kings_table
-        update_board_state
-        print_chessboard
+        ops_successful
       end
 
       # Play a the level
@@ -66,21 +66,12 @@ module ConsoleGame
       def play_turn
         @player = white_turn ? w_player : b_player
 
-        p player.side
+        puts "It is #{player.side}'s turn."
         # get piece selection from player
-        player_selection = controller.ask("#{player.name}: Pick a piece")
-        # validate player's selection
-        assign_piece(player_selection)
-        # Print move preview
-        print_chessboard
-        # process move
-        player_move = controller.ask("#{player.name}: Make a move")
-        # validate player's move
-        active_piece.move(player_move)
-        # update game state
-        self.active_piece = nil
-        update_board_state
-        print_chessboard
+        controller.turn_action
+        controller.make_a_move unless active_piece.nil?
+
+        ops_successful
         # Change turn
         self.white_turn = !white_turn
       end
@@ -88,6 +79,51 @@ module ConsoleGame
       # Endgame handling
       def end_game
         p "Should return to game.rb"
+      end
+
+      # == Game Logic ==
+
+      # Preview a move, display the moves indictor
+      # @param curr_alg_pos [String] algebraic position
+      # @return [Boolean] true if the operation is a success
+      def preview_move(curr_alg_pos)
+        puts active_piece # debug
+        return false unless assign_piece(curr_alg_pos)
+
+        puts "Previewing #{active_piece.name} at #{active_piece.info}." # @todo Proper feedback
+        ops_successful
+      end
+
+      # Chain with #preview_move, enables player make a move after previewing possible moves
+      # @param new_alg_pos [String] algebraic position
+      # @return [Boolean] true if the operation is a success
+      def move_piece(new_alg_pos)
+        active_piece.move(new_alg_pos)
+        return false unless active_piece.moved
+
+        puts "Moving #{active_piece.name} to #{active_piece.info}." # @todo Proper feedback
+        put_piece_down
+        true
+      end
+
+      # Assign a piece and make a move on the same prompt
+      # @param curr_alg_pos [String] algebraic position
+      # @param new_alg_pos [String] algebraic position
+      # @return [Boolean] true if the operation is a success
+      def direct_move(curr_alg_pos, new_alg_pos)
+        puts active_piece # debug
+        return false unless assign_piece(curr_alg_pos)
+        return false unless move_piece(new_alg_pos)
+
+        true
+      end
+
+      # Actions to perform when player input is valid
+      # @return [Boolean] true if the operation is a success
+      def ops_successful
+        update_board_state
+        print_chessboard
+        true
       end
 
       # == Board Logic ==
@@ -101,16 +137,22 @@ module ConsoleGame
 
       # Handling piece assignment
       # @param alg_pos [String] algebraic notation
+      # @return [ChessPiece]
       def assign_piece(alg_pos)
-        # add player side validation
+        put_piece_down
         piece = fetch_piece(alg_pos)
-        return if piece.nil?
+        return nil if piece.nil?
 
-        p "active piece: #{piece.side} #{piece.name}"
+        p "active piece: #{piece.side} #{piece.name}" # @todo: debug
         @previous_piece = active_piece
         @active_piece = piece
         self.previous_piece ||= active_piece
-        update_board_state
+        active_piece
+      end
+
+      # Unassign active piece
+      def put_piece_down
+        self.active_piece = nil
       end
 
       # Print the chessboard

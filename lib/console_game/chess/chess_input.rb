@@ -6,16 +6,8 @@ module ConsoleGame
   module Chess
     # Input controller for the game Chess
     class ChessInput < Input
-      attr_reader :alg_pattern
-
-      def initialize(game_manager = nil)
-        super(game_manager)
-        @alg_pattern = regexp_algebraic
-      end
-
-      # == Core methods ==
-
-      # == Chess Related Inputs ==
+      attr_accessor :input_scheme, :input_parser
+      attr_reader :alg_reg, :level
 
       # Algebraic Input Regexp pattern
       #  keys:
@@ -31,6 +23,57 @@ module ConsoleGame
         pieces: "[KQRBN]?", disambiguation: "[a-h]?[1-8]?", capture: "x?", destination: "[a-h][1-8]",
         promotion: "(?:=[QRBN])?", check: "[+#]?", castling: "O-O(?:-O)?"
       }.freeze
+
+      # Smith Input Regexp pattern
+      # The first capture group is used to support move preview mode
+      # The second capture group is used to support direct move and place
+      SMITH_PATTERN = "(?:[a-h][1-8])|(?:[a-h][1-8]){2}(?:[qrbn])?"
+
+      # Regexp parser
+      REG_PARSER = { alg: nil, smith: /[a-z]\d*/ }.freeze
+
+      def initialize(game_manager = nil)
+        super(game_manager)
+        @alg_reg = regexp_algebraic
+        @input_scheme = SMITH_PATTERN
+        @input_parser = REG_PARSER[:smith]
+      end
+
+      # Store active level object
+      # @param level [Chess::Level] expects a chess Level class object
+      def link_level(level)
+        @level = level
+      end
+
+      # == Core methods ==
+
+      # Get user input and process them accordingly
+      def turn_action
+        output = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
+        valid_ops = case output.scan(input_parser)
+                    in [curr_alg_pos]
+                      level.preview_move(curr_alg_pos)
+                    in [curr_alg_pos, new_alg_pos]
+                      level.direct_move(curr_alg_pos, new_alg_pos)
+                    in [curr_alg_pos, new_alg_pos, promotion]
+                      # p "Promoting Pawn at #{new_alg_pos} to a #{promotion}"
+                      true
+                    end
+        turn_action unless valid_ops
+      end
+
+      # Prompt user for the second time in the same turn if the first prompt was a preview move event
+      def make_a_move
+        output = ask("Make a move: ", reg: input_scheme, input_type: :custom)
+        valid_ops = case output.scan(input_parser)
+                    in [new_alg_pos]
+                      level.move_piece(new_alg_pos)
+                    else false
+                    end
+        make_a_move unless valid_ops
+      end
+
+      # == Chess Related Inputs ==
 
       # Algebraic Regexp pattern builder
       # @param notation_override [Hash]
@@ -82,11 +125,14 @@ module ConsoleGame
       # Change input mode to detect Smith Notation
       def smith(_arr = [])
         p "Input settings updated! The game will detect Smith notation."
+        self.input_scheme = SMITH_PATTERN
+        self.input_parser = REG_PARSER[:smith]
       end
 
       # Change input mode to detect Algebraic Notation
       def alg(_arr = [])
-        p "Input settings updated! The game will detect Algebraic notation."
+        # p "Input settings updated! The game will detect Algebraic notation."
+        # self.input_scheme = alg_reg # @todo: Not ready
       end
 
       private
