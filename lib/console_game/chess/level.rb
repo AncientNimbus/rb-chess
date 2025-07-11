@@ -103,15 +103,13 @@ module ConsoleGame
       # @param new_alg_pos [String] algebraic position
       # @return [Boolean] true if the operation is a success
       def direct_move(curr_alg_pos, new_alg_pos)
-        return false unless assign_piece(curr_alg_pos)
-        return false unless move_piece(new_alg_pos)
-
-        true
+        assign_piece(curr_alg_pos) && move_piece(new_alg_pos)
       end
 
       # Pawn specific: Promote the pawn when it reaches the other end of the board
       # @param curr_alg_pos [String] algebraic position
       # @param new_alg_pos [String] algebraic position
+      # @param notation [Symbol] algebraic notation
       # @return [Boolean] true if the operation is a success
       def direct_promote(curr_alg_pos, new_alg_pos, notation)
         return false unless assign_piece(curr_alg_pos) && active_piece.is_a?(Pawn)
@@ -123,21 +121,51 @@ module ConsoleGame
         true
       end
 
+      # Reset En Passant status when it is not used at the following turn
+      def reset_en_passant
+        return if en_passant.nil?
+
+        self.en_passant = nil if active_piece.curr_pos != en_passant[1]
+      end
+
+      # == Utilities ==
+
+      # Fetch a single chess piece
+      # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
+      # @return [ChessPiece]
+      def fetch_piece(query)
+        case query
+        in String
+          return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query)
+
+          turn_data[alg_map[query.to_sym]]
+        in Array
+          obj, side = query
+          fetch_all(side).find { |piece| piece.is_a?(obj) } # @todo add error handling
+        end
+      end
+
+      # Grab all pieces, only whites or only blacks
+      # @param side [Symbol] expects :all, :white or :black
+      # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
+      # @return [Array<ChessPiece>] a list of chess pieces
+      def fetch_all(side = :all, type: ChessPiece)
+        all_pieces = turn_data.select { |tile| tile if tile.is_a?(type) }
+        return all_pieces unless %i[black white].include?(side)
+
+        all_pieces.select { |piece| piece if piece.side == side }
+      end
+
+      private
+
+      # == Board Logic ==
+
       # Actions to perform when player input is valid
       # @return [Boolean] true if the operation is a success
       def ops_successful
         update_board_state
         print_chessboard
         true
-      end
-
-      # == Board Logic ==
-
-      # Reset En Passant status when it is not used at the following turn
-      def reset_en_passant
-        return if en_passant.nil?
-
-        self.en_passant = nil if active_piece.curr_pos != en_passant[1]
       end
 
       # Handling piece assignment
@@ -160,27 +188,9 @@ module ConsoleGame
         self.active_piece = nil
       end
 
-      # Print the chessboard
-      def print_chessboard
-        chessboard = build_board(rendering_data, side: player.side, size: 1)
-        print_msg(*chessboard, pre: "* ")
-      end
-
-      # Pre-process turn data before sending it to display module
-      # @return [Array] 2D array respect to bound limit
-      def rendering_data
-        display_data = highlight_moves(turn_data.dup)
-        to_matrix(display_data)
-      end
-
-      # Temporary display move indicator highlight on the board
-      # @param display_data [Array<ChessPiece, String>] 1D copied of turn_data
-      def highlight_moves(display_data)
-        return display_data if active_piece.nil?
-
-        highlight ||= THEME[:classic].slice(:icon, :highlight)
-        active_piece.possible_moves.each { |move| display_data[move] = highlight if display_data[move].is_a?(String) }
-        display_data
+      # Get and store both Kings
+      def kings_table
+        fetch_all(type: King).each { |king| kings[king.side] = king }
       end
 
       # Generate possible moves & targets for all pieces, all whites or all blacks
@@ -196,11 +206,6 @@ module ConsoleGame
         blunder_tiles(grouped_pieces)
         calculate_usable_pieces(grouped_pieces)
         any_checkmate?
-      end
-
-      # Get and store both Kings
-      def kings_table
-        fetch_all(type: King).each { |king| kings[king.side] = king }
       end
 
       # Refresh possible move and split chess pieces into two group
@@ -253,32 +258,29 @@ module ConsoleGame
         kings.values.any?(&:checkmate?)
       end
 
-      # Grab all pieces, only whites or only blacks
-      # @param side [Symbol] expects :all, :white or :black
-      # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
-      # @return [Array<ChessPiece>] a list of chess pieces
-      def fetch_all(side = :all, type: ChessPiece)
-        all_pieces = turn_data.select { |tile| tile if tile.is_a?(type) }
-        return all_pieces unless %i[black white].include?(side)
+      # == Display logic ==
 
-        all_pieces.select { |piece| piece if piece.side == side }
+      # Print the chessboard
+      def print_chessboard
+        chessboard = build_board(rendering_data, side: player.side, size: 1)
+        print_msg(*chessboard, pre: "* ")
       end
 
-      # == Utilities ==
+      # Pre-process turn data before sending it to display module
+      # @return [Array] 2D array respect to bound limit
+      def rendering_data
+        display_data = highlight_moves(turn_data.dup)
+        to_matrix(display_data)
+      end
 
-      # Fetch a single chess piece
-      # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
-      # @return [ChessPiece]
-      def fetch_piece(query)
-        case query
-        in String
-          return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query)
+      # Temporary display move indicator highlight on the board
+      # @param display_data [Array<ChessPiece, String>] 1D copied of turn_data
+      def highlight_moves(display_data)
+        return display_data if active_piece.nil?
 
-          turn_data[alg_map[query.to_sym]]
-        in Array
-          obj, side = query
-          fetch_all(side).find { |piece| piece.is_a?(obj) } # @todo add error handling
-        end
+        highlight ||= THEME[:classic].slice(:icon, :highlight)
+        active_piece.possible_moves.each { |move| display_data[move] = highlight if display_data[move].is_a?(String) }
+        display_data
       end
 
       # User data handling
