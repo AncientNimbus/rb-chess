@@ -36,16 +36,14 @@ module ConsoleGame
 
       # Start level
       def open_level
-        p "Setting up game level"
         init_level
-        p "Entering level"
         play_chess until any_checkmate?
-        p "Game session complete"
         end_game
       end
 
       # Initialise the chessboard
       def init_level
+        p "Setting up game level"
         controller.link_level(self)
         @white_turn = true
         @castling_states = { K: true, Q: true, k: true, q: true }
@@ -55,27 +53,25 @@ module ConsoleGame
         @en_passant = nil
         @player = w_player
         kings_table
-        # ops_successful
       end
 
       # Main Game Loop
       def play_chess
-        @player = white_turn ? w_player : b_player
+        self.player = white_turn ? w_player : b_player
         puts "It is #{player.side}'s turn."
         ops_successful
         # Prompt player to enter notation value
         controller.turn_action
         # Prompt player to enter move value when preview mode is used
         controller.make_a_move unless active_piece.nil?
+        # Turn end handling
         # Pass control to the other side
         self.white_turn = !white_turn
-        # Turn end handling
-        ops_successful
       end
 
       # Endgame handling
       def end_game
-        p "Should return to game.rb"
+        p "Game session complete, \nShould return to game.rb"
       end
 
       # == Game Logic ==
@@ -113,6 +109,20 @@ module ConsoleGame
         true
       end
 
+      # Pawn specific: Promote the pawn when it reaches the other end of the board
+      # @param curr_alg_pos [String] algebraic position
+      # @param new_alg_pos [String] algebraic position
+      # @return [Boolean] true if the operation is a success
+      def direct_promote(curr_alg_pos, new_alg_pos, notation)
+        return false unless assign_piece(curr_alg_pos) && active_piece.is_a?(Pawn)
+
+        active_piece.move(new_alg_pos, notation)
+        return false unless active_piece.moved
+
+        put_piece_down
+        true
+      end
+
       # Actions to perform when player input is valid
       # @return [Boolean] true if the operation is a success
       def ops_successful
@@ -138,7 +148,7 @@ module ConsoleGame
         piece = fetch_piece(alg_pos)
         return nil if piece.nil?
 
-        p "active piece: #{piece.side} #{piece.name}" # @todo: debug
+        # p "active piece: #{piece.side} #{piece.name}" # @todo: debug
         @previous_piece = active_piece
         @active_piece = piece
         self.previous_piece ||= active_piece
@@ -227,6 +237,13 @@ module ConsoleGame
           bad_moves << piece.sights
           bad_moves << piece.possible_moves.compact
         end
+        edit_threats_map(side, bad_moves)
+      end
+
+      # Helper: Add bad_moves to threats_map
+      # @param side [Symbol] expects :all, :white or :black
+      # @param bad_moves [Array]
+      def edit_threats_map(side, bad_moves)
         threats_map[side] = bad_moves.flatten.sort.to_set
       end
 
@@ -253,20 +270,17 @@ module ConsoleGame
       # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
       # @return [ChessPiece]
       def fetch_piece(query)
-        if query.is_a?(String) && usable_pieces[player.side].include?(query)
-          piece = turn_data[alg_map[query.to_sym]]
-        elsif query.is_a?(Array)
+        case query
+        in String
+          return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query)
+
+          turn_data[alg_map[query.to_sym]]
+        in Array
           obj, side = query
-          piece = fetch_all(side).find { |piece| piece.is_a?(obj) }
-          # @todo add error handling
-        else
-          return puts "'#{query}' is invalid, please enter a correct notation"
+          fetch_all(side).find { |piece| piece.is_a?(obj) } # @todo add error handling
         end
-        piece
       end
 
-      # Update turn data
-      # Update chessboard display
       # User data handling
     end
   end

@@ -76,7 +76,7 @@ describe ConsoleGame::Chess::Logic do
       start_value = 6
       arr = nil
       let(:preset) { ConsoleGame::Chess::Logic::PRESET }
-      let(:arr_length) { preset[:length] }
+      let(:arr_length) { 4 }
       let(:bound) { preset[:bound] }
 
       it "returns a sequence of positions to the north west" do
