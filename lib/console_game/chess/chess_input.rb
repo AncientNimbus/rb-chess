@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require_relative "../input"
+require_relative "smith_notation"
 
 module ConsoleGame
   module Chess
     # Input controller for the game Chess
     class ChessInput < Input
+      include SmithNotation
       attr_accessor :input_scheme, :input_parser
       attr_reader :alg_reg, :smith_reg, :level
 
@@ -23,13 +25,6 @@ module ConsoleGame
         pieces: "(?<piece>[KQRBN])?", disambiguation: "(?<file>[a-h])?(?<rank>[1-8])?",
         capture: "(?<capture>x)?", destination: "(?<target>[a-h][1-8])", promotion: "(?:=(?<promotion>[QRBN]))?",
         check: "(?<check>[+#])?", castling: "(?<castle>O-O(?:-O)?)"
-      }.freeze
-
-      # Smith Input Regexp pattern
-      # The first capture group is used to support move preview mode
-      # The second capture group is used to support direct move and place
-      SMITH_PATTERN = {
-        base: "(?:[a-h][1-8])|(?:[a-h][1-8]){2}", promotion: "(?:[qrbn])"
       }.freeze
 
       # Regexp parser
@@ -54,10 +49,11 @@ module ConsoleGame
       # Get user input and process them accordingly
       def turn_action
         output = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
-        case input_scheme
-        when smith_reg then validate_smith(output)
-        when alg_reg then validate_algebraic(output)
-        end
+        ops = case input_scheme
+              when smith_reg then validate_smith(output)
+              when alg_reg then validate_algebraic(output)
+              end
+        turn_action unless level.method(ops[:type]).call(*ops[:args])
       end
 
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
@@ -75,19 +71,6 @@ module ConsoleGame
       end
 
       private
-
-      # == Smith notation ==
-
-      # Input validation when input scheme is set to Smith notation
-      # @param output [String] output value from prompt
-      def validate_smith(output)
-        ops = case output.scan(input_parser)
-              in [curr_pos] then { type: :preview_move, args: [curr_pos] }
-              in [curr_pos, new_pos] then { type: :direct_move, args: [curr_pos, new_pos] }
-              in [curr_pos, new_pos, notation] then { type: :direct_promote, args: [curr_pos, new_pos, notation] }
-              end
-        turn_action unless level.method(ops[:type]).call(*ops[:args])
-      end
 
       # == Algebraic notation ==
 
@@ -167,7 +150,7 @@ module ConsoleGame
         end
       end
 
-      # == Unities ==
+      # == Utilities ==
 
       # Algebraic Regexp pattern builder
       # @param notation_override [Hash]
@@ -181,12 +164,6 @@ module ConsoleGame
         castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
         regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join
         regexp_capturing_gp([castling_gp, regular_gp])
-      end
-
-      # Algebraic Regexp pattern builder
-      # @return [String]
-      def regexp_smith
-        "#{SMITH_PATTERN.values.join('')}?"
       end
 
       # Setup input commands
