@@ -2,40 +2,23 @@
 
 require_relative "../input"
 require_relative "smith_notation"
+require_relative "algebraic_notation"
 
 module ConsoleGame
   module Chess
     # Input controller for the game Chess
     class ChessInput < Input
       include SmithNotation
+      include AlgebraicNotation
+
       attr_accessor :input_scheme, :input_parser
       attr_reader :alg_reg, :smith_reg, :level
 
-      # Algebraic Input Regexp pattern
-      #  keys:
-      #  :pieces - Piece notations.
-      #  :disambiguation - Useful when two (or more) identical pieces can move to the same square.
-      #  :capture - Indicate the move is a capture.
-      #  :destination - Indicate destination square.
-      #  :promotion - Pawn specific pattern, usable when Pawn reaches the other end of the board.
-      #  :check - Optional check and checkmate indicator.
-      #  :castling - King specific pattern usable when Castling move is possible.
-      # @return [Hash<Symbol, String>] patterns required to construct algebraic notation input.
-      ALG_PATTERN = {
-        pieces: "(?<piece>[KQRBN])?", disambiguation: "(?<file>[a-h])?(?<rank>[1-8])?",
-        capture: "(?<capture>x)?", destination: "(?<target>[a-h][1-8])", promotion: "(?:=(?<promotion>[QRBN]))?",
-        check: "(?<check>[+#])?", castling: "(?<castle>O-O(?:-O)?)"
-      }.freeze
-
-      # Regexp parser
-      REG_PARSER = { alg: nil, smith: /[a-z]\d*/ }.freeze
-
       def initialize(game_manager = nil)
         super(game_manager)
-        @alg_reg = regexp_algebraic
-        @smith_reg = regexp_smith
+        notation_patterns_builder
         @input_scheme = smith_reg
-        @input_parser = REG_PARSER[:smith]
+        @input_parser = SMITH_PARSER
       end
 
       # Store active level object
@@ -71,26 +54,6 @@ module ConsoleGame
       end
 
       private
-
-      # == Algebraic notation ==
-
-      # Input validation when input scheme is set to Algebraic notation
-      # @param output [String] output value from prompt
-      def validate_algebraic(output)
-        p capture_gps = output.match(alg_reg)&.named_captures(symbolize_names: true)&.compact
-        valid_ops = case capture_gps
-                    in { castle:, **nil } then p "Should castle: #{castle}" # char size 3 or 5
-                    in { file:, capture:, target:, promotion:, **nil } then p "#{file} Pawn capture #{target} and promote to #{promotion}"
-                    in { file:, capture:, target:, **nil } then p "#{file} Pawn captures #{target}"
-                    in { target:, promotion:, **nil } then p "Promoting #{target} Pawn to #{promotion}"
-                    in { piece:, target:, capture:, **nil } then p "#{piece} captures #{target}"
-                    in { piece:, file:, target:, **nil } then p "#{piece} from #{file} to #{target}"
-                    in { piece:, target:, **nil } then p "Moving #{piece} to #{target}"
-                    in { target:, **nil } then p "Moving Pawn to #{target}"
-                    else p "Invalid notation, please try again."
-                    end
-        turn_action unless valid_ops
-      end
 
       # == Console Commands ==
 
@@ -129,7 +92,7 @@ module ConsoleGame
       def smith(_arr = [])
         p "Input settings updated! The game will detect Smith notation."
         self.input_scheme = smith_reg
-        self.input_parser = REG_PARSER[:smith]
+        self.input_parser = SMITH_PARSER
       end
 
       # Change input mode to detect Algebraic Notation | command pattern: `alg`
@@ -152,18 +115,10 @@ module ConsoleGame
 
       # == Utilities ==
 
-      # Algebraic Regexp pattern builder
-      # @param notation_override [Hash]
-      #   @option :k [String] Notation for King
-      #   @option :q [String] Notation for Queen
-      #   @option :r [String] Notation for Rook
-      #   @option :b [String] Notation for Bishop
-      #   @option :n [String] Notation for Knight
-      # @return [String]
-      def regexp_algebraic
-        castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
-        regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join
-        regexp_capturing_gp([castling_gp, regular_gp])
+      # Create regexp patterns for various input modes
+      def notation_patterns_builder
+        @alg_reg = regexp_capturing_gp(regexp_algebraic)
+        @smith_reg = regexp_smith
       end
 
       # Setup input commands

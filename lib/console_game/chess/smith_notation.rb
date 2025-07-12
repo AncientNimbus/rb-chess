@@ -11,14 +11,18 @@ module ConsoleGame
         base: "(?:[a-h][1-8])|(?:[a-h][1-8]){2}", promotion: "(?:[qrbn])"
       }.freeze
 
+      # Smith regexp pattern parser
+      SMITH_PARSER = /[a-z]\d*/
+
       private
 
       # == Smith notation ==
 
       # Input validation when input scheme is set to Smith notation
       # @param output [String] output value from prompt
+      # @return [Hash] a command pattern hash
       def validate_smith(output)
-        case output.scan(input_parser)
+        case output.scan(SMITH_PARSER)
         in [curr_pos] then { type: :preview_move, args: [curr_pos] }
         in [curr_pos, new_pos] then { type: :direct_move, args: [curr_pos, new_pos] }
         in [curr_pos, new_pos, notation] then { type: :direct_promote, args: [curr_pos, new_pos, notation] }
@@ -27,7 +31,7 @@ module ConsoleGame
 
       # == Utilities ==
 
-      # Algebraic Regexp pattern builder
+      # Smith Regexp pattern builder
       # @return [String]
       def regexp_smith
         "#{SMITH_PATTERN.values.join('')}?"
