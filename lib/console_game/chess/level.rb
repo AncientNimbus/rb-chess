@@ -13,7 +13,8 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
+      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :board_size,
+                    :flip_board
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :kings, :castling_states, :threats_map,
                   :usable_pieces
 
@@ -43,7 +44,7 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
-        p "Setting up game level"
+        # p "Setting up game level"
         controller.link_level(self)
         @white_turn = true
         @castling_states = { K: true, Q: true, k: true, q: true }
@@ -53,6 +54,7 @@ module ConsoleGame
         @en_passant = nil
         @player = w_player
         kings_table
+        display_configs
       end
 
       # Main Game Loop
@@ -154,6 +156,20 @@ module ConsoleGame
         return all_pieces unless %i[black white].include?(side)
 
         all_pieces.select { |piece| piece if piece.side == side }
+      end
+
+      # Enable & disable board flipping
+      def flip_setting
+        self.flip_board = !flip_board
+        print_chessboard
+        puts flip_board ? "Board flipping enabled." : "Board flipping disabled." # @todo: to TF
+      end
+
+      # Make board bigger or smaller
+      def adjust_board_size
+        self.board_size = board_size == 1 ? 2 : 1
+        print_chessboard
+        puts board_size == 1 ? "Board size is set to standard." : "Board size is set to large." # @todo: to TF
       end
 
       private
@@ -260,9 +276,16 @@ module ConsoleGame
 
       # == Display logic ==
 
+      # Display configs
+      def display_configs
+        @board_size = 1
+        @flip_board = true
+      end
+
       # Print the chessboard
       def print_chessboard
-        chessboard = build_board(rendering_data, side: player.side, size: 1)
+        board_direction = flip_board ? player.side : :white
+        chessboard = build_board(rendering_data, side: board_direction, size: board_size)
         print_msg(*chessboard, pre: "* ")
       end
 

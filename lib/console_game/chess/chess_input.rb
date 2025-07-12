@@ -7,7 +7,7 @@ module ConsoleGame
     # Input controller for the game Chess
     class ChessInput < Input
       attr_accessor :input_scheme, :input_parser
-      attr_reader :alg_reg, :level
+      attr_reader :alg_reg, :smith_reg, :level
 
       # Algebraic Input Regexp pattern
       #  keys:
@@ -27,7 +27,10 @@ module ConsoleGame
       # Smith Input Regexp pattern
       # The first capture group is used to support move preview mode
       # The second capture group is used to support direct move and place
-      SMITH_PATTERN = "(?:[a-h][1-8])|(?:[a-h][1-8]){2}(?:[qrbn])?"
+      # SMITH_PATTERN = "(?:[a-h][1-8])|(?:[a-h][1-8]){2}(?:[qrbn])?"
+      SMITH_PATTERN = {
+        base: "(?:[a-h][1-8])|(?:[a-h][1-8]){2}", promotion: "(?:[qrbn])"
+      }.freeze
 
       # Regexp parser
       REG_PARSER = { alg: nil, smith: /[a-z]\d*/ }.freeze
@@ -35,7 +38,8 @@ module ConsoleGame
       def initialize(game_manager = nil)
         super(game_manager)
         @alg_reg = regexp_algebraic
-        @input_scheme = SMITH_PATTERN
+        @smith_reg = regexp_smith
+        @input_scheme = smith_reg
         @input_parser = REG_PARSER[:smith]
       end
 
@@ -72,21 +76,12 @@ module ConsoleGame
         make_a_move unless valid_ops
       end
 
-      # == Chess Related Inputs ==
-
-      # Algebraic Regexp pattern builder
-      # @param notation_override [Hash]
-      #   @option :k [String] Notation for King
-      #   @option :q [String] Notation for Queen
-      #   @option :r [String] Notation for Rook
-      #   @option :b [String] Notation for Bishop
-      #   @option :n [String] Notation for Knight
-      # @return [String]
-      def regexp_algebraic
-        castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
-        regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join
-        regexp_capturing_gp([castling_gp, regular_gp])
+      # Prompt user for Pawn promotion option when notation for promotion is not provided at the previous prompt
+      def promote_a_pawn
+        ask("Your pawn is ready for a promotion ", reg: SMITH_PATTERN[:promotion], input_type: :custom)
       end
+
+      private
 
       # == Console Commands ==
 
@@ -121,27 +116,57 @@ module ConsoleGame
         p "Will export session to local directory as a pgn file"
       end
 
-      # Change input mode to detect Smith Notation
+      # Change input mode to detect Smith Notation | command pattern: `smith`
       def smith(_arr = [])
         p "Input settings updated! The game will detect Smith notation."
-        self.input_scheme = SMITH_PATTERN
+        self.input_scheme = smith_reg
         self.input_parser = REG_PARSER[:smith]
       end
 
-      # Change input mode to detect Algebraic Notation
+      # Change input mode to detect Algebraic Notation | command pattern: `alg`
       def alg(_arr = [])
         # p "Input settings updated! The game will detect Algebraic notation."
         # self.input_scheme = alg_reg # @todo: Not ready
       end
 
-      private
+      # Update board settings | command pattern: `board`
+      # @example usage example
+      #  `--board size`
+      #  `--board flip`
+      def board(arr = [])
+        case arr
+        in ["size"] then level.adjust_board_size
+        in ["flip"] then level.flip_setting
+        else puts "Invalid command detected, type --help to view all possible commands." # @todo: Move to TF
+        end
+      end
 
       # == Unities ==
+
+      # Algebraic Regexp pattern builder
+      # @param notation_override [Hash]
+      #   @option :k [String] Notation for King
+      #   @option :q [String] Notation for Queen
+      #   @option :r [String] Notation for Rook
+      #   @option :b [String] Notation for Bishop
+      #   @option :n [String] Notation for Knight
+      # @return [String]
+      def regexp_algebraic
+        castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
+        regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join
+        regexp_capturing_gp([castling_gp, regular_gp])
+      end
+
+      # Algebraic Regexp pattern builder
+      # @return [String]
+      def regexp_smith
+        "#{SMITH_PATTERN.values.join('')}?"
+      end
 
       # Setup input commands
       def setup_commands
         super.merge({ "save" => method(:save), "load" => method(:load), "export" => method(:export),
-                      "smith" => method(:smith), "alg" => method(:alg) })
+                      "smith" => method(:smith), "alg" => method(:alg), "board" => method(:board) })
       end
     end
   end
