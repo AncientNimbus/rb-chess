@@ -5,6 +5,8 @@ require_relative "input"
 module ConsoleGame
   # Input controller for console menu
   class ConsoleMenu < Input
+    private
+
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`, `ttfn`

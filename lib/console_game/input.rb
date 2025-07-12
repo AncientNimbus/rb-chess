@@ -56,6 +56,8 @@ module ConsoleGame
       options[opt]
     end
 
+    private
+
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`
@@ -73,8 +75,6 @@ module ConsoleGame
     def info(_arr = [])
       print_msg(s("cli.ver"))
     end
-
-    private
 
     # == Unities ==
 

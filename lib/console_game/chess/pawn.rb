@@ -23,14 +23,17 @@ module ConsoleGame
       # Move the chess piece to a new valid location
       # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       # @param notation [Symbol]
-      def move(new_alg_pos, notation = :q)
+      def move(new_alg_pos, notation = nil)
         old_pos = curr_pos
         super(new_alg_pos)
 
         en_passant_reg if (old_pos - curr_pos).abs == 16
         en_passant_capture unless level.en_passant.nil?
 
-        promote_to(notation) if at_end? # @todo Missing input selection
+        return unless at_end?
+
+        notation = notation.nil? ? level.promote_opts : notation
+        promote_to(notation.to_sym)
       end
 
       private
@@ -66,7 +69,7 @@ module ConsoleGame
         class_name = PRESET[notation][:class]
         new_unit = Chess.const_get(class_name).new(curr_pos, side, level: level)
         level.turn_data[curr_pos] = new_unit
-        puts "Promoting Pawn to #{name}." # @todo Proper feedback
+        puts "Promoting Pawn to #{new_unit.name}." # @todo Proper feedback
       end
 
       # Check if the pawn is at the other end of the board

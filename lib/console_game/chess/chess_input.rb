@@ -59,7 +59,7 @@ module ConsoleGame
                     in [curr_alg_pos, new_alg_pos]
                       level.direct_move(curr_alg_pos, new_alg_pos)
                     in [curr_alg_pos, new_alg_pos, notation]
-                      level.direct_promote(curr_alg_pos, new_alg_pos, notation.to_sym)
+                      level.direct_promote(curr_alg_pos, new_alg_pos, notation)
                     end
         turn_action unless valid_ops
       end

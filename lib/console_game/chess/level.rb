@@ -123,6 +123,12 @@ module ConsoleGame
         true
       end
 
+      # Pawn specific: Present a list of option when player can promote a pawn
+      def promote_opts
+        ops_successful
+        controller.promote_a_pawn
+      end
+
       # Reset En Passant status when it is not used at the following turn
       def reset_en_passant
         return if en_passant.nil?
