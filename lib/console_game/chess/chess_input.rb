@@ -20,8 +20,9 @@ module ConsoleGame
       #  :castling - King specific pattern usable when Castling move is possible.
       # @return [Hash<Symbol, String>] patterns required to construct algebraic notation input.
       ALG_PATTERN = {
-        pieces: "[KQRBN]?", disambiguation: "[a-h]?[1-8]?", capture: "x?", destination: "[a-h][1-8]",
-        promotion: "(?:=[QRBN])?", check: "[+#]?", castling: "O-O(?:-O)?"
+        pieces: "(?<piece>[KQRBN])?", disambiguation: "(?<file>[a-h])?(?<rank>[1-8])?",
+        capture: "(?<capture>x)?", destination: "(?<target>[a-h][1-8])", promotion: "(?:=(?<promotion>[QRBN]))?",
+        check: "(?<check>[+#])?", castling: "(?<castle>O-O(?:-O)?)"
       }.freeze
 
       # Smith Input Regexp pattern
@@ -53,26 +54,19 @@ module ConsoleGame
       # Get user input and process them accordingly
       def turn_action
         output = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
-        valid_ops = case output.scan(input_parser)
-                    in [curr_alg_pos]
-                      level.preview_move(curr_alg_pos)
-                    in [curr_alg_pos, new_alg_pos]
-                      level.direct_move(curr_alg_pos, new_alg_pos)
-                    in [curr_alg_pos, new_alg_pos, notation]
-                      level.direct_promote(curr_alg_pos, new_alg_pos, notation)
-                    end
-        turn_action unless valid_ops
+        case input_scheme
+        when smith_reg then validate_smith(output)
+        when alg_reg then validate_algebraic(output)
+        end
       end
 
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
       def make_a_move
         output = ask("Make a move: ", reg: input_scheme, input_type: :custom)
-        valid_ops = case output.scan(input_parser)
-                    in [new_alg_pos]
-                      level.move_piece(new_alg_pos)
-                    else false
-                    end
-        make_a_move unless valid_ops
+        ops = case output.scan(input_parser)
+              in [new_pos] then { type: :move_piece, args: [new_pos] }
+              end
+        make_a_move unless level.method(ops[:type]).call(*ops[:args])
       end
 
       # Prompt user for Pawn promotion option when notation for promotion is not provided at the previous prompt
@@ -81,6 +75,39 @@ module ConsoleGame
       end
 
       private
+
+      # == Smith notation ==
+
+      # Input validation when input scheme is set to Smith notation
+      # @param output [String] output value from prompt
+      def validate_smith(output)
+        ops = case output.scan(input_parser)
+              in [curr_pos] then { type: :preview_move, args: [curr_pos] }
+              in [curr_pos, new_pos] then { type: :direct_move, args: [curr_pos, new_pos] }
+              in [curr_pos, new_pos, notation] then { type: :direct_promote, args: [curr_pos, new_pos, notation] }
+              end
+        turn_action unless level.method(ops[:type]).call(*ops[:args])
+      end
+
+      # == Algebraic notation ==
+
+      # Input validation when input scheme is set to Algebraic notation
+      # @param output [String] output value from prompt
+      def validate_algebraic(output)
+        p capture_gps = output.match(alg_reg)&.named_captures(symbolize_names: true)&.compact
+        valid_ops = case capture_gps
+                    in { castle:, **nil } then p "Should castle: #{castle}" # char size 3 or 5
+                    in { file:, capture:, target:, promotion:, **nil } then p "#{file} Pawn capture #{target} and promote to #{promotion}"
+                    in { file:, capture:, target:, **nil } then p "#{file} Pawn captures #{target}"
+                    in { target:, promotion:, **nil } then p "Promoting #{target} Pawn to #{promotion}"
+                    in { piece:, target:, capture:, **nil } then p "#{piece} captures #{target}"
+                    in { piece:, file:, target:, **nil } then p "#{piece} from #{file} to #{target}"
+                    in { piece:, target:, **nil } then p "Moving #{piece} to #{target}"
+                    in { target:, **nil } then p "Moving Pawn to #{target}"
+                    else p "Invalid notation, please try again."
+                    end
+        turn_action unless valid_ops
+      end
 
       # == Console Commands ==
 
