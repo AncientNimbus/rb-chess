@@ -117,7 +117,7 @@ module ConsoleGame
         turn_data.each_with_index do |row, i|
           rank_num = i + 1
           rank_row = format_row(rank_num, row, colors: colors, tile_w: tile_w, show_r: show_r, flipped: flip)
-          buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w)] * (size - 1)
+          buffer_row = [format_row(rank_num, [" "], colors: colors, tile_w: tile_w, flipped: flip)] * (size - 1)
           board << buffer_row.concat(rank_row, buffer_row)
         end
         flip ? board : board.reverse
