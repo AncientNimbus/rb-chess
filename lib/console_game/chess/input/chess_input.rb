@@ -59,55 +59,55 @@ module ConsoleGame
       # == Console Commands ==
 
       # Exit sequences | command patterns: `exit`
-      def quit(_arg = [])
+      def quit(_args = [])
         print_msg(s("cli.lobby.exit"), pre: "*")
         exit
       end
 
       # Display help string | command pattern: `help`
-      def help(_arr = [])
+      def help(_args = [])
         print_msg("Type --exit to exit the program")
       end
 
       # Display system info | command pattern: `info`
-      def info(_arr = [])
+      def info(_args = [])
         p "Will print game info"
       end
 
       # Save session to player data | command pattern: `save`
-      def save(_arr = [])
+      def save(_args = [])
         p "Will save session to player session, then store player data to user profile"
       end
 
       # Load session from player data | command pattern: `load`
-      def load(_arr = [])
+      def load(_args = [])
         p "Will allow player to switch between other sessions stored within their own user profile"
       end
 
       # Export current game session as pgn file | command pattern: `export`
-      def export(_arr = [])
+      def export(_args = [])
         p "Will export session to local directory as a pgn file"
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
-      def smith(_arr = [])
+      def smith(_args = [])
         p "Input settings updated! The game will detect Smith notation."
         self.input_scheme = smith_reg
         self.input_parser = SMITH_PARSER
       end
 
       # Change input mode to detect Algebraic Notation | command pattern: `alg`
-      def alg(_arr = [])
-        # p "Input settings updated! The game will detect Algebraic notation."
-        # self.input_scheme = alg_reg # @todo: Not ready
+      def alg(_args = [])
+        p "Input settings updated! The game will detect Algebraic notation."
+        self.input_scheme = alg_reg # @todo: Not ready
       end
 
       # Update board settings | command pattern: `board`
       # @example usage example
       #  `--board size`
       #  `--board flip`
-      def board(arr = [])
-        case arr
+      def board(args = [])
+        case args
         in ["size"] then level.adjust_board_size
         in ["flip"] then level.flip_setting
         else puts "Invalid command detected, type --help to view all possible commands." # @todo: Move to TF

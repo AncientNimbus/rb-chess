@@ -136,6 +136,20 @@ module ConsoleGame
         true
       end
 
+      # Fetch and move
+      # @param side [Symbol]
+      # @param type [Symbol]
+      # @param target [String]
+      def fetch_and_move(side, type, target, file_rank = nil)
+        type = Chess.const_get(PRESET.dig(type, :class))
+        piece = reverse_lookup(side, type, alg_map[target.to_sym], file_rank)
+
+        return false if piece.nil?
+
+        self.active_piece = piece
+        move_piece(target)
+      end
+
       # Pawn specific: Present a list of option when player can promote a pawn
       def promote_opts
         refresh
@@ -175,6 +189,21 @@ module ConsoleGame
         return all_pieces unless %i[black white].include?(side)
 
         all_pieces.select { |piece| piece if piece.side == side }
+      end
+
+      # Lookup a piece based on its possible move position
+      # @param side [Symbol]
+      # @param type [King, Queen, Bishop, Knight, Rook, Pawn]
+      # @param new_alg_pos [Integer]
+      # @param file_rank [String]
+      def reverse_lookup(side, type, new_alg_pos, file_rank = nil)
+        filtered_pieces = turn_data.select { |tile| tile if tile.is_a?(type) && tile.side == side }
+        result = filtered_pieces.select do |piece|
+          piece.possible_moves.include?(new_alg_pos) && (file_rank.nil? || piece.info.include?(file_rank))
+        end
+        return nil if result.size > 1
+
+        result[0]
       end
 
       # Enable & disable board flipping

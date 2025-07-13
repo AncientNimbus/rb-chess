@@ -51,7 +51,7 @@ module ConsoleGame
       # @param reg [String] regexp pattern
       # @return [Hash]
       def alg_output_capture_gps(input, reg)
-        p input.match(reg)&.named_captures(symbolize_names: true)&.compact
+        input.match(reg)&.named_captures(symbolize_names: true)&.compact
       end
 
       # Helper: parse castling input
@@ -69,28 +69,21 @@ module ConsoleGame
       # @param captures [hash]
       # @return [Hash] a command pattern hash
       def parse_promote(side, captures)
-        file_rank = captures.fetch(:file_rank, nil)
-        target, promote = captures.slice(:file_rank, :target, :promote).values
+        target, promote = captures.slice(:target, :promote).values
         rank = side == :white ? "7" : "2"
-        curr_pos = file_rank.nil? ? "#{target[0]}#{rank}" : "#{file_rank}#{rank}"
-        { type: :direct_promote, args: [curr_pos, target, notation_to_sym(promote)] }
+        file = captures[:file_rank] || captures[:target][0]
+
+        { type: :direct_promote, args: ["#{file}#{rank}", target, notation_to_sym(promote)] }
       end
 
       # Helper: parse pawn movement
       # @param side [Symbol] player side :white or :black
-      # @param target [String]
-      # @param kwargs [Hash]
-      #  @option kwargs [String] :file_rank
-      #  @option kwargs [String] :piece
+      # @param captures [hash]
       # @return [Hash] a command pattern hash
-      def parse_move(side, target, **kwargs)
-        cmd = { type: :fetch_and_move, args: [side, :p, target] }
-        return cmd if kwargs.empty?
+      def parse_move(side, captures)
+        piece_type = notation_to_sym(captures[:piece] || :p)
 
-        piece_type = notation_to_sym(kwargs.fetch(:piece, :p))
-        file_rank = kwargs.fetch(:file_rank, nil)
-        cmd[:args] = [side, piece_type, target, file_rank]
-        cmd
+        { type: :fetch_and_move, args: [side, piece_type, captures[:target], captures[:file_rank]].compact }
       end
 
       # == Utilities ==
@@ -113,6 +106,8 @@ module ConsoleGame
       # @param notation [String]
       # @return [Symbol]
       def notation_to_sym(notation)
+        return notation if notation.is_a?(Symbol)
+
         notation.downcase.to_sym
       end
     end
