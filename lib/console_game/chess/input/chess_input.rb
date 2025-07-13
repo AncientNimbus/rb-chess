@@ -99,7 +99,7 @@ module ConsoleGame
       # Change input mode to detect Algebraic Notation | command pattern: `alg`
       def alg(_args = [])
         p "Input settings updated! The game will detect Algebraic notation."
-        self.input_scheme = alg_reg # @todo: Not ready
+        self.input_scheme = alg_reg
       end
 
       # Update board settings | command pattern: `board`

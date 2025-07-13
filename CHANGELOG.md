@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2025-07-13
+
+### 🚀 Features
+
+- Add the ability to display possible moves
+- Add chess game loop POC
+- Add algebraic pattern to ChessInput class
+- Add #regexp_algebraic to build input pattern
+- Add the ability to play with Smith notation
+- Add the ability to flip the board
+- Add the ability to promote pawn via input
+- Add new command pattern board
+- Add the ability to promote pawn via Smith
+- Add parsing methods for algebraic notation
+- Add the ability to use algebraic input
+
+### 🐛 Bug Fixes
+
+- Address an issue where icons are not loading
+- Address a rendering issue when board is large
+
+### 🚜 Refactor
+
+- #prompt_user to have finer control
+- Organise level.rb
+- Optimise #turn_action method call
+- Move Smith notation logics to a module
+- Move algebraic logic to a module
+- Optimise core game loop
+- Rewrite logical flow for algebraic
+
+### 📚 Documentation
+
+- Update CHANGELOG
+
+### 🎨 Styling
+
+- Improve variable names for clarity
+
+### ⚙️ Miscellaneous Tasks
+
+- Organise project file structure
+
 ## [0.3.0] - 2025-07-08
 
 ### 🚀 Features
