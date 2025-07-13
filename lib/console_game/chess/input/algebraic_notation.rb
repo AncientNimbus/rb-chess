@@ -34,18 +34,15 @@ module ConsoleGame
       # @param reg [String] regexp pattern
       # @return [Hash] a command pattern hash
       def validate_algebraic(input, side, reg)
-        case alg_output_capture_gps(input, reg)
-        in { castle:, **nil } then parse_castling(side, castle)
-        in { file_rank:, capture:, target:, promote:, **nil } then parse_promote(side, target, promote, file_rank)
-        in { piece:, file_rank:, capture:, target:, **nil } then parse_move(side, target, piece: piece,
-                                                                                          file_rank: file_rank)
-        in { file_rank:, capture:, target:, **nil } then parse_move(side, target, file_rank: file_rank)
-        in { target:, promote:, **nil } then parse_promote(side, target, promote)
-        in { piece:, target:, capture:, **nil } then parse_move(side, target, piece: piece)
-        # in { piece:, file_rank:, target:, **nil } then { type: :disambiguated_move, args: [piece, file_rank, target] }
-        in { piece:, target:, **nil } then parse_move(side, target, piece: piece)
-        in { target:, **nil } then parse_move(side, target)
-        else { type: :invalid_notation, args: [input] }
+        captures = alg_output_capture_gps(input, reg)
+        return { type: :invalid_notation, args: [input] } unless captures
+
+        if captures[:castle]
+          parse_castling(side, captures[:castle])
+        elsif captures[:promote]
+          parse_promote(side, captures)
+        else
+          parse_move(side, captures) # @todo
         end
       end
 
@@ -69,11 +66,11 @@ module ConsoleGame
 
       # Helper: parse pawn promote & capture
       # @param side [Symbol] player side :white or :black
-      # @param target [String]
-      # @param promote [String]
-      # @param file_rank [String]
+      # @param captures [hash]
       # @return [Hash] a command pattern hash
-      def parse_promote(side, target, promote, file_rank = nil)
+      def parse_promote(side, captures)
+        file_rank = captures.fetch(:file_rank, nil)
+        target, promote = captures.slice(:file_rank, :target, :promote).values
         rank = side == :white ? "7" : "2"
         curr_pos = file_rank.nil? ? "#{target[0]}#{rank}" : "#{file_rank}#{rank}"
         { type: :direct_promote, args: [curr_pos, target, notation_to_sym(promote)] }
