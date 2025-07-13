@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../input"
+require_relative "../../input"
 require_relative "smith_notation"
 require_relative "algebraic_notation"
 

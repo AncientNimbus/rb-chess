@@ -3,11 +3,17 @@
 require_relative "../base_game"
 require_relative "logic"
 require_relative "display"
-require_relative "chess_input"
+require_relative "input/chess_input"
 require_relative "chess_player"
 require_relative "chess_computer"
-require_relative "chess_piece"
 require_relative "level"
+require_relative "pieces/chess_piece"
+require_relative "pieces/king"
+require_relative "pieces/queen"
+require_relative "pieces/bishop"
+require_relative "pieces/knight"
+require_relative "pieces/rook"
+require_relative "pieces/pawn"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.

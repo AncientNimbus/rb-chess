@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "logic"
-require_relative "display"
+require_relative "../logic"
+require_relative "../display"
 
 module ConsoleGame
   module Chess
