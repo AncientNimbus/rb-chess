@@ -26,7 +26,7 @@ plugins:
 
 Metrics/MethodLength:
   CountAsOne: ["array", "hash", "heredoc", "method_call"]
-  ExcludedMethods: ["case", "in"]
+  ExcludedMethods: ["validate_algebraic"]
 
 Metrics/ParameterLists:
   CountKeywordArgs: false
@@ -38,3 +38,9 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - "../spec/**/*"
+
+Metrics/CyclomaticComplexity:
+  ExcludedMethods: ["validate_algebraic"]
+
+Metrics/PerceivedComplexity:
+  ExcludedMethods: ["validate_algebraic"]

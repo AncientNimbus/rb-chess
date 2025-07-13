@@ -60,13 +60,12 @@ module ConsoleGame
       # Main Game Loop
       def play_chess
         self.player = white_turn ? w_player : b_player
+        # Pre turn
         puts "It is #{player.side}'s turn."
-        ops_successful
-        # Prompt player to enter notation value
-        controller.turn_action
-        # Prompt player to enter move value when preview mode is used
-        controller.make_a_move unless active_piece.nil?
-        # Turn end handling
+        refresh
+        # Play turn
+        player.is_a?(ChessComputer) ? ai_actions : human_actions(player)
+        # Post turn
         # Pass control to the other side
         self.white_turn = !white_turn
       end
@@ -78,6 +77,20 @@ module ConsoleGame
 
       # == Game Logic ==
 
+      # Turn events when player is a human
+      # @param player [ChessPlayer]
+      def human_actions(player)
+        # Prompt player to enter notation value
+        controller.turn_action(player)
+        # Prompt player to enter move value when preview mode is used
+        controller.make_a_move unless active_piece.nil?
+      end
+
+      # Turn events when player is a computer
+      def ai_actions
+        p "Computer's move"
+      end
+
       # Preview a move, display the moves indictor
       # @param curr_alg_pos [String] algebraic position
       # @return [Boolean] true if the operation is a success
@@ -85,7 +98,7 @@ module ConsoleGame
         return false unless assign_piece(curr_alg_pos)
 
         puts "Previewing #{active_piece.name} at #{active_piece.info}." # @todo Proper feedback
-        ops_successful
+        refresh
       end
 
       # Chain with #preview_move, enables player make a move after previewing possible moves
@@ -125,7 +138,7 @@ module ConsoleGame
 
       # Pawn specific: Present a list of option when player can promote a pawn
       def promote_opts
-        ops_successful
+        refresh
         controller.promote_a_pawn
       end
 
@@ -184,7 +197,7 @@ module ConsoleGame
 
       # Actions to perform when player input is valid
       # @return [Boolean] true if the operation is a success
-      def ops_successful
+      def refresh
         update_board_state
         print_chessboard
         true

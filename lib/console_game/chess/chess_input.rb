@@ -12,7 +12,7 @@ module ConsoleGame
       include AlgebraicNotation
 
       attr_accessor :input_scheme, :input_parser
-      attr_reader :alg_reg, :smith_reg, :level
+      attr_reader :alg_reg, :smith_reg, :level, :active_side
 
       def initialize(game_manager = nil)
         super(game_manager)
@@ -30,13 +30,14 @@ module ConsoleGame
       # == Core methods ==
 
       # Get user input and process them accordingly
-      def turn_action
+      # @param player [ChessPlayer]
+      def turn_action(player)
         output = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
         ops = case input_scheme
               when smith_reg then validate_smith(output)
-              when alg_reg then validate_algebraic(output)
+              when alg_reg then validate_algebraic(output, player.side, input_scheme)
               end
-        turn_action unless level.method(ops[:type]).call(*ops[:args])
+        turn_action(player) unless level.method(ops[:type]).call(*ops[:args])
       end
 
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
