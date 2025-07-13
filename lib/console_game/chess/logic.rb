@@ -118,16 +118,6 @@ module ConsoleGame
         nested_arr.flatten
       end
 
-      # Convert a 1D array to 2D array based on bound's row value
-      # @param flat_arr [Array]
-      # @param bound [Array<Integer>] `[row, col]`
-      # @return [Array] nested array
-      def to_matrix(flat_arr, bound: PRESET[:bound])
-        nested_arr = []
-        flat_arr.each_slice(bound[0]) { |row| nested_arr.push(row) }
-        nested_arr
-      end
-
       # Flip-flop, return :black if it is :white
       # @param side [Symbol] expects argument to be :black or :white
       # @return [Symbol] :black or :white

@@ -76,21 +76,29 @@ module ConsoleGame
 
       # Save session to player data | command pattern: `save`
       def save(_args = [])
+        return if level.nil?
+
         p "Will save session to player session, then store player data to user profile"
       end
 
       # Load session from player data | command pattern: `load`
       def load(_args = [])
+        return if level.nil?
+
         p "Will allow player to switch between other sessions stored within their own user profile"
       end
 
       # Export current game session as pgn file | command pattern: `export`
       def export(_args = [])
+        return if level.nil?
+
         p "Will export session to local directory as a pgn file"
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
       def smith(_args = [])
+        return if level.nil?
+
         p "Input settings updated! The game will detect Smith notation."
         self.input_scheme = smith_reg
         self.input_parser = SMITH_PARSER
@@ -98,6 +106,8 @@ module ConsoleGame
 
       # Change input mode to detect Algebraic Notation | command pattern: `alg`
       def alg(_args = [])
+        return if level.nil?
+
         p "Input settings updated! The game will detect Algebraic notation."
         self.input_scheme = alg_reg
       end
@@ -107,9 +117,11 @@ module ConsoleGame
       #  `--board size`
       #  `--board flip`
       def board(args = [])
+        return if level.nil?
+
         case args
-        in ["size"] then level.adjust_board_size
-        in ["flip"] then level.flip_setting
+        in ["size"] then level.board.adjust_board_size
+        in ["flip"] then level.board.flip_setting
         else puts "Invalid command detected, type --help to view all possible commands." # @todo: Move to TF
         end
       end

@@ -2,7 +2,7 @@
 
 require_relative "game"
 require_relative "logic"
-require_relative "display"
+require_relative "board"
 
 module ConsoleGame
   module Chess
@@ -11,12 +11,10 @@ module ConsoleGame
     class Level
       include Console
       include Logic
-      include Display
 
-      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :board_size,
-                    :flip_board
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :kings, :castling_states, :threats_map,
-                  :usable_pieces
+      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
+      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :board, :kings, :castling_states,
+                  :threats_map, :usable_pieces
 
       # @param mode [Integer]
       # @param input [ChessInput]
@@ -31,6 +29,7 @@ module ConsoleGame
         @w_player, @b_player = sides.values
         @session = sessions
         @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
+        @board = Board.new(self)
       end
 
       # == Flow ==
@@ -54,7 +53,6 @@ module ConsoleGame
         @en_passant = nil
         @player = w_player
         kings_table
-        display_configs
       end
 
       # Main Game Loop
@@ -206,20 +204,6 @@ module ConsoleGame
         result[0]
       end
 
-      # Enable & disable board flipping
-      def flip_setting
-        self.flip_board = !flip_board
-        print_chessboard
-        puts flip_board ? "Board flipping enabled." : "Board flipping disabled." # @todo: to TF
-      end
-
-      # Make board bigger or smaller
-      def adjust_board_size
-        self.board_size = board_size == 1 ? 2 : 1
-        print_chessboard
-        puts board_size == 1 ? "Board size is set to standard." : "Board size is set to large." # @todo: to TF
-      end
-
       private
 
       # == Board Logic ==
@@ -228,7 +212,7 @@ module ConsoleGame
       # @return [Boolean] true if the operation is a success
       def refresh
         update_board_state
-        print_chessboard
+        board.print_chessboard
         true
       end
 
@@ -320,38 +304,6 @@ module ConsoleGame
       # @param grouped_pieces [Hash<ChessPiece>]
       def any_checkmate?
         kings.values.any?(&:checkmate?)
-      end
-
-      # == Display logic ==
-
-      # Display configs
-      def display_configs
-        @board_size = 1
-        @flip_board = true
-      end
-
-      # Print the chessboard
-      def print_chessboard
-        board_direction = flip_board ? player.side : :white
-        chessboard = build_board(rendering_data, side: board_direction, size: board_size)
-        print_msg(*chessboard, pre: "* ")
-      end
-
-      # Pre-process turn data before sending it to display module
-      # @return [Array] 2D array respect to bound limit
-      def rendering_data
-        display_data = highlight_moves(turn_data.dup)
-        to_matrix(display_data)
-      end
-
-      # Temporary display move indicator highlight on the board
-      # @param display_data [Array<ChessPiece, String>] 1D copied of turn_data
-      def highlight_moves(display_data)
-        return display_data if active_piece.nil?
-
-        highlight ||= THEME[:classic].slice(:icon, :highlight)
-        active_piece.possible_moves.each { |move| display_data[move] = highlight if display_data[move].is_a?(String) }
-        display_data
       end
 
       # User data handling

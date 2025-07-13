@@ -40,6 +40,19 @@ module ConsoleGame
         navy: { bg: %w[#cdaa7d #8b5742], black: "#191970", white: "#f0ffff", icon: "◇", highlight: "#00ff7f" }
       }.freeze
 
+      # Override: s
+      # Retrieves a localized string and perform String interpolation and paint text if needed.
+      # @param key_path [String] textfile keypath
+      # @param subs [Hash] `{ demo: ["some text", :red] }`
+      # @param paint_str [Array<Symbol, String, nil>]
+      # @param extname [String]
+      # @return [String] the translated and interpolated string
+      def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
+        super("app.chess.#{key_path}", subs, paint_str: paint_str, extname: extname)
+      end
+
+      private
+
       # Build the chessboard
       # @param turn_data [Array<Array<ChessPiece, String>>] expects an 8 by 8 array, each represents a whole rank
       # @param side [Symbol] :white or :black, this will flip the board
@@ -61,19 +74,6 @@ module ConsoleGame
         # Return flatten
         board.flatten
       end
-
-      # Override: s
-      # Retrieves a localized string and perform String interpolation and paint text if needed.
-      # @param key_path [String] textfile keypath
-      # @param subs [Hash] `{ demo: ["some text", :red] }`
-      # @param paint_str [Array<Symbol, String, nil>]
-      # @param extname [String]
-      # @return [String] the translated and interpolated string
-      def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
-        super("app.chess.#{key_path}", subs, paint_str: paint_str, extname: extname)
-      end
-
-      private
 
       # Rank formatter
       # @param rank_num [Integer] rank number
@@ -178,6 +178,16 @@ module ConsoleGame
       def to_quadratic(size)
         q = size + 1
         q**2 - q + 1
+      end
+
+      # Convert a 1D array to 2D array based on bound's row value
+      # @param flat_arr [Array]
+      # @param bound [Array<Integer>] `[row, col]`
+      # @return [Array] nested array
+      def to_matrix(flat_arr, bound: [BOARD[:size], BOARD[:size]])
+        nested_arr = []
+        flat_arr.each_slice(bound[0]) { |row| nested_arr.push(row) }
+        nested_arr
       end
     end
   end
