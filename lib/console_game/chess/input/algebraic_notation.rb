@@ -10,16 +10,16 @@ module ConsoleGame
       #  :disambiguation - Useful when two (or more) identical pieces can move to the same square.
       #  :capture - Indicate the move is a capture.
       #  :destination - Indicate destination square.
-      #  :promotion - Pawn specific pattern, usable when Pawn reaches the other end of the board.
+      #  :promote - Pawn specific pattern, usable when Pawn reaches the other end of the board.
       #  :check - Optional check and checkmate indicator.
       #  :castling - King specific pattern usable when Castling move is possible.
       # @return [Hash<Symbol, String>] patterns required to construct algebraic notation input.
       ALG_PATTERN = {
         pieces: "(?<piece>[KQRBN])?",
-        disambiguation: "(?<file>[a-h])?(?<rank>[1-8])?",
+        disambiguation: "(?<file_rank>[a-h][1-8]|[a-h])?",
         capture: "(?<capture>x)?",
         destination: "(?<target>[a-h][1-8])",
-        promotion: "(?:=(?<promotion>[QRBN]))?",
+        promote: "(?:=(?<promote>[QRBN]))?",
         check: "(?<check>[+#])?",
         castling: "(?<castle>O-O(?:-O)?)"
       }.freeze
@@ -35,14 +35,16 @@ module ConsoleGame
       # @return [Hash] a command pattern hash
       def validate_algebraic(input, side, reg)
         case alg_output_capture_gps(input, reg)
-        in { castle:, **nil } then parse_castling(input, side)
-        in { file:, capture:, target:, promotion:, **nil } then { type: :move_promote, args: [file, target, promotion] }
-        in { file:, capture:, target:, **nil } then { type: :pawn_capture, args: [file, target] }
-        in { target:, promotion:, **nil } then { type: :pawn_promote, args: [target, promotion] }
-        in { piece:, target:, capture:, **nil } then { type: :piece_capture, args: [piece, target] }
-        in { piece:, file:, target:, **nil } then { type: :disambiguated_move, args: [piece, file, target] }
-        in { piece:, target:, **nil } then { type: :piece_move, args: [piece, target] }
-        in { target:, **nil } then { type: :pawn_move, args: [target] }
+        in { castle:, **nil } then parse_castling(side, castle)
+        in { file_rank:, capture:, target:, promote:, **nil } then parse_promote(side, target, promote, file_rank)
+        in { piece:, file_rank:, capture:, target:, **nil } then parse_move(side, target, piece: piece,
+                                                                                          file_rank: file_rank)
+        in { file_rank:, capture:, target:, **nil } then parse_move(side, target, file_rank: file_rank)
+        in { target:, promote:, **nil } then parse_promote(side, target, promote)
+        in { piece:, target:, capture:, **nil } then parse_move(side, target, piece: piece)
+        # in { piece:, file_rank:, target:, **nil } then { type: :disambiguated_move, args: [piece, file_rank, target] }
+        in { piece:, target:, **nil } then parse_move(side, target, piece: piece)
+        in { target:, **nil } then parse_move(side, target)
         else { type: :invalid_notation, args: [input] }
         end
       end
@@ -52,19 +54,46 @@ module ConsoleGame
       # @param reg [String] regexp pattern
       # @return [Hash]
       def alg_output_capture_gps(input, reg)
-        input.match(reg)&.named_captures(symbolize_names: true)&.compact
+        p input.match(reg)&.named_captures(symbolize_names: true)&.compact
       end
 
       # Helper: parse castling input
-      # @param input [String] input value from prompt
       # @param side [Symbol] player side :white or :black
+      # @param castle [String]
       # @return [Hash] a command pattern hash
-      def parse_castling(input, side)
+      def parse_castling(side, castle)
         rank = side == :white ? "1" : "8"
-        dir = input == "O-O" ? "g" : "c"
-        curr_pos = "e#{rank}"
-        new_pos = "#{dir}#{rank}"
-        { type: :direct_move, args: [curr_pos, new_pos] }
+        new_file = castle == "O-O" ? "g" : "c"
+        { type: :direct_move, args: ["e#{rank}", "#{new_file}#{rank}"] }
+      end
+
+      # Helper: parse pawn promote & capture
+      # @param side [Symbol] player side :white or :black
+      # @param target [String]
+      # @param promote [String]
+      # @param file_rank [String]
+      # @return [Hash] a command pattern hash
+      def parse_promote(side, target, promote, file_rank = nil)
+        rank = side == :white ? "7" : "2"
+        curr_pos = file_rank.nil? ? "#{target[0]}#{rank}" : "#{file_rank}#{rank}"
+        { type: :direct_promote, args: [curr_pos, target, notation_to_sym(promote)] }
+      end
+
+      # Helper: parse pawn movement
+      # @param side [Symbol] player side :white or :black
+      # @param target [String]
+      # @param kwargs [Hash]
+      #  @option kwargs [String] :file_rank
+      #  @option kwargs [String] :piece
+      # @return [Hash] a command pattern hash
+      def parse_move(side, target, **kwargs)
+        cmd = { type: :fetch_and_move, args: [side, :p, target] }
+        return cmd if kwargs.empty?
+
+        piece_type = notation_to_sym(kwargs.fetch(:piece, :p))
+        file_rank = kwargs.fetch(:file_rank, nil)
+        cmd[:args] = [side, piece_type, target, file_rank]
+        cmd
       end
 
       # == Utilities ==
@@ -81,6 +110,13 @@ module ConsoleGame
         castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
         regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join
         [castling_gp, regular_gp]
+      end
+
+      # Helper: Convert algebraic notation to internal symbol
+      # @param notation [String]
+      # @return [Symbol]
+      def notation_to_sym(notation)
+        notation.downcase.to_sym
       end
     end
   end
