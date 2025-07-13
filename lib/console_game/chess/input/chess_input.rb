@@ -32,18 +32,18 @@ module ConsoleGame
       # Get user input and process them accordingly
       # @param player [ChessPlayer]
       def turn_action(player)
-        output = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
+        input = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
         ops = case input_scheme
-              when smith_reg then validate_smith(output)
-              when alg_reg then validate_algebraic(output, player.side, input_scheme)
+              when smith_reg then validate_smith(input)
+              when alg_reg then validate_algebraic(input, player.side, input_scheme)
               end
         turn_action(player) unless level.method(ops[:type]).call(*ops[:args])
       end
 
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
       def make_a_move
-        output = ask("Make a move: ", reg: input_scheme, input_type: :custom)
-        ops = case output.scan(input_parser)
+        input = ask("Make a move: ", reg: input_scheme, input_type: :custom)
+        ops = case input.scan(input_parser)
               in [new_pos] then { type: :move_piece, args: [new_pos] }
               end
         make_a_move unless level.method(ops[:type]).call(*ops[:args])

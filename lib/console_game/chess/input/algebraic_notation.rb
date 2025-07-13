@@ -29,13 +29,13 @@ module ConsoleGame
       # == Algebraic notation ==
 
       # Input validation when input scheme is set to Algebraic notation
-      # @param output [String] output value from prompt
+      # @param input [String] input value from prompt
       # @param side [Symbol] player side :white or :black
       # @param reg [String] regexp pattern
       # @return [Hash] a command pattern hash
-      def validate_algebraic(output, side, reg)
-        case alg_output_capture_gps(output, reg)
-        in { castle:, **nil } then parse_castling(output, side)
+      def validate_algebraic(input, side, reg)
+        case alg_output_capture_gps(input, reg)
+        in { castle:, **nil } then parse_castling(input, side)
         in { file:, capture:, target:, promotion:, **nil } then { type: :move_promote, args: [file, target, promotion] }
         in { file:, capture:, target:, **nil } then { type: :pawn_capture, args: [file, target] }
         in { target:, promotion:, **nil } then { type: :pawn_promote, args: [target, promotion] }
@@ -43,25 +43,25 @@ module ConsoleGame
         in { piece:, file:, target:, **nil } then { type: :disambiguated_move, args: [piece, file, target] }
         in { piece:, target:, **nil } then { type: :piece_move, args: [piece, target] }
         in { target:, **nil } then { type: :pawn_move, args: [target] }
-        else { type: :invalid_notation, args: [output] }
+        else { type: :invalid_notation, args: [input] }
         end
       end
 
       # Helper: Process regexp and returns a named capture groups
-      # @param output [String] output value from prompt
+      # @param input [String] input value from prompt
       # @param reg [String] regexp pattern
       # @return [Hash]
-      def alg_output_capture_gps(output, reg)
-        output.match(reg)&.named_captures(symbolize_names: true)&.compact
+      def alg_output_capture_gps(input, reg)
+        input.match(reg)&.named_captures(symbolize_names: true)&.compact
       end
 
       # Helper: parse castling input
-      # @param output [String] output value from prompt
+      # @param input [String] input value from prompt
       # @param side [Symbol] player side :white or :black
       # @return [Hash] a command pattern hash
-      def parse_castling(output, side)
+      def parse_castling(input, side)
         rank = side == :white ? "1" : "8"
-        dir = output == "O-O" ? "g" : "c"
+        dir = input == "O-O" ? "g" : "c"
         curr_pos = "e#{rank}"
         new_pos = "#{dir}#{rank}"
         { type: :direct_move, args: [curr_pos, new_pos] }

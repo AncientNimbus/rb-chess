@@ -19,10 +19,10 @@ module ConsoleGame
       # == Smith notation ==
 
       # Input validation when input scheme is set to Smith notation
-      # @param output [String] output value from prompt
+      # @param input [String] input value from prompt
       # @return [Hash] a command pattern hash
-      def validate_smith(output)
-        case output.scan(SMITH_PARSER)
+      def validate_smith(input)
+        case input.scan(SMITH_PARSER)
         in [curr_pos] then { type: :preview_move, args: [curr_pos] }
         in [curr_pos, new_pos] then { type: :direct_move, args: [curr_pos, new_pos] }
         in [curr_pos, new_pos, notation] then { type: :direct_promote, args: [curr_pos, new_pos, notation] }
