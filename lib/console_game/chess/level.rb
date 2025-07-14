@@ -166,18 +166,14 @@ module ConsoleGame
       # == Utilities ==
 
       # Fetch a single chess piece
-      # @param query [String, Array<Object, Symbol>] algebraic notation `"e4"` or search by piece `[Queen, :white]`
+      # @param query [String] algebraic notation `"e4"`
+      # @param side [Symbol] expects :all, :white or :black
+      # @param usable_pieces [Hash<Array<String>>] algebraic notations in string
       # @return [ChessPiece]
       def fetch_piece(query)
-        case query
-        in String
-          return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query)
+        return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query)
 
-          turn_data[alg_map[query.to_sym]]
-        in Array
-          obj, side = query
-          fetch_all(side).find { |piece| piece.is_a?(obj) } # @todo add error handling
-        end
+        turn_data[alg_map[query.to_sym]]
       end
 
       # Grab all pieces, only whites or only blacks
@@ -185,10 +181,7 @@ module ConsoleGame
       # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
       # @return [Array<ChessPiece>] a list of chess pieces
       def fetch_all(side = :all, type: ChessPiece)
-        all_pieces = turn_data.select { |tile| tile if tile.is_a?(type) }
-        return all_pieces unless %i[black white].include?(side)
-
-        all_pieces.select { |piece| piece if piece.side == side }
+        turn_data.select { |tile| tile.is_a?(type) && (%i[black white].include?(side) ? tile.side == side : true) }
       end
 
       # Lookup a piece based on its possible move position
@@ -197,7 +190,7 @@ module ConsoleGame
       # @param new_alg_pos [Integer]
       # @param file_rank [String]
       def reverse_lookup(side, type, new_alg_pos, file_rank = nil)
-        filtered_pieces = turn_data.select { |tile| tile if tile.is_a?(type) && tile.side == side }
+        filtered_pieces = fetch_all(side, type: type)
         result = filtered_pieces.select do |piece|
           piece.possible_moves.include?(new_alg_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
@@ -227,6 +220,7 @@ module ConsoleGame
         return nil if piece.nil?
 
         # p "active piece: #{piece.side} #{piece.name}" # @todo: debug
+
         @previous_piece = active_piece
         @active_piece = piece
         self.previous_piece ||= active_piece
