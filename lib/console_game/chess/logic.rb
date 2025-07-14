@@ -17,6 +17,8 @@ module ConsoleGame
         w: ->(value, step, _row) { value - step }, nw: ->(value, step, row) { value + row * step - step }
       }.freeze
 
+      private
+
       # Recursively find the next position depending on direction
       # @param pos [Integer] start position
       # @param path [Symbol] see DIRECTIONS for available options. E.g., :e for count from left to right
@@ -79,8 +81,6 @@ module ConsoleGame
 
         side == :white ? :black : :white
       end
-
-      private
 
       # == Pathfinder ==
 
