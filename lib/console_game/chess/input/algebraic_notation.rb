@@ -42,7 +42,7 @@ module ConsoleGame
         elsif captures[:promote]
           parse_promote(side, captures)
         else
-          parse_move(side, captures) # @todo
+          parse_move(side, captures)
         end
       end
 

@@ -8,18 +8,77 @@ describe ConsoleGame::Chess::AlgebraicNotation do
   let(:dummy_class) { Class.new { include ConsoleGame::Chess::AlgebraicNotation } }
 
   describe "#validate_algebraic" do
-    # context "when input value is a valid entry to trigger preview move" do
-    #   it "returns a command pattern hash where type is preview_move and position is extracted into an Array" do
+    let(:reg) { "((?<castle>O-O(?:-O)?)|(?<piece>[KQRBN])?(?<file_rank>[a-h][1-8]|[a-h])?(?<capture>x)?(?<target>[a-h][1-8])(?:=(?<promote>[QRBN]))?(?<check>[+#])?)" }
 
-    #   end
-    # end
+    context "when side is a white king is performing kingside castling" do
+      let(:input) { "O-O" }
+      let(:side) { :white }
+
+      it "returns a command pattern hash where type is direct_move and current position and new position are extracted into an Array" do
+        result = algebraic_test.send(:validate_algebraic, input, side, reg)
+        expect(result).to eq({ type: :direct_move, args: %w[e1 g1] })
+      end
+    end
+
+    context "when side is a white pawn is marching directly towards e8 and intends to promote to queen" do
+      let(:input) { "e8=Q" }
+      let(:side) { :white }
+
+      it "returns a command pattern hash where type is direct_promote and current position, new position and notation are extracted into an Array" do
+        result = algebraic_test.send(:validate_algebraic, input, side, reg)
+        expect(result).to eq({ type: :direct_promote, args: ["e7", "e8", :q] })
+      end
+    end
+
+    context "when side is a white knight is performing a captures towards a5 from file c" do
+      let(:input) { "Ncxa5" }
+      let(:side) { :white }
+
+      it "returns a command pattern hash where type is fetch_and_move and side, notation, new position and file are extracted into an Array" do
+        result = algebraic_test.send(:validate_algebraic, input, side, reg)
+        expect(result).to eq({ type: :fetch_and_move, args: [:white, :n, "a5", "c"] })
+      end
+    end
   end
 
   describe "#alg_output_capture_gps" do
-    # context "when input value is a valid entry to trigger preview move" do
-    #   it "returns a command pattern hash where type is preview_move and position is extracted into an Array" do
-    #   end
-    # end
+    let(:reg) { "((?<castle>O-O(?:-O)?)|(?<piece>[KQRBN])?(?<file_rank>[a-h][1-8]|[a-h])?(?<capture>x)?(?<target>[a-h][1-8])(?:=(?<promote>[QRBN]))?(?<check>[+#])?)" }
+
+    context "when input is a valid pawn move" do
+      let(:input) { "a3" }
+
+      it "returns a regular expression capture group as hash" do
+        result = algebraic_test.send(:alg_output_capture_gps, input, reg)
+        expect(result).to eq({ target: "a3" })
+      end
+    end
+
+    context "when input is a valid knight move" do
+      let(:input) { "Na6" }
+
+      it "returns a regular expression capture group as hash" do
+        result = algebraic_test.send(:alg_output_capture_gps, input, reg)
+        expect(result).to eq({ piece: "N", target: "a6" })
+      end
+    end
+
+    context "when input is a valid rook move from file a" do
+      let(:input) { "Raa2" }
+
+      it "returns a regular expression capture group as hash" do
+        result = algebraic_test.send(:alg_output_capture_gps, input, reg)
+        expect(result).to eq({ piece: "R", file_rank: "a", target: "a2" })
+      end
+    end
+
+    context "when input is a valid pawn capture from file b" do
+      let(:input) { "bxa4" }
+
+      it "returns a regular expression capture group as hash" do
+        result = algebraic_test.send(:alg_output_capture_gps, input, reg)
+        expect(result).to eq({ file_rank: "b", capture: "x", target: "a4" })
+      end
+    end
   end
 
   describe "#parse_castling" do
