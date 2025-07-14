@@ -3,6 +3,7 @@
 require_relative "game"
 require_relative "logic"
 require_relative "board"
+require_relative "piece_analysis"
 
 module ConsoleGame
   module Chess
@@ -11,6 +12,7 @@ module ConsoleGame
     class Level
       include Console
       include Logic
+      include PieceAnalysis
 
       attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :board, :kings, :castling_states,
@@ -251,8 +253,9 @@ module ConsoleGame
       # Board state refresher
       def update_board_state
         grouped_pieces = pieces_group
-        blunder_tiles(grouped_pieces)
-        calculate_usable_pieces(grouped_pieces)
+        @threats_map, @usable_pieces = board_analysis(grouped_pieces)
+        # puts usable_pieces
+        # puts threats_map
         any_checkmate?
       end
 
@@ -264,44 +267,7 @@ module ConsoleGame
         grouped_pieces
       end
 
-      # Calculate usable pieces of the given turn
-      # @param grouped_pieces [Hash<ChessPiece>]
-      def calculate_usable_pieces(grouped_pieces)
-        grouped_pieces.each do |side, pieces|
-          usable_pieces[side] = pieces.map { |piece| piece.info unless piece.possible_moves.empty? }.compact
-        end
-      end
-
-      # Calculate all blunder tile for each side
-      # @param grouped_pieces [Hash<ChessPiece>]
-      def blunder_tiles(grouped_pieces)
-        threats_map.transform_values! { |_| [] }
-        grouped_pieces.each { |side, pieces| add_pos_to_blunder_tracker(side, pieces) }
-      end
-
-      # Helper: add blunder tiles to session variable
-      # @param side [Symbol] expects :all, :white or :black
-      # @param pieces [ChessPiece]
-      def add_pos_to_blunder_tracker(side, pieces)
-        bad_moves = []
-        pawns, back_row = pieces.partition { |piece| piece.is_a?(Pawn) }
-        pawns.each { |piece| bad_moves << piece.sights }
-        back_row.each do |piece|
-          bad_moves << piece.sights
-          bad_moves << piece.possible_moves.compact
-        end
-        edit_threats_map(side, bad_moves)
-      end
-
-      # Helper: Add bad_moves to threats_map
-      # @param side [Symbol] expects :all, :white or :black
-      # @param bad_moves [Array]
-      def edit_threats_map(side, bad_moves)
-        threats_map[side] = bad_moves.flatten.sort.to_set
-      end
-
       # End game if either side achieved a checkmate
-      # @param grouped_pieces [Hash<ChessPiece>]
       def any_checkmate?
         kings.values.any?(&:checkmate?)
       end
