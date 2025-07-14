@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "../../pgn_utils/pgn_utils"
 require_relative "../player"
+require_relative "utilities/pgn_utils"
 
 module ConsoleGame
   module Chess
@@ -56,7 +56,7 @@ module ConsoleGame
         puts "It is #{side}'s turn." # @todo: replace with TF string
         # Prompt player to enter notation value
         controller.turn_action(self)
-        puts level.active_piece
+
         put_piece_down
       end
 
