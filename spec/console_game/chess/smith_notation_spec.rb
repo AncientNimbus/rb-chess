@@ -42,7 +42,7 @@ describe ConsoleGame::Chess::SmithNotation do
   end
 
   describe "#regexp_smith" do
-    context "when it is call" do
+    context "when the method is call" do
       it "returns a regular expression pattern for Smith notation as string" do
         result = smith_test.send(:regexp_smith)
         expect(result).to eq("(?:[a-h][1-8])|(?:[a-h][1-8]){2}(?:[qrbn])?")
