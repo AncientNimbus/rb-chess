@@ -23,10 +23,45 @@ describe ConsoleGame::Chess::AlgebraicNotation do
   end
 
   describe "#parse_castling" do
-    # context "when input value is a valid entry to trigger preview move" do
-    #   it "returns a command pattern hash where type is preview_move and position is extracted into an Array" do
-    #   end
-    # end
+    context "when side is a white king is performing kingside castling" do
+      let(:side) { :white }
+      let(:captures) { "O-O" }
+
+      it "returns a command pattern hash where type is direct_move and current position and new position are extracted into an Array" do
+        result = algebraic_test.send(:parse_castling, side, captures)
+        expect(result).to eq({ type: :direct_move, args: %w[e1 g1] })
+      end
+    end
+
+    context "when side is a white king is performing queenside castling" do
+      let(:side) { :white }
+      let(:captures) { "O-O-O" }
+
+      it "returns a command pattern hash where type is direct_move and current position and new position are extracted into an Array" do
+        result = algebraic_test.send(:parse_castling, side, captures)
+        expect(result).to eq({ type: :direct_move, args: %w[e1 c1] })
+      end
+    end
+
+    context "when side is a black king is performing kingside castling" do
+      let(:side) { :black }
+      let(:captures) { "O-O" }
+
+      it "returns a command pattern hash where type is direct_move and current position and new position are extracted into an Array" do
+        result = algebraic_test.send(:parse_castling, side, captures)
+        expect(result).to eq({ type: :direct_move, args: %w[e8 g8] })
+      end
+    end
+
+    context "when side is a black king is performing queenside castling" do
+      let(:side) { :black }
+      let(:captures) { "O-O-O" }
+
+      it "returns a command pattern hash where type is direct_move and current position and new position are extracted into an Array" do
+        result = algebraic_test.send(:parse_castling, side, captures)
+        expect(result).to eq({ type: :direct_move, args: %w[e8 c8] })
+      end
+    end
   end
 
   describe "#parse_promote" do
