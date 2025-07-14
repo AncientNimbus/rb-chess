@@ -26,6 +26,7 @@ module ConsoleGame
         in [curr_pos] then { type: :preview_move, args: [curr_pos] }
         in [curr_pos, new_pos] then { type: :direct_move, args: [curr_pos, new_pos] }
         in [curr_pos, new_pos, notation] then { type: :direct_promote, args: [curr_pos, new_pos, notation] }
+        else { type: :invalid_input, args: [input] }
         end
       end
 
