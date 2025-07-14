@@ -38,11 +38,15 @@ module ConsoleGame
       # end
     end
 
-    attr_reader :data, :name, :player_color
+    attr_reader :data, :name, :player_color, :controller
 
-    def initialize(game_manager = nil, name = "")
+    # @param game_manager [GameManager]
+    # @param name [String]
+    # @param controller [Input]
+    def initialize(game_manager = nil, name = "", controller = nil)
       @game_manager = game_manager
       @name = name
+      @controller = controller
       # Player.setup_color
       Player.add_player
       @player_color = Paint.random

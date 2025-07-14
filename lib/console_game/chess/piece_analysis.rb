@@ -2,7 +2,7 @@
 
 module ConsoleGame
   module Chess
-    # The Piece Analysis module handles the turn actions within a chess level
+    # The Piece Analysis module handles the overall stats of the chessboard
     # @author Ancient Nimbus
     module PieceAnalysis
       private
@@ -24,6 +24,7 @@ module ConsoleGame
 
       # Helper: add blunder tiles to session variable
       # @param pieces [ChessPiece]
+      # @return [Set<Integer>]
       def add_pos_to_blunder_tracker(pieces)
         bad_moves = []
         pawns, back_row = pieces.partition { |piece| piece.is_a?(Pawn) }

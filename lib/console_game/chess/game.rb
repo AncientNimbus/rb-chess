@@ -30,7 +30,7 @@ module ConsoleGame
       def initialize(game_manager = nil, title = "Base Game")
         super(game_manager, title, ChessInput.new(game_manager))
         Player.player_count(0)
-        @p1 = ChessPlayer.new(game_manager, user.profile[:username])
+        @p1 = ChessPlayer.new(game_manager, user.profile[:username], controller)
         @p2 = nil
         @side = { white: nil, black: nil }
         user.profile[:appdata][:chess] ||= {}
@@ -88,7 +88,7 @@ module ConsoleGame
       # @param player [ConsoleGame::ChessPlayer, nil]
       # @return [ChessPlayer, ChessComputer]
       def player_profile(player)
-        player ||= mode == 1 ? ChessPlayer.new(game_manager, "") : ChessComputer.new(game_manager)
+        player ||= mode == 1 ? ChessPlayer.new(game_manager, "", controller) : ChessComputer.new(game_manager)
         return player if player.is_a?(ChessComputer)
 
         # flow 2: name players

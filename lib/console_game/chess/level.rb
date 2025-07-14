@@ -14,6 +14,8 @@ module ConsoleGame
       include Logic
       include PieceAnalysis
 
+      # @!attribute[w] player
+      #   @return [ChessPlayer, ChessComputer]
       attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
@@ -61,12 +63,10 @@ module ConsoleGame
       def play_chess
         self.player = white_turn ? w_player : b_player
         # Pre turn
-        puts "It is #{player.side}'s turn."
         refresh
         # Play turn
-        player.is_a?(ChessComputer) ? ai_actions : human_actions(player)
+        player.play_turn
         # Post turn
-        # Pass control to the other side
         self.white_turn = !white_turn
       end
 
@@ -76,20 +76,6 @@ module ConsoleGame
       end
 
       # == Game Logic ==
-
-      # Turn events when player is a human
-      # @param player [ChessPlayer]
-      def human_actions(player)
-        # Prompt player to enter notation value
-        controller.turn_action(player)
-        # Prompt player to enter move value when preview mode is used
-        controller.make_a_move unless active_piece.nil?
-      end
-
-      # Turn events when player is a computer
-      def ai_actions
-        p "Computer's move"
-      end
 
       # Preview a move, display the moves indictor
       # @param curr_alg_pos [String] algebraic position
