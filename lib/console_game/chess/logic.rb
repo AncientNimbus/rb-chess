@@ -7,11 +7,7 @@ module ConsoleGame
     # @version 1.0.0
     module Logic
       # Default values
-      PRESET = {
-        bound: [8, 8], fen_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-        k: { class: "King", notation: :k }, q: { class: "Queen", notation: :q }, r: { class: "Rook", notation: :r },
-        b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
-      }.freeze
+      PRESET = { bound: [8, 8] }.freeze
 
       # A hash of lambda functions for calculating movement in 8 directions on a grid
       DIRECTIONS = {
@@ -51,42 +47,6 @@ module ConsoleGame
         @alg_map ||= algebraic_notation_generator
       end
 
-      # FEN Raw data parser
-      # @param level [Chess::Level] Chess level object
-      # @param fen_str [String] expects a string in FEN format
-      def parse_fen(level, fen_str = PRESET[:fen_start])
-        fen = fen_str.split
-        return nil if fen.size != 6
-
-        fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
-        parse_castling_str(c_state, level)
-        turn_data = to_turn_data(fen_board, level)
-      end
-
-      # Process FEN board data
-      # @param fen_board [String] expects an Array with FEN positions data
-      # @param level [Chess::Level] Chess level object
-      # @return [Array<Array<ChessPiece, String>>] chess position data starts from a1..h8
-      def to_turn_data(fen_board, level)
-        turn_data = Array.new { {} }
-        pos_value = 0
-        fen_board.split("/").reverse.each_with_index do |rank, row|
-          turn_data[row] = []
-          normalise_fen_rank(rank).each_with_index do |unit, col|
-            turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit, level)
-            pos_value += 1
-          end
-        end
-        to_1d(turn_data)
-      end
-
-      # Process FEN castling states
-      # @param c_state [String] expects an Array with FEN positions data
-      # @param level [Chess::Level] Chess level object
-      def parse_castling_str(c_state, level)
-        # p c_state
-      end
-
       # Convert coordinate array to cell position
       # @param coord [Array<Integer>] `[row, col]`
       # @param bound [Array<Integer>] `[row, col]`
@@ -109,13 +69,6 @@ module ConsoleGame
 
         grid_width, _grid_height = bound
         pos.divmod(grid_width)
-      end
-
-      # Convert a 2D array to a 1D array
-      # @param nested_arr [Array]
-      # @return [Array] flatten array
-      def to_1d(nested_arr)
-        nested_arr.flatten
       end
 
       # Flip-flop, return :black if it is :white
@@ -165,26 +118,6 @@ module ConsoleGame
           [*"#{file}1".."#{file}8"].each_with_index { |alg, i| alg_map[alg.to_sym] = col[i] }
         end
         alg_map
-      end
-
-      # == FEN Parser ==
-
-      # Initialize chess piece via string value
-      # @param pos [Integer] positional value
-      # @param fen_notation [String] expects a single letter that follows the FEN standard
-      # @param level [Chess::Level] Chess level object
-      # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
-      def piece_maker(pos, fen_notation, level)
-        side = fen_notation == fen_notation.capitalize ? :white : :black
-        class_name = PRESET[fen_notation.downcase.to_sym][:class]
-        Chess.const_get(class_name).new(pos, side, level: level)
-      end
-
-      # Helper method to uncompress FEN empty cell values so that all arrays share the same size
-      # @param fen_rank_str [String]
-      # @return [Array] processed rank data array
-      def normalise_fen_rank(fen_rank_str)
-        fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
       end
     end
   end

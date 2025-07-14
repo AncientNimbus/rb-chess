@@ -4,6 +4,7 @@ require_relative "game"
 require_relative "logic"
 require_relative "board"
 require_relative "piece_analysis"
+require_relative "utilities/fen_utils"
 
 module ConsoleGame
   module Chess
@@ -13,6 +14,7 @@ module ConsoleGame
       include Console
       include Logic
       include PieceAnalysis
+      include FenUtils
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
@@ -87,7 +89,7 @@ module ConsoleGame
       # @param target [String]
       # @param file_rank [String]
       def reverse_lookup(side, type, target, file_rank = nil)
-        type = Chess.const_get(PRESET.dig(type, :class))
+        type = Chess.const_get(FEN.dig(type, :class))
         filtered_pieces = fetch_all(side, type: type)
         new_alg_pos = alg_map[target.to_sym]
         result = filtered_pieces.select do |piece|
@@ -156,7 +158,7 @@ module ConsoleGame
       def update_board_state
         @threats_map, @usable_pieces = board_analysis(generate_moves)
         # puts usable_pieces
-        puts threats_map
+        # puts threats_map
         any_checkmate?
       end
 

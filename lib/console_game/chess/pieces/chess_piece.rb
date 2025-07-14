@@ -2,6 +2,7 @@
 
 require_relative "../logic"
 require_relative "../display"
+require_relative "../utilities/fen_utils"
 
 module ConsoleGame
   module Chess
@@ -10,6 +11,7 @@ module ConsoleGame
     class ChessPiece
       include Logic
       include Display
+      include FenUtils
 
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
