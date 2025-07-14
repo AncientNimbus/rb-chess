@@ -10,16 +10,25 @@ module ConsoleGame
       # Analyse the board
       # usable_pieces: usable pieces of the given turn
       # threats_map: all blunder tile for each side
-      # @param pieces_groups [Hash<ChessPiece>]
+      # @param all_pieces [Array<ChessPiece>]
       # @return [Array<Hash<ChessPiece>>] usable_pieces and threats_map
-      def board_analysis(pieces_groups)
+      def board_analysis(all_pieces)
         usable_pieces = { white: [], black: [] }
         threats_map = { white: [], black: [] }
-        pieces_groups.each do |side, pieces|
+        pieces_group(all_pieces).each do |side, pieces|
           threats_map[side] = add_pos_to_blunder_tracker(pieces)
           usable_pieces[side] = pieces.map { |piece| piece.info unless piece.possible_moves.empty? }.compact
         end
         [threats_map, usable_pieces]
+      end
+
+      # Refresh possible move and split chess pieces into two group
+      # @param all_piece [Array<ChessPiece>]
+      # @return [Hash]
+      def pieces_group(all_pieces)
+        grouped_pieces = { white: nil, black: nil }
+        grouped_pieces[:white], grouped_pieces[:black] = all_pieces.partition { |piece| piece.side == :white }
+        grouped_pieces
       end
 
       # Helper: add blunder tiles to session variable

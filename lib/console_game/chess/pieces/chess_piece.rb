@@ -49,7 +49,7 @@ module ConsoleGame
         end
 
         # print user message
-        p "Moving to #{new_alg_pos}" # @todo: better feedback
+        # p "Moving to #{new_alg_pos}" # @todo: better feedback
 
         process_movement(level.turn_data, old_pos, new_pos)
         self.moved = true

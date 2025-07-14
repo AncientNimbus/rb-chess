@@ -45,36 +45,6 @@ module ConsoleGame
         end_game
       end
 
-      # Initialise the chessboard
-      def init_level
-        # p "Setting up game level"
-        controller.link_level(self)
-        @white_turn = true
-        @castling_states = { K: true, Q: true, k: true, q: true }
-        @kings = { white: nil, black: nil }
-        @threats_map = { white: [], black: [] }
-        @usable_pieces = { white: [], black: [] }
-        @en_passant = nil
-        @player = w_player
-        kings_table
-      end
-
-      # Main Game Loop
-      def play_chess
-        self.player = white_turn ? w_player : b_player
-        # Pre turn
-        refresh
-        # Play turn
-        player.play_turn
-        # Post turn
-        self.white_turn = !white_turn
-      end
-
-      # Endgame handling
-      def end_game
-        p "Game session complete, \nShould return to game.rb"
-      end
-
       # == Game Logic ==
 
       # Pawn specific: Present a list of option when player can promote a pawn
@@ -138,37 +108,37 @@ module ConsoleGame
         true
       end
 
-      # Handling piece assignment
-      # @param alg_pos [String] algebraic notation
-      # @return [ChessPiece]
-      def assign_piece(alg_pos)
-        put_piece_down
-        piece = fetch_piece(alg_pos)
-        return nil if piece.nil?
-
-        # p "active piece: #{piece.side} #{piece.name}" # @todo: debug
-
-        store_active_piece(piece)
-      end
-
-      # Unassign active piece
-      def put_piece_down
-        self.active_piece = nil
-        player.piece_at_hand = nil
-      end
-
-      # store active piece
-      # @param piece [ChessPiece]
-      # @return [ChessPiece]
-      def store_active_piece(piece)
-        @previous_piece = active_piece
-        @active_piece = piece
-        player.piece_at_hand = active_piece
-        self.previous_piece ||= active_piece
-        active_piece
-      end
-
       private
+
+      # Initialise the chessboard
+      def init_level
+        # p "Setting up game level"
+        controller.link_level(self)
+        @white_turn = true
+        @castling_states = { K: true, Q: true, k: true, q: true }
+        @kings = { white: nil, black: nil }
+        @threats_map = { white: [], black: [] }
+        @usable_pieces = { white: [], black: [] }
+        @en_passant = nil
+        @player = w_player
+        kings_table
+      end
+
+      # Main Game Loop
+      def play_chess
+        self.player = white_turn ? w_player : b_player
+        # Pre turn
+        refresh
+        # Play turn
+        player.play_turn
+        # Post turn
+        self.white_turn = !white_turn
+      end
+
+      # Endgame handling
+      def end_game
+        p "Game session complete, \nShould return to game.rb"
+      end
 
       # Get and store both Kings
       def kings_table
@@ -184,19 +154,10 @@ module ConsoleGame
 
       # Board state refresher
       def update_board_state
-        grouped_pieces = pieces_group
-        @threats_map, @usable_pieces = board_analysis(grouped_pieces)
+        @threats_map, @usable_pieces = board_analysis(generate_moves)
         # puts usable_pieces
-        # puts threats_map
+        puts threats_map
         any_checkmate?
-      end
-
-      # Refresh possible move and split chess pieces into two group
-      # @return [Hash]
-      def pieces_group
-        grouped_pieces = { white: nil, black: nil }
-        grouped_pieces[:white], grouped_pieces[:black] = generate_moves(:all).partition { |piece| piece.side == :white }
-        grouped_pieces
       end
 
       # End game if either side achieved a checkmate
