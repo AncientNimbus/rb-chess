@@ -14,7 +14,7 @@ module ConsoleGame
       include Logic
       include PieceAnalysis
 
-      # @!attribute[w] player
+      # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
       attr_reader :mode, :controller, :w_player, :b_player, :sessions, :board, :kings, :castling_states,
@@ -77,69 +77,10 @@ module ConsoleGame
 
       # == Game Logic ==
 
-      # Preview a move, display the moves indictor
-      # @param curr_alg_pos [String] algebraic position
-      # @return [Boolean] true if the operation is a success
-      def preview_move(curr_alg_pos)
-        return false unless assign_piece(curr_alg_pos)
-
-        puts "Previewing #{active_piece.name} at #{active_piece.info}." # @todo Proper feedback
-        refresh
-      end
-
-      # Chain with #preview_move, enables player make a move after previewing possible moves
-      # @param new_alg_pos [String] algebraic position
-      # @return [Boolean] true if the operation is a success
-      def move_piece(new_alg_pos)
-        active_piece.move(new_alg_pos)
-        return false unless active_piece.moved
-
-        puts "Moving #{active_piece.name} to #{active_piece.info}." # @todo Proper feedback
-        put_piece_down
-        true
-      end
-
-      # Assign a piece and make a move on the same prompt
-      # @param curr_alg_pos [String] algebraic position
-      # @param new_alg_pos [String] algebraic position
-      # @return [Boolean] true if the operation is a success
-      def direct_move(curr_alg_pos, new_alg_pos)
-        assign_piece(curr_alg_pos) && move_piece(new_alg_pos)
-      end
-
-      # Pawn specific: Promote the pawn when it reaches the other end of the board
-      # @param curr_alg_pos [String] algebraic position
-      # @param new_alg_pos [String] algebraic position
-      # @param notation [Symbol] algebraic notation
-      # @return [Boolean] true if the operation is a success
-      def direct_promote(curr_alg_pos, new_alg_pos, notation)
-        return false unless assign_piece(curr_alg_pos) && active_piece.is_a?(Pawn)
-
-        active_piece.move(new_alg_pos, notation)
-        return false unless active_piece.moved
-
-        put_piece_down
-        true
-      end
-
-      # Fetch and move
-      # @param side [Symbol]
-      # @param type [Symbol]
-      # @param target [String]
-      def fetch_and_move(side, type, target, file_rank = nil)
-        type = Chess.const_get(PRESET.dig(type, :class))
-        piece = reverse_lookup(side, type, alg_map[target.to_sym], file_rank)
-
-        return false if piece.nil?
-
-        self.active_piece = piece
-        move_piece(target)
-      end
-
       # Pawn specific: Present a list of option when player can promote a pawn
       def promote_opts
         refresh
-        controller.promote_a_pawn
+        player.indirect_promote
       end
 
       # Reset En Passant status when it is not used at the following turn
@@ -172,11 +113,13 @@ module ConsoleGame
 
       # Lookup a piece based on its possible move position
       # @param side [Symbol]
-      # @param type [King, Queen, Bishop, Knight, Rook, Pawn]
-      # @param new_alg_pos [Integer]
+      # @param type [Symbol]
+      # @param target [String]
       # @param file_rank [String]
-      def reverse_lookup(side, type, new_alg_pos, file_rank = nil)
+      def reverse_lookup(side, type, target, file_rank = nil)
+        type = Chess.const_get(PRESET.dig(type, :class))
         filtered_pieces = fetch_all(side, type: type)
+        new_alg_pos = alg_map[target.to_sym]
         result = filtered_pieces.select do |piece|
           piece.possible_moves.include?(new_alg_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
@@ -184,8 +127,6 @@ module ConsoleGame
 
         result[0]
       end
-
-      private
 
       # == Board Logic ==
 
@@ -207,16 +148,27 @@ module ConsoleGame
 
         # p "active piece: #{piece.side} #{piece.name}" # @todo: debug
 
-        @previous_piece = active_piece
-        @active_piece = piece
-        self.previous_piece ||= active_piece
-        active_piece
+        store_active_piece(piece)
       end
 
       # Unassign active piece
       def put_piece_down
         self.active_piece = nil
+        player.piece_at_hand = nil
       end
+
+      # store active piece
+      # @param piece [ChessPiece]
+      # @return [ChessPiece]
+      def store_active_piece(piece)
+        @previous_piece = active_piece
+        @active_piece = piece
+        player.piece_at_hand = active_piece
+        self.previous_piece ||= active_piece
+        active_piece
+      end
+
+      private
 
       # Get and store both Kings
       def kings_table

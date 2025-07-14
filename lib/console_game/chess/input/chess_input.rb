@@ -37,16 +37,17 @@ module ConsoleGame
               when smith_reg then validate_smith(input)
               when alg_reg then validate_algebraic(input, player.side, input_scheme)
               end
-        turn_action(player) unless level.method(ops[:type]).call(*ops[:args])
+        turn_action(player) unless player.method(ops[:type]).call(*ops[:args])
       end
 
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
-      def make_a_move
+      # @param player [ChessPlayer]
+      def make_a_move(player)
         input = ask("Make a move: ", reg: input_scheme, input_type: :custom)
         ops = case input.scan(input_parser)
               in [new_pos] then { type: :move_piece, args: [new_pos] }
               end
-        make_a_move unless level.method(ops[:type]).call(*ops[:args])
+        make_a_move(player) unless player.method(ops[:type]).call(*ops[:args])
       end
 
       # Prompt user for Pawn promotion option when notation for promotion is not provided at the previous prompt
