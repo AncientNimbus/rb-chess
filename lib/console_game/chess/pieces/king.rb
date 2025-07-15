@@ -8,7 +8,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class King < ChessPiece
       attr_accessor :checked
-      attr_reader :checked_status, :castle_dirs
+      attr_reader :checked_status, :castle_dirs, :castle_config, :castle_key
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -24,6 +24,7 @@ module ConsoleGame
       # @param new_alg_pos [Symbol] expects board position in Algebraic notation, e.g., :e3
       def move(new_alg_pos)
         old_pos = curr_pos
+        disable_castling
         super(new_alg_pos)
 
         castling_event(old_pos)
@@ -38,12 +39,27 @@ module ConsoleGame
 
       # == King specific logics ==
 
+      # Determine if the King is in a checkmate position
+      # @return [Boolean] true if it is a checkmate
+      def checkmate?
+        return false unless in_check?
+
+        allies = level.fetch_all(side).select { |ally| ally unless ally.is_a?(King) }
+        checked_status[:attackers].each do |attacker|
+          return false if under_threat_by?(allies, attacker)
+          return false if any_saviours?(allies, attacker)
+        end
+        crown_has_fallen?
+      end
+
+      private
+
       # Determine if the King can perform castling
       def can_castle?
         return false unless at_start
 
-        castle_key = side == :white ? %i[K Q] : %i[k q]
-        castle_config = castle_key.zip(castle_dirs)
+        @castle_key ||= side == :white ? %i[K Q] : %i[k q]
+        @castle_config ||= castle_key.zip(castle_dirs) # @todo: broken
         castle_config.each do |set|
           key, dir = set
           castle_dirs.delete(dir) if level.castling_states[key] == false
@@ -68,20 +84,12 @@ module ConsoleGame
         p "King is castling"
       end
 
-      # Determine if the King is in a checkmate position
-      # @return [Boolean] true if it is a checkmate
-      def checkmate?
-        return false unless in_check?
+      # disable castling
+      def disable_castling
+        return unless at_start
 
-        allies = level.fetch_all(side).select { |ally| ally unless ally.is_a?(King) }
-        checked_status[:attackers].each do |attacker|
-          return false if under_threat_by?(allies, attacker)
-          return false if any_saviours?(allies, attacker)
-        end
-        crown_has_fallen?
+        castle_key.each { |key| level.castling_states[key] = false }
       end
-
-      private
 
       # Override validate_moves
       # Store all valid placement
