@@ -19,19 +19,26 @@ module ConsoleGame
       # @param fen_str [String] expects a string in FEN format
       def parse_fen(level, fen_str = FEN[:w_start])
         fen = fen_str.split
-        return nil if fen.size != 6
+        return fen_error(fen_str) if fen.size != 6
 
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
-        parse_castling_str(c_state, level)
+        castling_states = parse_castling_str(c_state)
+        turn_state = parse_active_color(turn)
         turn_data = to_turn_data(fen_board, level)
       end
 
       private
 
-      # Process FEN board data
+      # Process flow when there is an issue during FEN parsing
+      # @param fen_str [String] expects a string in FEN format
+      def fen_error(fen_str)
+        puts "FEN error, operation cancelled. #{fen_str}" # @todo: Replace with TF
+      end
+
+      # Process FEN board data field
       # @param fen_board [String] expects an Array with FEN positions data
       # @param level [Chess::Level] Chess level object
-      # @return [Array<Array<ChessPiece, String>>] chess position data starts from a1..h8
+      # @return [Array<ChessPiece, String>] chess position data starts from a1..h8
       def to_turn_data(fen_board, level)
         turn_data = Array.new { {} }
         pos_value = 0
@@ -42,7 +49,33 @@ module ConsoleGame
             pos_value += 1
           end
         end
-        to_1d(turn_data)
+        turn_data.flatten
+      end
+
+      # Process FEN active color field
+      # @param active_color [String] expects a string with active color data
+      # @return [Hash, nil] a hash containing data that indicates whether it is white's turn
+      def parse_active_color(active_color)
+        return nil unless %w[b w].include?(active_color)
+
+        white_turn = active_color == "w"
+        { white_turn: white_turn }
+      end
+
+      # Process FEN castling field
+      # @param c_state [String] expects a string with castling data
+      # @return [Hash] a hash of castling statuses
+      def parse_castling_str(c_state)
+        castling_states = { K: false, Q: false, k: false, q: false }
+        return castling_states if c_state.empty?
+
+        c_state.split("").each do |char|
+          char_as_sym = char.to_sym
+          return nil unless castling_states.key?(char_as_sym)
+
+          castling_states[char_as_sym] = true
+        end
+        castling_states
       end
 
       # Initialize chess piece via string value
@@ -56,25 +89,14 @@ module ConsoleGame
         Chess.const_get(class_name).new(pos, side, level: level)
       end
 
-      # Process FEN castling states
-      # @param c_state [String] expects an Array with FEN positions data
-      # @param level [Chess::Level] Chess level object
-      def parse_castling_str(c_state, level)
-        # p c_state
-      end
-
       # Helper method to uncompress FEN empty cell values so that all arrays share the same size
       # @param fen_rank_str [String]
       # @return [Array] processed rank data array
       def normalise_fen_rank(fen_rank_str)
-        fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
-      end
+        data = fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
+        return nil unless data.all? { |element| element.match?(%r{\A[kqrbnp0/]\z}i) }
 
-      # Convert a 2D array to a 1D array
-      # @param nested_arr [Array]
-      # @return [Array] flatten array
-      def to_1d(nested_arr)
-        nested_arr.flatten
+        data
       end
     end
   end

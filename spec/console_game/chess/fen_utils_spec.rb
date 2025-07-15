@@ -46,10 +46,78 @@ describe ConsoleGame::Chess::FenUtils do
     end
   end
 
+  describe "#parse_active_color" do
+    context "when value is a valid FEN active color data: w" do
+      let(:active_color) { "w" }
+
+      it "returns a hash where white_turn is set to true" do
+        result = fen_utils_test.send(:parse_active_color, active_color)
+        expect(result).to eq({ white_turn: true })
+      end
+    end
+
+    context "when value is a valid FEN active color data: b" do
+      let(:active_color) { "b" }
+
+      it "returns a hash where white_turn is set to true" do
+        result = fen_utils_test.send(:parse_active_color, active_color)
+        expect(result).to eq({ white_turn: false })
+      end
+    end
+
+    context "when value is invalid" do
+      let(:active_color) { "c" }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:parse_active_color, active_color)
+        expect(result).to be_nil
+      end
+    end
+  end
+
   describe "#parse_castling_str" do
-    context "when value is a valid FEN castling sequence" do
-      it "returns a hash of each castling status as boolean" do
-        skip "not ready"
+    context "when value is a valid FEN castling sequence: KQkq" do
+      let(:castling_state) { "KQkq" }
+
+      it "returns a hash where all castling moves are possible" do
+        result = fen_utils_test.send(:parse_castling_str, castling_state)
+        expect(result).to eq({ K: true, Q: true, k: true, q: true })
+      end
+    end
+
+    context "when value is a valid FEN castling sequence: Kq" do
+      let(:castling_state) { "Kq" }
+
+      it "returns a hash where white Kingside castling and black Queenside castling are possible" do
+        result = fen_utils_test.send(:parse_castling_str, castling_state)
+        expect(result).to eq({ K: true, Q: false, k: false, q: true })
+      end
+    end
+
+    context "when value is a valid FEN castling sequence: k" do
+      let(:castling_state) { "k" }
+
+      it "returns a hash where only black Kingside castling is possible" do
+        result = fen_utils_test.send(:parse_castling_str, castling_state)
+        expect(result).to eq({ K: false, Q: false, k: true, q: false })
+      end
+    end
+
+    context "when value is a valid FEN castling sequence is empty" do
+      let(:castling_state) { "" }
+
+      it "returns a hash where no castling moves are available" do
+        result = fen_utils_test.send(:parse_castling_str, castling_state)
+        expect(result).to eq({ K: false, Q: false, k: false, q: false })
+      end
+    end
+
+    context "when value is not a valid FEN castling sequence" do
+      let(:castling_state) { "ABcd" }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:parse_castling_str, castling_state)
+        expect(result).to be_nil
       end
     end
   end
@@ -224,6 +292,15 @@ describe ConsoleGame::Chess::FenUtils do
       it "returns a 1D array of string where the length of the array is 71" do
         result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board)
         expect(result.size).to eq(71)
+      end
+    end
+
+    context "when the value is not a valid FEN string sequence" do
+      let(:invalid_sequence) { "r5rk/abc4p/3p4/2b2Q2/3ZZZ2/2P2n2/PP3P1R/RNB4K" }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:normalise_fen_rank, invalid_sequence)
+        expect(result).to be_nil
       end
     end
   end
