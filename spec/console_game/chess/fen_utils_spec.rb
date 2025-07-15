@@ -24,14 +24,14 @@ describe ConsoleGame::Chess::FenUtils do
     end
   end
 
-  describe "#to_turn_data" do
+  describe "#parse_piece_placement" do
     let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
 
     context "when the value is a valid FEN string of a new game" do
       let(:standard_new_board) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
 
       it "returns a 1d array of the board state with 64 elements" do
-        result = fen_utils_test.send(:to_turn_data, standard_new_board, level_double)
+        result = fen_utils_test.send(:parse_piece_placement, standard_new_board, level_double)
         expect(result.size).to eq(64)
       end
     end
@@ -40,7 +40,7 @@ describe ConsoleGame::Chess::FenUtils do
       let(:ongoing_game_board) { "r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K" }
 
       it "returns a 1d array of the board state with 64 elements" do
-        result = fen_utils_test.send(:to_turn_data, ongoing_game_board, level_double)
+        result = fen_utils_test.send(:parse_piece_placement, ongoing_game_board, level_double)
         expect(result.size).to eq(64)
       end
     end
@@ -49,7 +49,7 @@ describe ConsoleGame::Chess::FenUtils do
       let(:invalid_sequence) { "r5ABC/ppzzp4p/3p4/9/3pPP2/2P2n2/TEST/RNB4K" }
 
       it "returns nil" do
-        result = fen_utils_test.send(:to_turn_data, invalid_sequence, level_double)
+        result = fen_utils_test.send(:parse_piece_placement, invalid_sequence, level_double)
         expect(result).to be_nil
       end
     end
@@ -126,6 +126,53 @@ describe ConsoleGame::Chess::FenUtils do
 
       it "returns nil" do
         result = fen_utils_test.send(:parse_castling_str, castling_state)
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#parse_en_passant" do
+    context "when value is a3" do
+      let(:ep_state) { "a3" }
+
+      it "returns a hash where en_passant key contains the same value" do
+        result = fen_utils_test.send(:parse_en_passant, ep_state)
+        expect(result).to eq({ en_passant: "a3" })
+      end
+    end
+
+    context "when value is h6" do
+      let(:ep_state) { "h6" }
+
+      it "returns a hash where en_passant key contains the same value" do
+        result = fen_utils_test.send(:parse_en_passant, ep_state)
+        expect(result).to eq({ en_passant: "h6" })
+      end
+    end
+
+    context "when value is -" do
+      let(:ep_state) { "-" }
+
+      it "returns a hash where en_passant key is set to nil" do
+        result = fen_utils_test.send(:parse_en_passant, ep_state)
+        expect(result).to eq({ en_passant: nil })
+      end
+    end
+
+    context "when value is h8" do
+      let(:ep_state) { "h8" }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:parse_en_passant, ep_state)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when value is invalid" do
+      let(:ep_state) { "abc" }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:parse_en_passant, ep_state)
         expect(result).to be_nil
       end
     end

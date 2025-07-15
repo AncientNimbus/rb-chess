@@ -24,7 +24,7 @@ module ConsoleGame
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
         castling_states = parse_castling_str(c_state)
         turn_state = parse_active_color(turn)
-        turn_data = to_turn_data(fen_board, level)
+        turn_data = parse_piece_placement(fen_board, level)
       end
 
       private
@@ -39,7 +39,7 @@ module ConsoleGame
       # @param fen_board [String] expects an Array with FEN positions data
       # @param level [Chess::Level] Chess level object
       # @return [Array<ChessPiece, String>, nil] chess position data starts from a1..h8
-      def to_turn_data(fen_board, level)
+      def parse_piece_placement(fen_board, level)
         turn_data = Array.new(8) { [] }
         pos_value = 0
         fen_board.split("/").reverse.each_with_index do |rank, row|
@@ -77,6 +77,15 @@ module ConsoleGame
           castling_states[char_as_sym] = true
         end
         castling_states
+      end
+
+      # Process FEN En-passant target square field
+      # @param ep_state [String] expects a string with En-passant target square data
+      # @return [Hash, nil] a hash of En-passant status
+      def parse_en_passant(ep_state)
+        return nil unless ep_state.match?(/\A[a-h][36]|-\z/)
+
+        { en_passant: ep_state == "-" ? nil : ep_state }
       end
 
       # Initialize chess piece via string value
