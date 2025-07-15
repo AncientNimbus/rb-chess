@@ -11,7 +11,6 @@ module ConsoleGame
       # @param side [Symbol] specify unit side :black or :white
       def initialize(alg_pos = :a1, side = :white, level: nil)
         super(alg_pos, side, :r, movements: %i[n e s w], range: :max, level: level)
-        @board_side = info(:file) == "h" ? :k : :q
       end
 
       # Move the chess piece to a new valid location
@@ -27,6 +26,7 @@ module ConsoleGame
       def disable_castling
         return unless at_start
 
+        kingside = info(:file) == "h"
         query = kingside ? :k : :q
         query = query.upcase if side == :white
         level.castling_states[query] = false

@@ -59,7 +59,7 @@ module ConsoleGame
         return false unless at_start
 
         @castle_key ||= side == :white ? %i[K Q] : %i[k q]
-        @castle_config ||= castle_key.zip(castle_dirs) # @todo: broken
+        @castle_config ||= castle_key.zip(castle_dirs)
         castle_config.each do |set|
           key, dir = set
           castle_dirs.delete(dir) if level.castling_states[key] == false
