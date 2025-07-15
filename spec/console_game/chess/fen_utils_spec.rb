@@ -8,6 +8,52 @@ describe ConsoleGame::Chess::FenUtils do
 
   let(:dummy_class) { Class.new { include ConsoleGame::Chess::FenUtils } }
 
+  describe "#parse_fen" do
+    context "when value is a complete and valid FEN data string" do
+      it "returns a hash" do
+        skip "not ready"
+      end
+    end
+  end
+
+  describe "#fen_error" do
+    context "when the method is called" do
+      it "returns a string with the problematic FEN string attached" do
+        skip "not ready"
+      end
+    end
+  end
+
+  describe "#to_turn_data" do
+    let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
+
+    context "when the value is a valid FEN string of a new game" do
+      let(:standard_new_board) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
+
+      it "returns a 1d array of the board state with 64 elements" do
+        result = fen_utils_test.send(:to_turn_data, standard_new_board, level_double)
+        expect(result.size).to eq(64)
+      end
+    end
+
+    context "when the value is a valid FEN string of an ongoing game" do
+      let(:ongoing_game_board) { "r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K" }
+
+      it "returns a 1d array of the board state with 64 elements" do
+        result = fen_utils_test.send(:to_turn_data, ongoing_game_board, level_double)
+        expect(result.size).to eq(64)
+      end
+    end
+  end
+
+  describe "#parse_castling_str" do
+    context "when value is a valid FEN castling sequence" do
+      it "returns a hash of each castling status as boolean" do
+        skip "not ready"
+      end
+    end
+  end
+
   describe "#piece_maker" do
     let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
 
@@ -152,11 +198,6 @@ describe ConsoleGame::Chess::FenUtils do
     end
   end
 
-  # describe "#parse_castling_str" do
-  #   context "" do
-  #   end
-  # end
-
   describe "#normalise_fen_rank" do
     context "when the value is a valid FEN string of a new game" do
       let(:standard_new_board) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
@@ -173,15 +214,15 @@ describe ConsoleGame::Chess::FenUtils do
     end
 
     context "when the value is a valid FEN string of an ongoing game" do
-      let(:standard_new_board) { "r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K" }
+      let(:ongoing_game_board) { "r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K" }
 
       it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
-        result = fen_utils_test.send(:normalise_fen_rank, standard_new_board)
+        result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board)
         expect(result).to eq(["r", "0", "0", "0", "0", "0", "r", "k", "/", "p", "p", "p", "0", "0", "0", "0", "p", "/", "0", "0", "0", "p", "0", "0", "0", "0", "/", "0", "0", "b", "0", "0", "Q", "0", "0", "/", "0", "0", "0", "p", "P", "P", "0", "0", "/", "0", "0", "P", "0", "0", "n", "0", "0", "/", "P", "P", "0", "0", "0", "P", "0", "R", "/", "R", "N", "B", "0", "0", "0", "0", "K"])
       end
 
       it "returns a 1D array of string where the length of the array is 71" do
-        result = fen_utils_test.send(:normalise_fen_rank, standard_new_board)
+        result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board)
         expect(result.size).to eq(71)
       end
     end
