@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require_relative "../console/console"
+require_relative "../nimbus_file_utils/nimbus_file_utils"
 
 module ConsoleGame
   # Base Game class
   class BaseGame
     include Console
-    include NimbusFileUtils
+    include ::NimbusFileUtils
 
     attr_reader :game_manager, :controller, :title, :user
     attr_accessor :state, :game_result

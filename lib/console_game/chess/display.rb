@@ -7,7 +7,7 @@ module ConsoleGame
   module Chess
     # Display module for the game Chess in Console Game
     module Display
-      include NimbusFileUtils
+      include ::NimbusFileUtils
       # Default design for the chessboard
       BOARD = {
         size: 8,

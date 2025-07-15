@@ -19,7 +19,7 @@ module ConsoleGame
   # Game Manager for Console game
   class GameManager
     include Console
-    include NimbusFileUtils
+    include ::NimbusFileUtils
 
     attr_reader :base_input, :cli, :apps, :user
     attr_accessor :running, :active_game

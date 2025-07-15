@@ -7,7 +7,7 @@ module ConsoleGame
   # Input class is a base class for various control layouts for ConsoleGame
   class Input
     include Console
-    include NimbusFileUtils
+    include ::NimbusFileUtils
 
     attr_reader :game_manager, :commands, :cmd_pattern
 
