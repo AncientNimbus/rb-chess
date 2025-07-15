@@ -14,9 +14,10 @@ module ConsoleGame
         b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
       }.freeze
 
-      # FEN Raw data parser
+      # FEN Raw data parser (FEN import)
       # @param level [Chess::Level] Chess level object
       # @param fen_str [String] expects a string in FEN format
+      # @return [Hash<Hash>] FEN data hash for internal use
       def parse_fen(level, fen_str = FEN[:w_start])
         fen = fen_str.split
         return fen_error(fen_str) if fen.size != 6

@@ -18,8 +18,9 @@ module ConsoleGame
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
-      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player
-      attr_reader :mode, :controller, :w_player, :b_player, :sessions, :board, :kings, :castling_states,
+      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :half_move,
+                    :full_move
+      attr_reader :mode, :controller, :w_player, :b_player, :fen_data, :sessions, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
       # @param mode [Integer]
@@ -34,7 +35,7 @@ module ConsoleGame
         @controller = input
         @w_player, @b_player = sides.values
         @session = sessions
-        @turn_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
+        @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @board = Board.new(self)
       end
 
@@ -114,14 +115,12 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
-        # p "Setting up game level"
+        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
+          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         controller.link_level(self)
-        @white_turn = true
-        @castling_states = { K: true, Q: true, k: true, q: true }
         @kings = { white: nil, black: nil }
         @threats_map = { white: [], black: [] }
         @usable_pieces = { white: [], black: [] }
-        @en_passant = nil
         @player = w_player
         kings_table
       end
