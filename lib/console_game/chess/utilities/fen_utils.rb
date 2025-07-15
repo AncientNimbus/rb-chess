@@ -21,27 +21,38 @@ module ConsoleGame
         fen = fen_str.split
         return fen_error(fen_str) if fen.size != 6
 
-        fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
-        p turn_state = parse_active_color(turn)
-        p castling_states = parse_castling_str(c_state)
-        p en_passant_state = parse_en_passant(ep_state)
-        p halfmove_state = parse_move_number(halfmove)
-        p fullmove_state = parse_move_number(fullmove, :full)
-        p turn_data = parse_piece_placement(fen_board, level)
+        fen_data = process_fen_data(fen, level)
+        return fen_error(fen_str) if fen_data.any?(&:nil?)
+
+        board_data, active_player, castling, en_passant, h_move, f_move = fen_data
+        { **board_data, **active_player, **castling, **en_passant, **h_move, **f_move }
       end
 
       private
+
+      # Helper: Batch process FEN parsing operations
+      # @param fen_data [Array<String>] expects splitted FEN as an array
+      # @param level [Chess::Level] Chess level object
+      # @return [Array<Hash, nil>]
+      def process_fen_data(fen_data, level)
+        fen_board, active_color, c_state, ep_state, halfmove, fullmove = fen_data
+        [
+          parse_piece_placement(fen_board, level), parse_active_color(active_color), parse_castling_str(c_state),
+          parse_en_passant(ep_state), parse_move_number(halfmove), parse_move_number(fullmove, :full)
+        ]
+      end
 
       # Process flow when there is an issue during FEN parsing
       # @param fen_str [String] expects a string in FEN format
       def fen_error(fen_str)
         puts "FEN error, operation cancelled. #{fen_str}" # @todo: Replace with TF
+        "FEN error, operation cancelled. #{fen_str}" # @todo: Replace with TF
       end
 
       # Process FEN board data field
       # @param fen_board [String] expects an Array with FEN positions data
       # @param level [Chess::Level] Chess level object
-      # @return [Array<ChessPiece, String>, nil] chess position data starts from a1..h8
+      # @return [Hash<Array<ChessPiece, String>>, nil] chess position data starts from a1..h8
       def parse_piece_placement(fen_board, level)
         turn_data = Array.new(8) { [] }
         pos_value = 0
@@ -53,7 +64,7 @@ module ConsoleGame
             pos_value += 1
           end
         end
-        turn_data.flatten
+        { turn_data: turn_data.flatten }
       end
 
       # Process FEN active color field
@@ -68,10 +79,10 @@ module ConsoleGame
 
       # Process FEN castling field
       # @param c_state [String] expects a string with castling data
-      # @return [Hash, nil] a hash of castling statuses
+      # @return [Hash<Hash<Boolean>>, nil] a hash of castling statuses
       def parse_castling_str(c_state)
         castling_states = { K: false, Q: false, k: false, q: false }
-        return castling_states if c_state.empty?
+        return { castling_states: castling_states } if c_state.empty?
 
         c_state.split("").each do |char|
           char_as_sym = char.to_sym
@@ -79,7 +90,7 @@ module ConsoleGame
 
           castling_states[char_as_sym] = true
         end
-        castling_states
+        { castling_states: castling_states }
       end
 
       # Process FEN En-passant target square field
@@ -98,7 +109,7 @@ module ConsoleGame
       def parse_move_number(move_num, type = :half)
         return nil unless move_num.match?(/\A\d+\z/) && %i[half full].include?(type)
 
-        { type.to_sym => move_num.to_i }
+        { type => move_num.to_i }
       end
 
       # Initialize chess piece via string value
