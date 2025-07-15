@@ -90,9 +90,9 @@ describe ConsoleGame::Chess::FenUtils do
     context "when value is an invalid FEN string" do
       let(:invalid_fen_string) { "Invalid fen string" }
 
-      it "returns a error string" do
+      it "returns a hash of a standard new game as fallback" do
         result = fen_utils_test.parse_fen(level_double, invalid_fen_string)
-        expect(result).to eq("FEN error, operation cancelled. Invalid fen string")
+        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half full])
       end
     end
   end
@@ -218,7 +218,7 @@ describe ConsoleGame::Chess::FenUtils do
 
       it "returns a hash where en_passant key contains the same value" do
         result = fen_utils_test.send(:parse_en_passant, ep_state)
-        expect(result).to eq({ en_passant: "a3" })
+        expect(result).to eq({ en_passant: %w[a4 a3] })
       end
     end
 
@@ -227,7 +227,7 @@ describe ConsoleGame::Chess::FenUtils do
 
       it "returns a hash where en_passant key contains the same value" do
         result = fen_utils_test.send(:parse_en_passant, ep_state)
-        expect(result).to eq({ en_passant: "h6" })
+        expect(result).to eq({ en_passant: %w[h5 h6] })
       end
     end
 

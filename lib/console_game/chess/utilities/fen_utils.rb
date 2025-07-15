@@ -20,10 +20,10 @@ module ConsoleGame
       # @return [Hash<Hash>] FEN data hash for internal use
       def parse_fen(level, fen_str = FEN[:w_start])
         fen = fen_str.split
-        return fen_error(fen_str) if fen.size != 6
+        return fen_error(level, fen_str) if fen.size != 6
 
         fen_data = process_fen_data(fen, level)
-        return fen_error(fen_str) if fen_data.any?(&:nil?)
+        return fen_error(level, fen_str) if fen_data.any?(&:nil?)
 
         board_data, active_player, castling, en_passant, h_move, f_move = fen_data
         { **board_data, **active_player, **castling, **en_passant, **h_move, **f_move }
@@ -44,10 +44,11 @@ module ConsoleGame
       end
 
       # Process flow when there is an issue during FEN parsing
+      # @param level [Chess::Level] Chess level object
       # @param fen_str [String] expects a string in FEN format
-      def fen_error(fen_str)
-        puts "FEN error, operation cancelled. #{fen_str}" # @todo: Replace with TF
-        "FEN error, operation cancelled. #{fen_str}" # @todo: Replace with TF
+      def fen_error(level, fen_str)
+        puts "FEN error, FEN: '#{fen_str}' is not a valid sequence. Loading a new game..." # @todo: Replace with TF
+        parse_fen(level)
       end
 
       # Process FEN board data field
@@ -100,7 +101,10 @@ module ConsoleGame
       def parse_en_passant(ep_state)
         return nil unless ep_state.match?(/\A[a-h][36]|-\z/)
 
-        { en_passant: ep_state == "-" ? nil : ep_state }
+        ep_pawn_rank = ep_state.include?("6") ? "5" : "4"
+        ep_pawn = "#{ep_state[0]}#{ep_pawn_rank}"
+
+        { en_passant: ep_state == "-" ? nil : [ep_pawn, ep_state] }
       end
 
       # Process FEN Half-move clock or Full-move field
