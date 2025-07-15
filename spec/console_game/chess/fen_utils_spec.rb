@@ -44,6 +44,15 @@ describe ConsoleGame::Chess::FenUtils do
         expect(result.size).to eq(64)
       end
     end
+
+    context "when the value is not a valid FEN string sequence" do
+      let(:invalid_sequence) { "r5ABC/ppzzp4p/3p4/9/3pPP2/2P2n2/TEST/RNB4K" }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:to_turn_data, invalid_sequence, level_double)
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe "#parse_active_color" do
@@ -306,15 +315,6 @@ describe ConsoleGame::Chess::FenUtils do
       it "returns a 1D array of string where the length of the array is 8" do
         result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
         expect(result.size).to eq(8)
-      end
-    end
-
-    context "when the value is not a valid FEN string sequence" do
-      let(:invalid_sequence) { "r5aBcd" }
-
-      it "returns nil" do
-        result = fen_utils_test.send(:normalise_fen_rank, invalid_sequence)
-        expect(result).to be_nil
       end
     end
   end

@@ -38,12 +38,13 @@ module ConsoleGame
       # Process FEN board data field
       # @param fen_board [String] expects an Array with FEN positions data
       # @param level [Chess::Level] Chess level object
-      # @return [Array<ChessPiece, String>] chess position data starts from a1..h8
+      # @return [Array<ChessPiece, String>, nil] chess position data starts from a1..h8
       def to_turn_data(fen_board, level)
-        turn_data = Array.new { {} }
+        turn_data = Array.new(8) { [] }
         pos_value = 0
         fen_board.split("/").reverse.each_with_index do |rank, row|
-          turn_data[row] = []
+          return nil unless rank.match?(/\A[kqrbnp1-8]+\z/i)
+
           normalise_fen_rank(rank).each_with_index do |unit, col|
             turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit, level)
             pos_value += 1
@@ -64,7 +65,7 @@ module ConsoleGame
 
       # Process FEN castling field
       # @param c_state [String] expects a string with castling data
-      # @return [Hash] a hash of castling statuses
+      # @return [Hash, nil] a hash of castling statuses
       def parse_castling_str(c_state)
         castling_states = { K: false, Q: false, k: false, q: false }
         return castling_states if c_state.empty?
@@ -93,8 +94,6 @@ module ConsoleGame
       # @param fen_rank_str [String]
       # @return [Array] processed rank data array
       def normalise_fen_rank(fen_rank_str)
-        return nil unless fen_rank_str.match?(/\A[kqrbnp1-8]+\z/i)
-
         fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
       end
     end
