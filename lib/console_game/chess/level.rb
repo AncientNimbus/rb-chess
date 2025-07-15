@@ -58,7 +58,7 @@ module ConsoleGame
 
       # Reset En Passant status when it is not used at the following turn
       def reset_en_passant
-        return if en_passant.nil?
+        return if en_passant.nil? || active_piece == en_passant[0]
 
         self.en_passant = nil if active_piece.curr_pos != en_passant[1]
       end
@@ -123,6 +123,8 @@ module ConsoleGame
         @usable_pieces = { white: [], black: [] }
         @player = w_player
         kings_table
+        load_en_passant_state
+        update_board_state
       end
 
       # Main Game Loop
@@ -144,6 +146,15 @@ module ConsoleGame
       # Get and store both Kings
       def kings_table
         fetch_all(type: King).each { |king| kings[king.side] = king }
+      end
+
+      # Restore En passant status based on FEN data
+      def load_en_passant_state
+        return if en_passant.nil?
+
+        pawn_query, ghost_pos = en_passant
+        en_passant[0] = turn_data[alg_map[pawn_query.to_sym]]
+        en_passant[1] = alg_map[ghost_pos.to_sym]
       end
 
       # Generate possible moves & targets for all pieces, all whites or all blacks

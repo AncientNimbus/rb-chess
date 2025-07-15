@@ -53,9 +53,10 @@ module ConsoleGame
       # Play a turn in chess as a human player
       def play_turn
         link_level
-        puts "It is #{side}'s turn." # @todo: replace with TF string
+        puts "It is #{name}'s turn." # @todo: replace with TF string
         # Prompt player to enter notation value
         controller.turn_action(self)
+        level.reset_en_passant
 
         put_piece_down
       end
