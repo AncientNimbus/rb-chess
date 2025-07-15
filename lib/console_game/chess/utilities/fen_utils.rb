@@ -22,9 +22,12 @@ module ConsoleGame
         return fen_error(fen_str) if fen.size != 6
 
         fen_board, turn, c_state, ep_state, halfmove, fullmove = fen
-        castling_states = parse_castling_str(c_state)
-        turn_state = parse_active_color(turn)
-        turn_data = parse_piece_placement(fen_board, level)
+        p turn_state = parse_active_color(turn)
+        p castling_states = parse_castling_str(c_state)
+        p en_passant_state = parse_en_passant(ep_state)
+        p halfmove_state = parse_move_number(halfmove)
+        p fullmove_state = parse_move_number(fullmove, :full)
+        p turn_data = parse_piece_placement(fen_board, level)
       end
 
       private
@@ -86,6 +89,16 @@ module ConsoleGame
         return nil unless ep_state.match?(/\A[a-h][36]|-\z/)
 
         { en_passant: ep_state == "-" ? nil : ep_state }
+      end
+
+      # Process FEN Half-move clock or Full-move field
+      # @param move_num [String] expects a string with either half-move or full-move data
+      # @param type [Symbol] specify the key type for the hash
+      # @return [Hash, nil] a hash of either half-move or full-move data
+      def parse_move_number(move_num, type = :half)
+        return nil unless move_num.match?(/\A\d+\z/) && %i[half full].include?(type)
+
+        { type.to_sym => move_num.to_i }
       end
 
       # Initialize chess piece via string value

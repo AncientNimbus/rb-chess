@@ -178,6 +178,48 @@ describe ConsoleGame::Chess::FenUtils do
     end
   end
 
+  describe "#parse_move_number" do
+    context "when value is a number and type is half-move" do
+      let(:move_num) { "2" }
+      let(:type_is_half_move) { :half }
+
+      it "returns a hash where key is set to half and value is converted to an integer" do
+        result = fen_utils_test.send(:parse_move_number, move_num, type_is_half_move)
+        expect(result).to eq({ half: 2 })
+      end
+    end
+
+    context "when value is a number and type is full-move" do
+      let(:move_num) { "20" }
+      let(:type_is_full_move) { :full }
+
+      it "returns a hash where key is set to full and value is converted to an integer" do
+        result = fen_utils_test.send(:parse_move_number, move_num, type_is_full_move)
+        expect(result).to eq({ full: 20 })
+      end
+    end
+
+    context "when value is not a number and type is full-move" do
+      let(:move_num) { "ABC" }
+      let(:type_is_full_move) { :full }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:parse_move_number, move_num, type_is_full_move)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when value is a number and type is not valid" do
+      let(:move_num) { "123" }
+      let(:invalid_type) { :not_valid }
+
+      it "returns nil" do
+        result = fen_utils_test.send(:parse_move_number, move_num, invalid_type)
+        expect(result).to be_nil
+      end
+    end
+  end
+
   describe "#piece_maker" do
     let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
 
