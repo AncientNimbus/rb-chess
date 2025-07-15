@@ -93,10 +93,9 @@ module ConsoleGame
       # @param fen_rank_str [String]
       # @return [Array] processed rank data array
       def normalise_fen_rank(fen_rank_str)
-        data = fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
-        return nil unless data.all? { |element| element.match?(%r{\A[kqrbnp0/]\z}i) }
+        return nil unless fen_rank_str.match?(/\A[kqrbnp1-8]+\z/i)
 
-        data
+        fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
       end
     end
   end

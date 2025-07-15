@@ -267,36 +267,50 @@ describe ConsoleGame::Chess::FenUtils do
   end
 
   describe "#normalise_fen_rank" do
-    context "when the value is a valid FEN string of a new game" do
-      let(:standard_new_board) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
+    context "when the value is a valid FEN string of rank 1 in a new game" do
+      let(:standard_new_rank1) { "rnbqkbnr" }
 
       it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
-        result = fen_utils_test.send(:normalise_fen_rank, standard_new_board)
-        expect(result).to eq(["r", "n", "b", "q", "k", "b", "n", "r", "/", "p", "p", "p", "p", "p", "p", "p", "p", "/", "0", "0", "0", "0", "0", "0", "0", "0", "/", "0", "0", "0", "0", "0", "0", "0", "0", "/", "0", "0", "0", "0", "0", "0", "0", "0", "/", "0", "0", "0", "0", "0", "0", "0", "0", "/", "P", "P", "P", "P", "P", "P", "P", "P", "/", "R", "N", "B", "Q", "K", "B", "N", "R"])
+        result = fen_utils_test.send(:normalise_fen_rank, standard_new_rank1)
+        expect(result).to eq(%w[r n b q k b n r])
       end
 
-      it "returns a 1D array of string where the length of the array is 71" do
-        result = fen_utils_test.send(:normalise_fen_rank, standard_new_board)
-        expect(result.size).to eq(71)
+      it "returns a 1D array of string where the length of the array is 8" do
+        result = fen_utils_test.send(:normalise_fen_rank, standard_new_rank1)
+        expect(result.size).to eq(8)
       end
     end
 
-    context "when the value is a valid FEN string of an ongoing game" do
-      let(:ongoing_game_board) { "r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K" }
+    context "when the value is a valid FEN string of rank 3 in a new game" do
+      let(:standard_new_rank3) { "8" }
 
       it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
-        result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board)
-        expect(result).to eq(["r", "0", "0", "0", "0", "0", "r", "k", "/", "p", "p", "p", "0", "0", "0", "0", "p", "/", "0", "0", "0", "p", "0", "0", "0", "0", "/", "0", "0", "b", "0", "0", "Q", "0", "0", "/", "0", "0", "0", "p", "P", "P", "0", "0", "/", "0", "0", "P", "0", "0", "n", "0", "0", "/", "P", "P", "0", "0", "0", "P", "0", "R", "/", "R", "N", "B", "0", "0", "0", "0", "K"])
+        result = fen_utils_test.send(:normalise_fen_rank, standard_new_rank3)
+        expect(result).to eq(%w[0 0 0 0 0 0 0 0])
       end
 
-      it "returns a 1D array of string where the length of the array is 71" do
-        result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board)
-        expect(result.size).to eq(71)
+      it "returns a 1D array of string where the length of the array is 8" do
+        result = fen_utils_test.send(:normalise_fen_rank, standard_new_rank3)
+        expect(result.size).to eq(8)
+      end
+    end
+
+    context "when the value is a valid FEN string of rank 1 in an ongoing game" do
+      let(:ongoing_game_board_rank1) { "r5rk" }
+
+      it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
+        result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
+        expect(result).to eq(%w[r 0 0 0 0 0 r k])
+      end
+
+      it "returns a 1D array of string where the length of the array is 8" do
+        result = fen_utils_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
+        expect(result.size).to eq(8)
       end
     end
 
     context "when the value is not a valid FEN string sequence" do
-      let(:invalid_sequence) { "r5rk/abc4p/3p4/2b2Q2/3ZZZ2/2P2n2/PP3P1R/RNB4K" }
+      let(:invalid_sequence) { "r5aBcd" }
 
       it "returns nil" do
         result = fen_utils_test.send(:normalise_fen_rank, invalid_sequence)
