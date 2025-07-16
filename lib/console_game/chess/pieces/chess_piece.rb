@@ -18,7 +18,7 @@ module ConsoleGame
 
       attr_accessor :at_start, :curr_pos, :targets, :sights, :color, :moved
       attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :captured, :possible_moves,
-                  :std_color, :highlight
+                  :std_color, :highlight, :last_move
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -61,6 +61,7 @@ module ConsoleGame
       def query_moves
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
         threat_response
+        # puts "#{info}: #{possible_moves}"
       end
 
       # Return alg notation of current position
@@ -112,17 +113,31 @@ module ConsoleGame
 
         turn_data[old_pos] = ""
         turn_data[new_pos] = self
+        @last_move = store_last_move(:move, old_pos)
         return curr_pos if new_tile.is_a?(String)
 
-        captured << new_tile if new_tile.is_a?(ChessPiece)
+        captured << new_tile
+        @last_move = store_last_move(:capture, old_pos)
         curr_pos
+      end
+
+      # Last move formatted as algebraic notation
+      def store_last_move(move_type = :move, file = nil)
+        alg_notation = notation.to_s.upcase
+        move = "#{alg_notation}#{info}"
+        if move_type == :capture
+          move.insert(1, "x")
+          move.insert(1, alg_map.key(file)[0])
+        end
+        # move.insert(-1, "+") if possible_moves.include?(level.kings[opposite_of(side)].curr_pos)
+        move
       end
 
       # Valid movement
       # @param pos1 [Integer] original board positional value
       # @param pos2 [Integer] new board positional value
       # @return [Boolean]
-      def valid_moves?(pos1, pos2); end
+      # def valid_moves?(pos1, pos2); end
 
       # == Threat Query ==
 

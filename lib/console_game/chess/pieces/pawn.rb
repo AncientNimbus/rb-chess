@@ -90,6 +90,13 @@ module ConsoleGame
         false
       end
 
+      # Override store_last_move
+      # Last move formatted as algebraic notation
+      def store_last_move(move_type = :move, file = nil)
+        move = super
+        move.sub("P", "")
+      end
+
       # Override detect_occupied_tiles
       # Detect blocked tile based on the given positions
       # @param path [Symbol]

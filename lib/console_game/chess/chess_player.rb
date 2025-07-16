@@ -9,7 +9,7 @@ module ConsoleGame
     class ChessPlayer < Player
       # @!attribute [w] piece_at_hand
       #   @return [ChessPiece]
-      attr_accessor :side, :piece_at_hand
+      attr_accessor :side, :piece_at_hand, :move_count
       # @!attribute [r] controller
       #   @return [ChessInput]
       attr_reader :level, :controller
@@ -21,12 +21,14 @@ module ConsoleGame
         super(game_manager, name, controller)
         @side = nil
         @piece_at_hand = nil
+        @move_count = 0
       end
 
       # Override: Initialise player save data
       def init_data
         @data = Hash.new do |hash, key|
-          hash[key] = { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {} }
+          hash[key] =
+            { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {}, fen: nil }
         end
       end
 
@@ -73,7 +75,7 @@ module ConsoleGame
 
         # Second prompt to complete the turn
         controller.make_a_move(self)
-        turn_end
+        true
       end
 
       # Chain with #preview_move, enables player make a move after previewing possible moves
@@ -128,6 +130,8 @@ module ConsoleGame
         move_piece(target)
       end
 
+      private
+
       # Handling piece assignment
       # @param alg_pos [String] algebraic notation
       # @return [ChessPiece]
@@ -159,8 +163,6 @@ module ConsoleGame
         piece_at_hand
       end
 
-      private
-
       # Store active level
       def link_level
         return if level == controller.level
@@ -170,6 +172,8 @@ module ConsoleGame
 
       # Helper: Explicitly state that player action has ended
       def turn_end
+        piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
+        p piece_at_hand.last_move
         true
       end
 
