@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2025-07-16
+
+### 🚀 Features
+
+- Add #parse_active_color
+- Add #parse_en_passant and test cases
+- Add #parse_move_number and test cases
+- Add all import logics to parse FEN string
+- Integrate new data structure to Level
+- Add logic to correctly process en passant
+- Add logic to store last move
+- Add #convert_turn_data to convert game data
+- Add support for FEN export
+- Add the ability to generate FEN string
+- Add logic to support autosaving
+- Add core logic to support load game
+
+### 🐛 Bug Fixes
+
+- Address a load order issue
+- Resolve an issue when checking castling status
+- Resolve an issue with Rook's movement
+- Resolve a highlighting bug during promotion
+- Address a bug occurred when King is checked
+
+### 🚜 Refactor
+
+- Move chess display logic to board class
+- Move analysis logic to a module
+- Optimise #fetch_all and #fetch_piece
+- Move player's actions to Player class
+- Move more player actions logic to Player
+- Further remove logics from Level.rb
+- Move FEN related logics to a new module
+- Optimise #normalise_fen_rank
+- Optimise #turn_data
+- Update #fen_error to use a fallback value
+- Remove unnecessary reference for Players
+- Optimise #convert_turn_data
+- Optimise FenUtils module
+- Split FenUtils to Fen import and export
+
+### 📚 Documentation
+
+- Update CHANGELOG
+
+### 🧪 Testing
+
+- Update test suites for logic module
+- Add test cases SmithNotation module
+- Add test cases for AlgebraicNotation module
+- Add test cases for #parse_castling
+- Add more test cases for algebraic module
+- Add test cases for #piece_maker
+- Add test cases for #to_turn_data
+
+### ⚙️ Miscellaneous Tasks
+
+- Update PGN utilities location
+
 ## [0.4.0] - 2025-07-13
 
 ### 🚀 Features
@@ -16,7 +76,7 @@ All notable changes to this project will be documented in this file.
 - Add new command pattern board
 - Add the ability to promote pawn via Smith
 - Add parsing methods for algebraic notation
-- Add the ability to use algebraic input
+- Add the ability to use with algebraic input
 
 ### 🐛 Bug Fixes
 
