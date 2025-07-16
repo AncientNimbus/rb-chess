@@ -145,7 +145,10 @@ module ConsoleGame
 
       # Save turn handling
       def save_turn
-        # to_fen(turn_data)
+        session_data =
+          { turn_data: turn_data, white_turn: white_turn, castling_states: castling_states, en_passant: en_passant,
+            half: half_move, full: full_move }
+        p to_fen(session_data)
       end
 
       # Endgame handling
