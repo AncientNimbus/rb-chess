@@ -122,7 +122,7 @@ module ConsoleGame
         saviours = king_allies.map do |ally|
           ally unless (ally.possible_moves & attack_path).empty?
         end.compact
-        saviours.each { |ally| ally.query_moves(attack_path) } # @todo: Limit move here for those who are not king
+        saviours.each { |ally| ally.query_moves(attack_path) }
         level.usable_pieces[side] = saviours.push(self).map(&:info)
         query_moves # update self
         !saviours.empty?

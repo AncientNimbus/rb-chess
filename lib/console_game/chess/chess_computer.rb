@@ -6,8 +6,8 @@ module ConsoleGame
   module Chess
     # Chess computer player class
     class ChessComputer < ChessPlayer
-      def initialize(game_manager = nil, name = "Computer")
-        super(game_manager, name)
+      def initialize(name = "Computer")
+        super(name)
       end
 
       # Play a turn in chess as an AI player

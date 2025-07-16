@@ -30,7 +30,7 @@ module ConsoleGame
       def initialize(game_manager = nil, title = "Base Game")
         super(game_manager, title, ChessInput.new(game_manager))
         Player.player_count(0)
-        @p1 = ChessPlayer.new(game_manager, user.profile[:username], controller)
+        @p1 = ChessPlayer.new(user.profile[:username], controller)
         @p2 = nil
         @side = { white: nil, black: nil }
         user.profile[:appdata][:chess] ||= {}
@@ -53,7 +53,11 @@ module ConsoleGame
         # new game or load game
         opt = game_selection
         opt == 1 ? new_game : load_game
-        Level.new(mode, controller, side, sessions).open_level
+        fen = nil
+        # fen = "r3k2r/1pppppp1/n1bq1bn1/p6p/P6P/N1BQ1BN1/1PPPPPP1/R3K2R w KQkq - 0 1"
+        # fen = "r2bkbnr/pp2p1pp/3p1p2/6n1/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
+        fen = "r1b1kbnr/pp2p1pp/3p1p2/n7/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
+        Level.new(mode, controller, side, sessions, fen).open_level
       end
 
       # Prompt player for new game or load game
@@ -88,7 +92,7 @@ module ConsoleGame
       # @param player [ConsoleGame::ChessPlayer, nil]
       # @return [ChessPlayer, ChessComputer]
       def player_profile(player)
-        player ||= mode == 1 ? ChessPlayer.new(game_manager, "", controller) : ChessComputer.new(game_manager)
+        player ||= mode == 1 ? ChessPlayer.new("", controller) : ChessComputer.new(game_manager)
         return player if player.is_a?(ChessComputer)
 
         # flow 2: name players

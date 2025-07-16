@@ -40,11 +40,9 @@ module ConsoleGame
 
     attr_reader :data, :name, :player_color, :controller
 
-    # @param game_manager [GameManager]
     # @param name [String]
     # @param controller [Input]
-    def initialize(game_manager = nil, name = "", controller = nil)
-      @game_manager = game_manager
+    def initialize(name = "", controller = nil)
       @name = name
       @controller = controller
       # Player.setup_color

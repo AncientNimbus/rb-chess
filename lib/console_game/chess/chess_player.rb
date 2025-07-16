@@ -14,11 +14,10 @@ module ConsoleGame
       #   @return [ChessInput]
       attr_reader :level, :controller
 
-      # @param game_manager [GameManager]
       # @param name [String]
       # @param controller [ChessInput]
-      def initialize(game_manager = nil, name = "", controller = nil)
-        super(game_manager, name, controller)
+      def initialize(name = "", controller = nil)
+        super(name, controller)
         @side = nil
         @piece_at_hand = nil
         @move_count = 0
