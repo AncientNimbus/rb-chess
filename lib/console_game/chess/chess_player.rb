@@ -111,6 +111,7 @@ module ConsoleGame
 
       # Pawn specific: Present a list of option when player can promote a pawn
       def indirect_promote
+        level.refresh
         controller.promote_a_pawn
       end
 
