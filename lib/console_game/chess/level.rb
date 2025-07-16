@@ -12,7 +12,6 @@ module ConsoleGame
     # The Level class handles the core game loop of the game Chess
     # @author Ancient Nimbus
     class Level
-      include Console
       include Logic
       include PieceAnalysis
       include FenImport
@@ -22,7 +21,7 @@ module ConsoleGame
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :half_move,
                     :full_move
-      attr_reader :mode, :controller, :w_player, :b_player, :fen_data, :sessions, :board, :kings, :castling_states,
+      attr_reader :mode, :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
       # @param mode [Integer]
@@ -30,13 +29,13 @@ module ConsoleGame
       # @param sides [hash]
       #   @option sides [ChessPlayer, ChessComputer] :white Player who plays as White
       #   @option sides [ChessPlayer, ChessComputer] :black Player who plays as Black
-      # @param sessions [hash]
+      # @param session [hash] current session
       # @param import_fen [String] expects a valid FEN string
-      def initialize(mode, input, sides, sessions, import_fen = nil)
+      def initialize(mode, input, sides, session, import_fen = nil)
         @mode = mode
         @controller = input
         @w_player, @b_player = sides.values
-        @session = sessions
+        p @session = session
         @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @board = Board.new(self)
       end
@@ -125,7 +124,6 @@ module ConsoleGame
         @kings = { white: nil, black: nil }
         @threats_map = { white: [], black: [] }
         @usable_pieces = { white: [], black: [] }
-        @player = w_player
         kings_table
         load_en_passant_state
         update_board_state
@@ -133,7 +131,7 @@ module ConsoleGame
 
       # Main Game Loop
       def play_chess
-        self.player = white_turn ? w_player : b_player
+        @player = white_turn ? w_player : b_player
         # Pre turn
         refresh
         # Play turn
@@ -145,10 +143,11 @@ module ConsoleGame
 
       # Save turn handling
       def save_turn
-        session_data =
+        level_data =
           { turn_data: turn_data, white_turn: white_turn, castling_states: castling_states, en_passant: en_passant,
             half: half_move, full: full_move }
-        p to_fen(session_data)
+        session[:fens].push(to_fen(level_data))
+        controller.save
       end
 
       # Endgame handling

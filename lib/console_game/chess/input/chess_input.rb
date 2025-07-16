@@ -55,8 +55,6 @@ module ConsoleGame
         ask("Your pawn is ready for a promotion ", reg: SMITH_PATTERN[:promotion], input_type: :custom)
       end
 
-      private
-
       # == Console Commands ==
 
       # Exit sequences | command patterns: `exit`
@@ -80,6 +78,7 @@ module ConsoleGame
         return if level.nil?
 
         p "Will save session to player session, then store player data to user profile"
+        game_manager.user.save_profile
       end
 
       # Load session from player data | command pattern: `load`
@@ -126,6 +125,8 @@ module ConsoleGame
         else puts "Invalid command detected, type --help to view all possible commands." # @todo: Move to TF
         end
       end
+
+      private
 
       # == Utilities ==
 

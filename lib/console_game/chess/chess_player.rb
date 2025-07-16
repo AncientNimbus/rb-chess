@@ -27,7 +27,7 @@ module ConsoleGame
       def init_data
         @data = Hash.new do |hash, key|
           hash[key] =
-            { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {}, fen: nil }
+            { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {}, fens: [] }
         end
       end
 
@@ -172,7 +172,7 @@ module ConsoleGame
       # Helper: Explicitly state that player action has ended
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
-        p piece_at_hand.last_move
+        # p piece_at_hand.last_move
         true
       end
 

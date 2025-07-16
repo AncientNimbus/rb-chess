@@ -52,12 +52,12 @@ module ConsoleGame
       def setup_game
         # new game or load game
         opt = game_selection
-        opt == 1 ? new_game : load_game
+        id = opt == 1 ? new_game : load_game
         fen = nil
         # fen = "r3k2r/1pppppp1/n1bq1bn1/p6p/P6P/N1BQ1BN1/1PPPPPP1/R3K2R w KQkq - 0 1"
         # fen = "r2bkbnr/pp2p1pp/3p1p2/6n1/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
-        fen = "r1b1kbnr/pp2p1pp/3p1p2/n7/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
-        Level.new(mode, controller, side, sessions, fen).open_level
+        # fen = "r1b1kbnr/pp2p1pp/3p1p2/n7/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
+        Level.new(mode, controller, side, sessions[id], fen).open_level
       end
 
       # Prompt player for new game or load game
@@ -114,10 +114,12 @@ module ConsoleGame
       end
 
       # Create session data
+      # @return [Integer] current session id
       def create_session(id)
         sides = side.keys
         p1.side, p2.side = side[:white] == p1 ? sides : sides.reverse
         sessions[id] = p1.register_session(id, p2.name)
+        id
       end
     end
   end
