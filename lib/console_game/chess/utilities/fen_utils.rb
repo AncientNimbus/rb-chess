@@ -14,6 +14,11 @@ module ConsoleGame
         b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
       }.freeze
 
+      EXPORT_HELPER = {
+        to_active_color: ->(white_turn) { white_turn ? "w" : "b" },
+        to_en_passant: ->(en_passant) { en_passant.nil? ? "-" : en_passant[1] }
+      }.freeze
+
       # FEN Raw data parser (FEN import)
       # @param level [Chess::Level] Chess level object
       # @param fen_str [String] expects a string in FEN format
@@ -139,15 +144,20 @@ module ConsoleGame
 
       # Transform internal turn data to FEN string
       # @param turn_data [Array<ChessPiece, String>]
+      # @param session_data [Hash]
       # @return [String]
-      def to_fen(turn_data)
-        convert_turn_data(turn_data)
+      def to_fen(session_data)
+        turn_data, white_turn, castling_states, en_passant, half_move, full_move =
+          session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+
+        [to_turn_data(turn_data), EXPORT_HELPER[:to_active_color].call(white_turn), to_castling_states(castling_states),
+         EXPORT_HELPER[:to_en_passant].call(en_passant), half_move.to_s, full_move.to_s].join(" ")
       end
 
       # Convert internal turn data to string
       # @param turn_data [Array<ChessPiece, String>]
       # @return [String] FEN position placements as string
-      def convert_turn_data(turn_data)
+      def to_turn_data(turn_data)
         str_arr = []
         turn_data.each_slice(8) do |row|
           compressed_row = compress_row_str(row_data_to_str(row))
@@ -184,6 +194,14 @@ module ConsoleGame
           end
         end
         compressed_row.tap { |arr| arr.push(count.to_s) if count.positive? }
+      end
+
+      # Convert castling states to FEN castling status field
+      # @param castling_states [Hash]
+      # @return [String]
+      def to_castling_states(castling_states)
+        str = castling_states.reject { |_, v| v == false }.keys.map(&:to_s).join("")
+        str.empty? ? "-" : str
       end
     end
   end
