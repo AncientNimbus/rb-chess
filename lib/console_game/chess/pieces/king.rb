@@ -119,9 +119,12 @@ module ConsoleGame
       # @return [Boolean] true if someone can come save the King
       def any_saviours?(king_allies, attacker)
         attack_path = find_attacker_path(attacker)
-        saviours = level.usable_pieces[side] = king_allies.map do |ally|
-          ally.info unless (ally.possible_moves & attack_path).empty?
+        saviours = king_allies.map do |ally|
+          ally unless (ally.possible_moves & attack_path).empty?
         end.compact
+        saviours.each { |ally| ally.query_moves(attack_path) } # @todo: Limit move here for those who are not king
+        level.usable_pieces[side] = saviours.push(self).map(&:info)
+        query_moves # update self
         !saviours.empty?
       end
 

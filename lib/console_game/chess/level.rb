@@ -94,6 +94,8 @@ module ConsoleGame
         filtered_pieces = fetch_all(side, type: type)
         new_alg_pos = alg_map[target.to_sym]
         result = filtered_pieces.select do |piece|
+          next unless usable_pieces[side].include?(piece.info)
+
           piece.possible_moves.include?(new_alg_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
         return nil if result.size > 1
@@ -167,9 +169,9 @@ module ConsoleGame
       # Board state refresher
       def update_board_state
         @threats_map, @usable_pieces = board_analysis(generate_moves)
+        any_checkmate?
         # puts usable_pieces
         # puts threats_map
-        any_checkmate?
       end
 
       # End game if either side achieved a checkmate

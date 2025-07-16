@@ -58,9 +58,11 @@ module ConsoleGame
       end
 
       # Query and update possible_moves
-      def query_moves
+      # @param limiter [Array] limit piece movement when player is checked
+      def query_moves(limiter = [])
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
         threat_response
+        @possible_moves = possible_moves & limiter unless limiter.empty?
         # puts "#{info}: #{possible_moves}"
       end
 
