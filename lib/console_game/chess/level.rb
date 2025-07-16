@@ -4,7 +4,8 @@ require_relative "game"
 require_relative "logic"
 require_relative "board"
 require_relative "piece_analysis"
-require_relative "utilities/fen_utils"
+require_relative "utilities/fen_import"
+require_relative "utilities/fen_export"
 
 module ConsoleGame
   module Chess
@@ -14,7 +15,8 @@ module ConsoleGame
       include Console
       include Logic
       include PieceAnalysis
-      include FenUtils
+      include FenImport
+      include FenExport
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
@@ -143,7 +145,7 @@ module ConsoleGame
 
       # Save turn handling
       def save_turn
-        to_fen(turn_data)
+        # to_fen(turn_data)
       end
 
       # Endgame handling
