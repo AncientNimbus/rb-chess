@@ -137,7 +137,13 @@ module ConsoleGame
         # Play turn
         player.play_turn
         # Post turn
+        save_turn
         self.white_turn = !white_turn
+      end
+
+      # Save turn handling
+      def save_turn
+        to_fen(turn_data)
       end
 
       # Endgame handling

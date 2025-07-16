@@ -84,7 +84,7 @@ module ConsoleGame
       # @return [Hash<Hash<Boolean>>, nil] a hash of castling statuses
       def parse_castling_str(c_state)
         castling_states = { K: false, Q: false, k: false, q: false }
-        return { castling_states: castling_states } if c_state.empty?
+        return { castling_states: castling_states } if c_state.empty? || c_state == "-"
 
         c_state.split("").each do |char|
           char_as_sym = char.to_sym
@@ -133,6 +133,48 @@ module ConsoleGame
       # @return [Array] processed rank data array
       def normalise_fen_rank(fen_rank_str)
         fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
+      end
+
+      # == FEN Export ==
+
+      # Transform internal turn data to FEN string
+      # @param turn_data [Array<ChessPiece, String>]
+      # @return [String]
+      def to_fen(turn_data)
+        convert_turn_data(turn_data)
+      end
+
+      # Convert internal turn data to string
+      # @param turn_data [Array<ChessPiece, String>]
+      def convert_turn_data(turn_data)
+        str_arr = []
+        turn_data.each_slice(8) do |row|
+          row.map! do |tile|
+            if tile.is_a?(ChessPiece)
+              notation = tile.notation
+              tile.side == :white ? notation : notation.downcase
+            else
+              "0"
+            end
+          end
+
+          count = 0
+          out = []
+          row.reverse_each do |elem|
+            if elem == "0"
+              count += 1
+            else
+              out << count.to_s if count.positive?
+              out << elem
+              count = 0
+            end
+          end
+          out << count.to_s if count.positive?
+
+          str_arr << out.join("")
+        end
+
+        p str_arr.join("/").reverse
       end
     end
   end
