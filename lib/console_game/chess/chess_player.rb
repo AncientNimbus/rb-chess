@@ -27,20 +27,24 @@ module ConsoleGame
       def init_data
         @data = Hash.new do |hash, key|
           hash[key] =
-            { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, moves: {}, fens: [] }
+            { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, mode: nil, moves: {},
+              fens: [] }
         end
       end
 
       # Register session data
       # @param id [Integer] session id
       # @param p2_name [String] player 2's name
+      # @param mode [Integer] game mode
       # @param event [String] name of the event
       # @param site [String] name of the site
       # @param date [Time] time of the event
-      def register_session(id, p2_name, event: "Ruby Arcade Chess Casual", site: "Ruby Arcade", date: Time.new.ceil)
+      def register_session(id, p2_name, mode, event: "Casual", site: "Ruby Arcade by Ancient Nimbus",
+                           date: Time.new.ceil)
         players = [name, p2_name].map { |name| Paint.unpaint(name) }
         white, black = side == :white ? players : players.reverse
         # @todo: to refactor
+        write_metadata(id, :mode, mode)
         write_metadata(id, :white, white)
         write_metadata(id, :black, black)
         write_metadata(id, :event, event)

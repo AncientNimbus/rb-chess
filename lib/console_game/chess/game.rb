@@ -34,7 +34,7 @@ module ConsoleGame
         @p2 = nil
         @side = { white: nil, black: nil }
         user.profile[:appdata][:chess] ||= {}
-        @sessions = user.profile[:appdata][:chess]
+        @sessions = user.profile[:appdata][:chess].transform_keys(&:to_s)
       end
 
       private
@@ -53,10 +53,7 @@ module ConsoleGame
         # new game or load game
         opt = game_selection
         id = opt == 1 ? new_game : load_game
-        fen = nil
-        # fen = "r3k2r/1pppppp1/n1bq1bn1/p6p/P6P/N1BQ1BN1/1PPPPPP1/R3K2R w KQkq - 0 1"
-        # fen = "r2bkbnr/pp2p1pp/3p1p2/6n1/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
-        # fen = "r1b1kbnr/pp2p1pp/3p1p2/n7/1Q6/6q1/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
+        p fen = sessions.dig(id, :fens, -1)
         Level.new(mode, controller, side, sessions[id], fen).open_level
       end
 
@@ -73,12 +70,29 @@ module ConsoleGame
         @p1, @p2 = setup_players
         start_order
         create_session(sessions.size + 1)
-        # [p1, p2].each { |player| print_msg(s("order.f2", { player: [player.name], color: [player.side] }), pre: "* ") }
       end
 
       # Handle load game sequence
       def load_game
         p "load game from list"
+        records = sessions.values
+        records.map! { |record| record.slice(:date, :white, :black, :mode, :fens) }
+
+        # Print list
+        user_opt = controller.pick_from(sessions.keys)
+        session = sessions.fetch(user_opt)
+        @mode = session[:mode]
+        if mode == 1
+          p1_color = session.key(game_manager.user.username)
+          p2_color = p1_color == :white ? :black : :white
+          @p1 = ChessPlayer.new(session[p1_color], controller)
+          @p2 = ChessPlayer.new(session[p2_color], controller)
+          side[p1_color] = p1
+          side[p2_color] = p2
+        end
+        user_opt
+
+        # p loaded_sessions.dig(user_opt, :fens, -1)
       end
 
       # == Utilities ==
@@ -114,11 +128,13 @@ module ConsoleGame
       end
 
       # Create session data
+      # @param id [Integer] session id
+      # @param mode [Integer] game mode
       # @return [Integer] current session id
-      def create_session(id)
+      def create_session(id, game_mode = mode)
         sides = side.keys
         p1.side, p2.side = side[:white] == p1 ? sides : sides.reverse
-        sessions[id] = p1.register_session(id, p2.name)
+        sessions[id] = p1.register_session(id, p2.name, game_mode, event: "Ruby Arcade Chess Casual")
         id
       end
     end

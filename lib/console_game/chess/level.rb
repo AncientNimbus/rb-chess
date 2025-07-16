@@ -35,7 +35,7 @@ module ConsoleGame
         @mode = mode
         @controller = input
         @w_player, @b_player = sides.values
-        p @session = session
+        @session = session
         @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @board = Board.new(self)
       end

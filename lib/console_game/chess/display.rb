@@ -9,29 +9,17 @@ module ConsoleGame
     module Display
       include ::NimbusFileUtils
       # Default design for the chessboard
-      BOARD = {
-        size: 8,
-        turn_data: Array.new(8) { [" "] },
-        file: [*"a".."h"],
-        std_tile: 3,
-        h: "═",
-        decors: %w[◆ ◇],
-        head_l: "╔═══╦", head_r: "╦═══╗",
-        sep_l: "╠═══╬", sep_r: "╬═══╣",
-        tail_l: "╚═══╩", tail_r: "╩═══╝",
-        side: ->(v) { "║ #{v} ║" }
-      }.freeze
+      BOARD = { size: 8, turn_data: Array.new(8) { [" "] }, file: [*"a".."h"], std_tile: 3, h: "═", decors: %w[◆ ◇],
+                head_l: "╔═══╦", head_r: "╦═══╗", sep_l: "╠═══╬", sep_r: "╬═══╣", tail_l: "╚═══╩", tail_r: "╩═══╝",
+                side: ->(v) { "║ #{v} ║" } }.freeze
 
       # Default design for chess pieces
-      PIECES = {
-        k: { name: "King", notation: "K", style1: "♚", style2: "♔" },
-        q: { name: "Queen", notation: "Q", style1: "♛", style2: "♕" },
-        r: { name: "Rook", notation: "R", style1: "♜", style2: "♖" },
-        b: { name: "Bishop", notation: "B", style1: "♝", style2: "♗" },
-        n: { name: "Knight", notation: "N", style1: "♞", style2: "♘" },
-        p: { name: "Pawn", notation: "P", style1: "♟", style2: "♙" }
-
-      }.freeze
+      PIECES = { k: { name: "King", notation: "K", style1: "♚", style2: "♔" },
+                 q: { name: "Queen", notation: "Q", style1: "♛", style2: "♕" },
+                 r: { name: "Rook", notation: "R", style1: "♜", style2: "♖" },
+                 b: { name: "Bishop", notation: "B", style1: "♝", style2: "♗" },
+                 n: { name: "Knight", notation: "N", style1: "♞", style2: "♘" },
+                 p: { name: "Pawn", notation: "P", style1: "♟", style2: "♙" } }.freeze
 
       # Default theme
       # Note: on other good options: bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF"
@@ -189,6 +177,8 @@ module ConsoleGame
         flat_arr.each_slice(bound[0]) { |row| nested_arr.push(row) }
         nested_arr
       end
+
+      # Print a list
     end
   end
 end
