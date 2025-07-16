@@ -14,10 +14,16 @@ module ConsoleGame
         b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
       }.freeze
 
-      EXPORT_HELPER = {
-        to_active_color: ->(white_turn) { white_turn ? "w" : "b" },
-        to_en_passant: ->(en_passant) { en_passant.nil? ? "-" : en_passant[1] }
+      # FEN import helper for simpler ops
+      PARSE_HELPER = {
+        active_color: ->(color) { %w[b w].include?(color) ? { white_turn: color == "w" } : nil },
+        move_num: ->(num, type) { num.match?(/\A\d+\z/) && %i[half full].include?(type) ? { type => num.to_i } : nil },
+        normalise_row: ->(str) { str.split("").map { |c| c.sub(/\A\d\z/, "0" * c.to_i).split("") }.flatten }
       }.freeze
+
+      # FEN export helper for simpler ops
+      EXPORT_HELPER = { to_active_color: ->(white_turn) { white_turn ? "w" : "b" },
+                        to_en_passant: ->(en_passant) { en_passant.nil? ? "-" : en_passant[1] } }.freeze
 
       # FEN Raw data parser (FEN import)
       # @param level [Chess::Level] Chess level object
@@ -43,8 +49,9 @@ module ConsoleGame
       def process_fen_data(fen_data, level)
         fen_board, active_color, c_state, ep_state, halfmove, fullmove = fen_data
         [
-          parse_piece_placement(fen_board, level), parse_active_color(active_color), parse_castling_str(c_state),
-          parse_en_passant(ep_state), parse_move_number(halfmove), parse_move_number(fullmove, :full)
+          parse_piece_placement(fen_board, level), PARSE_HELPER[:active_color].call(active_color),
+          parse_castling_str(c_state), parse_en_passant(ep_state),
+          PARSE_HELPER[:move_num].call(halfmove, :half), PARSE_HELPER[:move_num].call(fullmove, :full)
         ]
       end
 
@@ -66,22 +73,12 @@ module ConsoleGame
         fen_board.split("/").reverse.each_with_index do |rank, row|
           return nil unless rank.match?(/\A[kqrbnp1-8]+\z/i)
 
-          normalise_fen_rank(rank).each_with_index do |unit, col|
+          PARSE_HELPER[:normalise_row].call(rank).each_with_index do |unit, col|
             turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit, level)
             pos_value += 1
           end
         end
         { turn_data: turn_data.flatten }
-      end
-
-      # Process FEN active color field
-      # @param active_color [String] expects a string with active color data
-      # @return [Hash, nil] a hash containing data that indicates whether it is white's turn
-      def parse_active_color(active_color)
-        return nil unless %w[b w].include?(active_color)
-
-        white_turn = active_color == "w"
-        { white_turn: white_turn }
       end
 
       # Process FEN castling field
@@ -112,16 +109,6 @@ module ConsoleGame
         { en_passant: ep_state == "-" ? nil : [ep_pawn, ep_state] }
       end
 
-      # Process FEN Half-move clock or Full-move field
-      # @param move_num [String] expects a string with either half-move or full-move data
-      # @param type [Symbol] specify the key type for the hash
-      # @return [Hash, nil] a hash of either half-move or full-move data
-      def parse_move_number(move_num, type = :half)
-        return nil unless move_num.match?(/\A\d+\z/) && %i[half full].include?(type)
-
-        { type => move_num.to_i }
-      end
-
       # Initialize chess piece via string value
       # @param pos [Integer] positional value
       # @param fen_notation [String] expects a single letter that follows the FEN standard
@@ -133,12 +120,10 @@ module ConsoleGame
         Chess.const_get(class_name).new(pos, side, level: level)
       end
 
-      # Helper method to uncompress FEN empty cell values so that all arrays share the same size
-      # @param fen_rank_str [String]
-      # @return [Array] processed rank data array
-      def normalise_fen_rank(fen_rank_str)
-        fen_rank_str.split("").map { |elem| elem.sub(/\A\d\z/, "0" * elem.to_i).split("") }.flatten
-      end
+      # Moved to PARSE_HELPER:
+      # - #parse_move_number
+      # - #parse_active_color
+      # - #normalise_fen_rank
 
       # == FEN Export ==
 
