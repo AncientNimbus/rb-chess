@@ -146,35 +146,44 @@ module ConsoleGame
 
       # Convert internal turn data to string
       # @param turn_data [Array<ChessPiece, String>]
+      # @return [String] FEN position placements as string
       def convert_turn_data(turn_data)
         str_arr = []
         turn_data.each_slice(8) do |row|
-          row.map! do |tile|
-            if tile.is_a?(ChessPiece)
-              notation = tile.notation
-              tile.side == :white ? notation : notation.downcase
-            else
-              "0"
-            end
-          end
-
-          count = 0
-          out = []
-          row.reverse_each do |elem|
-            if elem == "0"
-              count += 1
-            else
-              out << count.to_s if count.positive?
-              out << elem
-              count = 0
-            end
-          end
-          out << count.to_s if count.positive?
-
-          str_arr << out.join("")
+          compressed_row = compress_row_str(row_data_to_str(row))
+          str_arr << compressed_row.join("")
         end
+        str_arr.join("/").reverse
+      end
 
-        p str_arr.join("/").reverse
+      # Helper: Convert row data to string
+      # @param row [Array<ChessPiece>]
+      # @return [Array<String>]
+      def row_data_to_str(row)
+        row.map do |tile|
+          if tile.is_a?(ChessPiece)
+            notation = tile.notation
+            tile.side == :white ? notation : notation.downcase
+          else
+            "0"
+          end
+        end
+      end
+
+      # Helper: Compress empty tile
+      # @param row_str_arr [Array<String>]
+      # @param [Array<String>]
+      def compress_row_str(row_str_arr, count: 0, compressed_row: [])
+        row_str_arr.reverse_each do |elem|
+          if elem == "0"
+            count += 1
+          else
+            compressed_row.push(count.to_s) if count.positive?
+            compressed_row.push(elem)
+            count = 0
+          end
+        end
+        compressed_row.tap { |arr| arr.push(count.to_s) if count.positive? }
       end
     end
   end
