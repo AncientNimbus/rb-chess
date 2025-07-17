@@ -77,7 +77,7 @@ module NimbusFileUtils
         when ".yml"
           return output.puts data.to_yaml
         when ".json"
-          return output.puts data.to_json
+          return output.puts JSON.pretty_generate(data)
         else
           return output.puts data
         end

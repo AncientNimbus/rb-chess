@@ -16,9 +16,10 @@ module ConsoleGame
 
       # @param name [String]
       # @param controller [ChessInput]
-      def initialize(name = "", controller = nil)
+      # @param color [Symbol] :black or :white
+      def initialize(name = "", controller = nil, color = nil)
         super(name, controller)
-        @side = nil
+        @side = color
         @piece_at_hand = nil
         @move_count = 0
       end

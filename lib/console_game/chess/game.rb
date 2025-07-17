@@ -34,7 +34,7 @@ module ConsoleGame
         @p2 = nil
         @side = { white: nil, black: nil }
         user.profile[:appdata][:chess] ||= {}
-        @sessions = user.profile[:appdata][:chess].transform_keys(&:to_s)
+        @sessions = user.profile[:appdata][:chess]
       end
 
       private
@@ -85,8 +85,8 @@ module ConsoleGame
         if mode == 1
           p1_color = session.key(game_manager.user.username)
           p2_color = p1_color == :white ? :black : :white
-          @p1 = ChessPlayer.new(session[p1_color], controller)
-          @p2 = ChessPlayer.new(session[p2_color], controller)
+          @p1 = ChessPlayer.new(session[p1_color], controller, p1_color)
+          @p2 = ChessPlayer.new(session[p2_color], controller, p2_color)
           side[p1_color] = p1
           side[p2_color] = p2
         end

@@ -127,6 +127,7 @@ module ConsoleGame
         kings_table
         load_en_passant_state
         update_board_state
+        save_turn
       end
 
       # Main Game Loop
@@ -137,8 +138,8 @@ module ConsoleGame
         # Play turn
         player.play_turn
         # Post turn
-        save_turn
         self.white_turn = !white_turn
+        save_turn
       end
 
       # Save turn handling
@@ -147,6 +148,7 @@ module ConsoleGame
           { turn_data: turn_data, white_turn: white_turn, castling_states: castling_states, en_passant: en_passant,
             half: half_move, full: full_move }
         session[:fens].push(to_fen(level_data))
+        p session
         controller.save
       end
 
