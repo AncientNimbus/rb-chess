@@ -64,7 +64,9 @@ module ConsoleGame
       end
 
       # Handle new game sequence
-      def new_game
+      # @param err [Boolean] is use when there is a load err
+      def new_game(err: true)
+        print_msg("Sessions not found, entering new game creation mode...") if err
         print_msg(s("new.f1"))
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
         @p1, @p2 = setup_players
@@ -94,6 +96,7 @@ module ConsoleGame
 
       # Helper to get session selection from user
       def select_session
+        new_game(err: true) if sessions.empty?
         print_sessions_to_load
         user_opt = controller.pick_from(sessions.keys)
         session = sessions[user_opt]
