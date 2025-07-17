@@ -20,7 +20,7 @@ module ConsoleGame
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :half_move,
-                    :full_move
+                    :full_move, :game_ended
       attr_reader :mode, :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
@@ -38,6 +38,7 @@ module ConsoleGame
         @session = session
         @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @board = Board.new(self)
+        @game_ended = false
       end
 
       # == Flow ==
@@ -45,7 +46,7 @@ module ConsoleGame
       # Start level
       def open_level
         init_level
-        play_chess until any_checkmate?
+        play_chess until game_ended
         end_game
       end
 
@@ -111,6 +112,7 @@ module ConsoleGame
       def refresh
         update_board_state
         board.print_chessboard
+        self.game_ended = any_checkmate? || draw?
         true
       end
 
@@ -124,6 +126,7 @@ module ConsoleGame
         @kings = { white: nil, black: nil }
         @threats_map = { white: [], black: [] }
         @usable_pieces = { white: [], black: [] }
+        @player = white_turn ? w_player : b_player
         kings_table
         load_en_passant_state
         update_board_state
@@ -132,9 +135,11 @@ module ConsoleGame
 
       # Main Game Loop
       def play_chess
-        @player = white_turn ? w_player : b_player
+        self.player = white_turn ? w_player : b_player
         # Pre turn
         refresh
+        return if game_ended
+
         # Play turn
         player.play_turn
         # Post turn
@@ -180,7 +185,6 @@ module ConsoleGame
       # Board state refresher
       def update_board_state
         @threats_map, @usable_pieces = board_analysis(generate_moves)
-        any_checkmate?
         # puts usable_pieces
         # puts threats_map
       end
@@ -190,7 +194,39 @@ module ConsoleGame
         kings.values.any?(&:checkmate?)
       end
 
-      # User data handling
+      # End game if is it a draw
+      # @return [Boolean] the game is a draw when true
+      def draw?
+        [stalemate, insufficient_material, half_move_overflow, threefold_repetition].any?
+      end
+
+      # Game is a stalemate
+      # @return [Boolean] the game is a draw when true
+      def stalemate
+        player_side = player.side
+        # p "checking #{player_side} for stalemate"
+        # p usable_pieces[player_side]
+        # p threats_map[player_side]
+        usable_pieces[player_side].empty? && threats_map[player_side].empty?
+      end
+
+      # Game is a draw due to insufficient material
+      # @return [Boolean] the game is a draw when true
+      def insufficient_material
+        false
+      end
+
+      # Game is a draw due to Fifty-move rule
+      # @return [Boolean] the game is a draw when true
+      def half_move_overflow
+        false
+      end
+
+      # Game is a draw due to Threefold Repetition
+      # @return [Boolean] the game is a draw when true
+      def threefold_repetition
+        false
+      end
     end
   end
 end

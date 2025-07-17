@@ -53,7 +53,7 @@ module ConsoleGame
         # new game or load game
         opt = game_selection
         id = opt == 1 ? new_game : load_game
-        # p fen = sessions.dig(id, :fens, -1)
+        fen = sessions.dig(id, :fens, -1)
         Level.new(mode, controller, side, sessions[id], fen).open_level
       end
 
