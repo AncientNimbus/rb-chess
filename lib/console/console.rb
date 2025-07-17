@@ -168,6 +168,7 @@ module Console
     prefix_size = P_HELPER[:ol_prefix].call(row_counts).size
     auto_pad = row_counts * 2 + P_HELPER[:v_sep].size
     max_length = data_arr.map { |arr| arr.max_by(&:size) }.sum(&:size) + auto_pad + prefix_size
+    max_length = 80 if max_length > 80
     [prefix_size, max_length]
   end
 

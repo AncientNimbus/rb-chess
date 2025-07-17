@@ -48,7 +48,7 @@ module ConsoleGame
         write_metadata(id, :mode, mode)
         write_metadata(id, :white, white)
         write_metadata(id, :black, black)
-        write_metadata(id, :event, event)
+        write_metadata(id, :event, "#{white} vs #{black}")
         write_metadata(id, :site, site)
         write_metadata(id, :date, date)
         data[id]

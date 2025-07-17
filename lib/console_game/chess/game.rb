@@ -18,7 +18,7 @@ require_relative "pieces/pawn"
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
   # @author Ancient Nimbus
-  # @version 0.3.0
+  # @version 0.6.0
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
@@ -53,7 +53,7 @@ module ConsoleGame
         # new game or load game
         opt = game_selection
         id = opt == 1 ? new_game : load_game
-        p fen = sessions.dig(id, :fens, -1)
+        # p fen = sessions.dig(id, :fens, -1)
         Level.new(mode, controller, side, sessions[id], fen).open_level
       end
 
@@ -74,25 +74,31 @@ module ConsoleGame
 
       # Handle load game sequence
       def load_game
-        p "load game from list"
-        records = sessions.values
-        records.map! { |record| record.slice(:date, :white, :black, :mode, :fens) }
-
-        # Print list
-        user_opt = controller.pick_from(sessions.keys)
-        session = sessions.fetch(user_opt)
-        @mode = session[:mode]
+        user_opt, session = select_session
         if mode == 1
-          p1_color = session.key(game_manager.user.username)
-          p2_color = p1_color == :white ? :black : :white
-          @p1 = ChessPlayer.new(session[p1_color], controller, p1_color)
-          @p2 = ChessPlayer.new(session[p2_color], controller, p2_color)
-          side[p1_color] = p1
-          side[p2_color] = p2
+          @p1, @p2 = %i[white black].map { |side| ChessPlayer.new(session[side], controller, side) }
+          side[:white] = p1
+          side[:black] = p2
         end
         user_opt
+      end
 
-        # p loaded_sessions.dig(user_opt, :fens, -1)
+      # Helper to print list of sessions to load
+      def print_sessions_to_load
+        sessions_list = sessions.transform_values { |session| session.select { |k, _| %i[event date].include?(k) } }
+        filter = sessions_list.transform_values do |session|
+          session.merge(date: Time.new(session[:date]).strftime("%m/%d/%Y %I:%M %p"))
+        end
+        puts build_table(data: filter, head: "Load from the following sessions")
+      end
+
+      # Helper to get session selection from user
+      def select_session
+        print_sessions_to_load
+        user_opt = controller.pick_from(sessions.keys)
+        session = sessions[user_opt]
+        @mode = session[:mode]
+        [user_opt, session]
       end
 
       # == Utilities ==
@@ -134,7 +140,7 @@ module ConsoleGame
       def create_session(id, game_mode = mode)
         sides = side.keys
         p1.side, p2.side = side[:white] == p1 ? sides : sides.reverse
-        sessions[id] = p1.register_session(id, p2.name, game_mode, event: "Ruby Arcade Chess Casual")
+        sessions[id] = p1.register_session(id, p2.name, game_mode)
         id
       end
     end
