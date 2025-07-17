@@ -198,12 +198,12 @@ module ConsoleGame
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
-        [stalemate, insufficient_material, half_move_overflow, threefold_repetition].any?
+        [stalemate?, insufficient_material?, half_move_overflow?, threefold_repetition?].any?
       end
 
       # Game is a stalemate
       # @return [Boolean] the game is a draw when true
-      def stalemate
+      def stalemate?
         player_side = player.side
         usable_pieces[player_side].empty? && threats_map[player_side].empty?
       end
@@ -211,24 +211,55 @@ module ConsoleGame
       # Game is a draw due to insufficient material
       # @see https://support.chess.com/en/articles/8705277-what-does-insufficient-mating-material-mean
       # @return [Boolean] the game is a draw when true
-      def insufficient_material
-        remaining_pieces = usable_pieces.values
-        return false if remaining_pieces.sum(&:size) > 4
+      def insufficient_material?
+        remaining_pieces_pos = usable_pieces.values
+        return false if remaining_pieces_pos.sum(&:size) > 4
 
-        remaining_notations = remaining_pieces.flatten.map { |pos| turn_data[alg_map[pos.to_sym]].notation }
-        # @todo: missing bishop same color
-        %w[KK KBK KKN KBKB KNKN KKNN].any? { |combo| combo.chars.sort == remaining_notations.sort }
+        remaining_notations, remaining_pieces = group_fetch(remaining_pieces_pos)
+
+        return false unless bishops_insufficient_material(remaining_pieces)
+
+        insufficient_patterns = %w[KK KBK KKN KBKB KNKN KKNN]
+        insufficient_patterns.any? { |combo| combo.chars.sort == remaining_notations.sort }
+      end
+
+      # Insufficient material helper: fetch a group of pieces notation from turn_data based on algebraic notation
+      # @param query [Array<String>]
+      # @return [Array<Array<String, ChessPiece>>]
+      def group_fetch(query)
+        pieces = []
+        notations = query.flatten.map do |pos|
+          piece = turn_data[alg_map[pos.to_sym]]
+          pieces << piece
+          piece.notation
+        end
+        [notations, pieces]
+      end
+
+      # Insufficient material helper: check if two bishops are from the same side or on the same color tile
+      # @param pieces [Array<ChessPiece>] remaining ChessPiece
+      # @return [Boolean] continue insufficient material flow
+      def bishops_insufficient_material?(pieces)
+        bishops = pieces.select { |piece| piece.is_a?(Bishop) }
+        return true if bishops.size == 1
+        return false if bishops.size > 2
+
+        bishop1, bishop2 = bishops
+        return false if bishop1.side == bishop2.side
+
+        b1_ord, b2_ord = bishops.map { |bishop| bishop.info(:file).ord + bishop.info(:rank).to_i }
+        b1_ord == b2_ord
       end
 
       # Game is a draw due to Fifty-move rule
       # @return [Boolean] the game is a draw when true
-      def half_move_overflow
+      def half_move_overflow?
         half_move >= 100
       end
 
       # Game is a draw due to Threefold Repetition
       # @return [Boolean] the game is a draw when true
-      def threefold_repetition
+      def threefold_repetition?
         false
       end
     end
