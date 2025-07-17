@@ -205,9 +205,6 @@ module ConsoleGame
       # @return [Boolean] the game is a draw when true
       def stalemate
         player_side = player.side
-        # p "checking #{player_side} for stalemate"
-        # p usable_pieces[player_side]
-        # p threats_map[player_side]
         usable_pieces[player_side].empty? && threats_map[player_side].empty?
       end
 
@@ -219,13 +216,14 @@ module ConsoleGame
         return false if remaining_pieces.sum(&:size) > 4
 
         remaining_notations = remaining_pieces.flatten.map { |pos| turn_data[alg_map[pos.to_sym]].notation }
+        # @todo: missing bishop same color
         %w[KK KBK KKN KBKB KNKN KKNN].any? { |combo| combo.chars.sort == remaining_notations.sort }
       end
 
       # Game is a draw due to Fifty-move rule
       # @return [Boolean] the game is a draw when true
       def half_move_overflow
-        false
+        half_move >= 100
       end
 
       # Game is a draw due to Threefold Repetition
