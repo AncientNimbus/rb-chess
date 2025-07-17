@@ -152,7 +152,8 @@ module ConsoleGame
         level_data =
           { turn_data: turn_data, white_turn: white_turn, castling_states: castling_states, en_passant: en_passant,
             half: half_move, full: full_move }
-        session[:fens].push(to_fen(level_data))
+        fen_str = to_fen(level_data)
+        session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
         controller.save
       end
 
@@ -211,9 +212,14 @@ module ConsoleGame
       end
 
       # Game is a draw due to insufficient material
+      # @see https://support.chess.com/en/articles/8705277-what-does-insufficient-mating-material-mean
       # @return [Boolean] the game is a draw when true
       def insufficient_material
-        false
+        remaining_pieces = usable_pieces.values
+        return false if remaining_pieces.sum(&:size) > 4
+
+        remaining_notations = remaining_pieces.flatten.map { |pos| turn_data[alg_map[pos.to_sym]].notation }
+        %w[KK KBK KKN KBKB KNKN KKNN].any? { |combo| combo.chars.sort == remaining_notations.sort }
       end
 
       # Game is a draw due to Fifty-move rule
