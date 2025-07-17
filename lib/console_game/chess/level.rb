@@ -148,7 +148,6 @@ module ConsoleGame
           { turn_data: turn_data, white_turn: white_turn, castling_states: castling_states, en_passant: en_passant,
             half: half_move, full: full_move }
         session[:fens].push(to_fen(level_data))
-        p session
         controller.save
       end
 

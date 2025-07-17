@@ -177,8 +177,6 @@ module ConsoleGame
         flat_arr.each_slice(bound[0]) { |row| nested_arr.push(row) }
         nested_arr
       end
-
-      # Print a list
     end
   end
 end

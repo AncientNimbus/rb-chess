@@ -4,17 +4,18 @@ require "readline"
 
 # Game display & input capturing for console game
 # @author Ancient Nimbus
-# @version v2.0.0
+# @version v2.1.0
 module Console
   # Default message strings
-  D_MSG = {
-    msg: "Using message printer",
-    err_msg: "Invalid input, please try again: ",
-    prompt_prefix: ">>> ",
-    query_prefix: "? ",
-    warn_prefix: "! ",
-    cmd_err: "Invalid commands, type --help to view all available commands.",
-    cmd_pattern: "--(exit).*?"
+  D_MSG = { msg: "Using message printer", err_msg: "Invalid input, please try again: ",
+            prompt_prefix: ">>> ", query_prefix: "? ", warn_prefix: "! ",
+            cmd_err: "Invalid commands, type --help to view all available commands.",
+            cmd_pattern: "--(exit).*?" }.freeze
+
+  # Print formatting helper
+  P_HELPER = {
+    ol_prefix: ->(i) { "* [#{i + 1}] - " },
+    h_sep: ->(length) { "-" * length }, v_sep: "| "
   }.freeze
 
   # prompt message helper
@@ -49,6 +50,17 @@ module Console
 
     handle_command(cmd, input_arr[1..], cmds, is_valid)
     ask(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
+  end
+
+  # Build table
+  # @param data [Hash<String>] data
+  # @param head [String] the title of the table
+  def build_table(data: {}, head: "Console Table")
+    data_values = data.values.map(&:values)
+    return "Non-string elements found, ops cancelled." unless data_values.all? { |_, v| v.is_a?(String) }
+
+    prefix_size, max_length = table_formatter(data_values)
+    build_header(data, head, prefix_size, max_length) + build_rows(data_values, max_length - prefix_size)
   end
 
   # Helper method to create regexp pattern
@@ -144,5 +156,40 @@ module Console
     rescue TypeError
       cmd == "exit" ? cmds.fetch(cmd).call : raise(TypeError, "#{cmd} is missing optional argument: #{opt_arg}")
     end
+  end
+
+  # == Build table helper ==
+
+  # Helper: Table formatter
+  # @param data_arr [Array<String>]
+  # @return [Array]
+  def table_formatter(data_arr)
+    row_counts = data_arr.size
+    prefix_size = P_HELPER[:ol_prefix].call(row_counts).size
+    auto_pad = row_counts * 2 + P_HELPER[:v_sep].size
+    max_length = data_arr.map { |arr| arr.max_by(&:size) }.sum(&:size) + auto_pad + prefix_size
+    [prefix_size, max_length]
+  end
+
+  # Helper: Build Header row
+  # @return [Array<String>]
+  def build_header(data, head, prefix_size, row_length)
+    tb_col_heads = data.values[0].keys.map { |title| title.to_s.capitalize }
+    col_heads = tb_col_heads.join(P_HELPER[:v_sep].rjust(row_length - prefix_size * 3))
+    separator = P_HELPER[:h_sep].call(row_length)
+    [head, separator, col_heads, separator]
+  end
+
+  # Helper: Build table row
+  # @param data_arr [Array<String>]
+  # @param tb_rows [Array<String>]
+  # @return [Array<String>]
+  def build_rows(data_arr, row_length, tb_rows = [])
+    data_arr.each_with_index do |entry, i|
+      last_col = entry[-1]
+      cols = entry[0].ljust(row_length - last_col.size)
+      tb_rows << "#{P_HELPER[:ol_prefix].call(i)}#{cols}#{last_col}"
+    end
+    tb_rows
   end
 end
