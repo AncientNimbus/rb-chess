@@ -223,8 +223,6 @@ module ConsoleGame
       # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
       def insufficient_material_qualifier
         remaining_pieces_pos = usable_pieces.values
-        return false if remaining_pieces_pos.sum(&:size) > 4
-
         remaining_pieces_pos.sum(&:size) > 4 ? [nil, nil] : group_fetch(remaining_pieces_pos)
       end
     end
