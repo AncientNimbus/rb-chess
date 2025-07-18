@@ -2,6 +2,7 @@
 
 require_relative "game"
 require_relative "logic"
+require_relative "endgame_logic"
 require_relative "board"
 require_relative "piece_analysis"
 require_relative "utilities/fen_import"
@@ -13,6 +14,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Level
       include Logic
+      include EndGameLogic
       include PieceAnalysis
       include FenImport
       include FenExport
@@ -111,8 +113,8 @@ module ConsoleGame
       # @return [Boolean] true if the operation is a success
       def refresh
         update_board_state
-        board.print_chessboard
         self.game_ended = any_checkmate? || draw?
+        board.print_chessboard
         true
       end
 
@@ -184,8 +186,9 @@ module ConsoleGame
       end
 
       # Board state refresher
-      def update_board_state
-        @threats_map, @usable_pieces = board_analysis(generate_moves)
+      # @param side [Symbol] expects :all, :white or :black
+      def update_board_state(side = :all)
+        @threats_map, @usable_pieces = board_analysis(generate_moves(side))
         # puts usable_pieces
         # puts threats_map
       end
@@ -198,14 +201,9 @@ module ConsoleGame
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
-        [stalemate?, insufficient_material?, half_move_overflow?, threefold_repetition?].any?
-      end
-
-      # Game is a stalemate
-      # @return [Boolean] the game is a draw when true
-      def stalemate?
-        player_side = player.side
-        usable_pieces[player_side].empty? && threats_map[player_side].empty?
+        update_board_state(player.side)
+        [stalemate?(player.side, usable_pieces: usable_pieces, threats_map: threats_map), insufficient_material?,
+         half_move_overflow?(half_move), threefold_repetition?(session[:fens])].any?
       end
 
       # Game is a draw due to insufficient material
@@ -217,7 +215,7 @@ module ConsoleGame
 
         remaining_notations, remaining_pieces = group_fetch(remaining_pieces_pos)
 
-        return false unless bishops_insufficient_material(remaining_pieces)
+        return false unless bishops_insufficient_material?(remaining_pieces)
 
         insufficient_patterns = %w[KK KBK KKN KBKB KNKN KKNN]
         insufficient_patterns.any? { |combo| combo.chars.sort == remaining_notations.sort }
@@ -241,7 +239,7 @@ module ConsoleGame
       # @return [Boolean] continue insufficient material flow
       def bishops_insufficient_material?(pieces)
         bishops = pieces.select { |piece| piece.is_a?(Bishop) }
-        return true if bishops.size == 1
+        return true if bishops.size <= 1
         return false if bishops.size > 2
 
         bishop1, bishop2 = bishops
@@ -249,23 +247,6 @@ module ConsoleGame
 
         b1_ord, b2_ord = bishops.map { |bishop| bishop.info(:file).ord + bishop.info(:rank).to_i }
         b1_ord == b2_ord
-      end
-
-      # Game is a draw due to Fifty-move rule
-      # @return [Boolean] the game is a draw when true
-      def half_move_overflow?
-        half_move >= 100
-      end
-
-      # Game is a draw due to Threefold Repetition
-      # @return [Boolean] the game is a draw when true
-      def threefold_repetition?
-        fen_records = session[:fens]
-        return false unless fen_records.size > 10
-
-        sectioned_fen_records = fen_records.last(100).map { |fen| fen.split(" ")[0...-2].join(" ") }
-        last_turn = sectioned_fen_records.last
-        sectioned_fen_records.count(last_turn) >= 3
       end
     end
   end
