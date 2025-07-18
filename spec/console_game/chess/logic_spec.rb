@@ -13,7 +13,7 @@ describe ConsoleGame::Chess::Logic do
 
       let(:pos) { 27 }
 
-      it "returns an hash of integer arrays where directions are use as keys" do
+      it "returns a hash of integer arrays where directions are use as keys" do
         result = logic_test.send(:all_paths, movements, pos)
         expect(result).to eq({ e: [27, 28, 29, 30, 31], n: [27, 35, 43, 51, 59], ne: [27, 36, 45, 54, 63], nw: [27, 34, 41, 48], s: [27, 19, 11, 3], se: [27, 20, 13, 6], sw: [27, 18, 9, 0], w: [27, 26, 25, 24] })
       end
@@ -24,7 +24,7 @@ describe ConsoleGame::Chess::Logic do
 
       let(:pos) { 27 }
 
-      it "returns an hash of integer arrays where directions are use as keys" do
+      it "returns a hash of integer arrays where directions are use as keys" do
         result = logic_test.send(:all_paths, movements, pos)
         expect(result).to eq({ e: [27, 28], n: [27, 35], ne: [27, 36], nw: [27, 34], s: [27, 19], se: [27, 20], sw: [27, 18], w: [27, 26] })
       end
@@ -35,7 +35,7 @@ describe ConsoleGame::Chess::Logic do
 
       let(:pos) { 28 }
 
-      it "returns an hash of integer arrays where directions are use as keys" do
+      it "returns a hash of integer arrays where directions are use as keys" do
         result = logic_test.send(:all_paths, movements, pos)
         expect(result).to eq({ ne: [28, 37, 46, 55], nw: [28, 35, 42, 49, 56], se: [28, 21, 14, 7], sw: [28, 19, 10, 1] })
       end
@@ -46,9 +46,66 @@ describe ConsoleGame::Chess::Logic do
 
       let(:pos) { 0 }
 
-      it "returns an hash of integer arrays where directions are use as keys" do
+      it "returns a hash of integer arrays where directions are use as keys" do
         result = logic_test.send(:all_paths, movements, pos)
         expect(result).to eq({ e: [0, 1, 2, 3, 4, 5, 6, 7], n: [0, 8, 16, 24, 32, 40, 48, 56] })
+      end
+    end
+  end
+
+  describe "#path" do
+    context "when position is 27 and the requested direction is set to east with range set to max" do
+      let(:pos) { 27 }
+      let(:path) { :e }
+      let(:range) { :max }
+
+      it "returns an integer array" do
+        result = logic_test.send(:path, pos, path, range: range)
+        expect(result).to eq([27, 28, 29, 30, 31])
+      end
+    end
+
+    context "when position is 0 and the requested direction is set to north east with range set to max" do
+      let(:pos) { 0 }
+      let(:path) { :ne }
+      let(:range) { :max }
+
+      it "returns an integer array" do
+        result = logic_test.send(:path, pos, path, range: range)
+        expect(result).to eq([0, 9, 18, 27, 36, 45, 54, 63])
+      end
+    end
+
+    context "when position is 63 and the requested direction is set to south with range set to 1" do
+      let(:pos) { 63 }
+      let(:path) { :s }
+      let(:range) { 1 }
+
+      it "returns an integer array" do
+        result = logic_test.send(:path, pos, path, range: range)
+        expect(result).to eq([63, 55])
+      end
+    end
+
+    context "when position is 63 and the requested direction is set to north with range set to 1" do
+      let(:pos) { 63 }
+      let(:path) { :n }
+      let(:range) { :max }
+
+      it "returns an empty array" do
+        result = logic_test.send(:path, pos, path, range: range)
+        expect(result).to eq([])
+      end
+    end
+
+    context "when position is 63 and the requested direction is set to south west with range set to nil" do
+      let(:pos) { 63 }
+      let(:path) { :sw }
+      let(:range) { :nil }
+
+      it "returns an empty array" do
+        p result = logic_test.send(:path, pos, path, range: range)
+        expect(result).to eq([])
       end
     end
   end
