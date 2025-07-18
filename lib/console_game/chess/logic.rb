@@ -7,7 +7,7 @@ module ConsoleGame
     # @version 1.0.0
     module Logic
       # Default values
-      PRESET = { bound: [8, 8] }.freeze
+      PRESET = { bound: [8, 8], nil_hash: -> { Hash.new { |h, k| h[k] = nil } } }.freeze
 
       # A hash of lambda functions for calculating movement in 8 directions on a grid
       DIRECTIONS = {
@@ -47,9 +47,9 @@ module ConsoleGame
       # Calculate valid sequence based on positional value
       # @param movements [Hash] expects a hash with DIRECTION as keys
       # @param pos [Integer] positional value within a matrix
+      # @param paths [Hash] a hash with `nil` set as default value
       # @return [Hash<Array<Integer>>] an array of valid directional path within given bound
-      def all_paths(movements, pos)
-        paths = Hash.new { |h, k| h[k] = nil }
+      def all_paths(movements, pos, paths: PRESET[:nil_hash].call)
         movements.each do |path, range|
           next if range.nil?
 
@@ -73,9 +73,9 @@ module ConsoleGame
       # Possible movement direction for the given piece
       # @param directions [Array<Symbol>] possible paths
       # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
+      # @param movements [Hash] a hash with `nil` set as default value
       # @return [Hash]
-      def movement_range(directions = [], range: 1)
-        movements = Hash.new { |h, k| h[k] = nil }
+      def movement_range(directions = [], range: 1, movements: PRESET[:nil_hash].call)
         DIRECTIONS.each_key { |k| movements[k] }
         directions.each { |dir| movements[dir] = range }
         movements

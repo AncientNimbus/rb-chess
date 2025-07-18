@@ -7,6 +7,52 @@ describe ConsoleGame::Chess::Logic do
 
   let(:dummy_class) { Class.new { include ConsoleGame::Chess::Logic } }
 
+  describe "#all_paths" do
+    context "when position is 27 and the requested movements directions are set to all with all ranges set to max" do
+      subject(:movements) { { n: :max, ne: :max, e: :max, se: :max, s: :max, sw: :max, w: :max, nw: :max } }
+
+      let(:pos) { 27 }
+
+      it "returns an hash of integer arrays where directions are use as keys" do
+        result = logic_test.send(:all_paths, movements, pos)
+        expect(result).to eq({ e: [27, 28, 29, 30, 31], n: [27, 35, 43, 51, 59], ne: [27, 36, 45, 54, 63], nw: [27, 34, 41, 48], s: [27, 19, 11, 3], se: [27, 20, 13, 6], sw: [27, 18, 9, 0], w: [27, 26, 25, 24] })
+      end
+    end
+
+    context "when position is 27 and the requested movements directions are set to all with all ranges set to 1" do
+      subject(:movements) { { n: 1, ne: 1, e: 1, se: 1, s: 1, sw: 1, w: 1, nw: 1 } }
+
+      let(:pos) { 27 }
+
+      it "returns an hash of integer arrays where directions are use as keys" do
+        result = logic_test.send(:all_paths, movements, pos)
+        expect(result).to eq({ e: [27, 28], n: [27, 35], ne: [27, 36], nw: [27, 34], s: [27, 19], se: [27, 20], sw: [27, 18], w: [27, 26] })
+      end
+    end
+
+    context "when position is 28 and the requested movements directions are set to diagonal with all ranges set to max" do
+      subject(:movements) { { n: nil, ne: :max, e: nil, se: :max, s: nil, sw: :max, w: nil, nw: :max } }
+
+      let(:pos) { 28 }
+
+      it "returns an hash of integer arrays where directions are use as keys" do
+        result = logic_test.send(:all_paths, movements, pos)
+        expect(result).to eq({ ne: [28, 37, 46, 55], nw: [28, 35, 42, 49, 56], se: [28, 21, 14, 7], sw: [28, 19, 10, 1] })
+      end
+    end
+
+    context "when position is 0 and the requested movements directions are set to horizontal and vertical with all ranges set to max" do
+      subject(:movements) { { n: :max, ne: nil, e: :max, se: nil, s: :max, sw: nil, w: :max, nw: nil } }
+
+      let(:pos) { 0 }
+
+      it "returns an hash of integer arrays where directions are use as keys" do
+        result = logic_test.send(:all_paths, movements, pos)
+        expect(result).to eq({ e: [0, 1, 2, 3, 4, 5, 6, 7], n: [0, 8, 16, 24, 32, 40, 48, 56] })
+      end
+    end
+  end
+
   describe "#alg_map" do
     let(:alg_map) { { a1: 0, a2: 8, a3: 16, a4: 24, a5: 32, a6: 40, a7: 48, a8: 56, b1: 1, b2: 9, b3: 17, b4: 25, b5: 33, b6: 41, b7: 49, b8: 57, c1: 2, c2: 10, c3: 18, c4: 26, c5: 34, c6: 42, c7: 50, c8: 58, d1: 3, d2: 11, d3: 19, d4: 27, d5: 35, d6: 43, d7: 51, d8: 59, e1: 4, e2: 12, e3: 20, e4: 28, e5: 36, e6: 44, e7: 52, e8: 60, f1: 5, f2: 13, f3: 21, f4: 29, f5: 37, f6: 45, f7: 53, f8: 61, g1: 6, g2: 14, g3: 22, g4: 30, g5: 38, g6: 46, g7: 54, g8: 62, h1: 7, h2: 15, h3: 23, h4: 31, h5: 39, h6: 47, h7: 55, h8: 63 } }
 
