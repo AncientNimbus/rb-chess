@@ -17,6 +17,11 @@ module ConsoleGame
         w: ->(value, step, _row) { value - step }, nw: ->(value, step, row) { value + row * step - step }
       }.freeze
 
+      # Algebraic chess notation to positional value hash
+      ALG_MAP = [*"a".."h"].each_with_index.flat_map do |file, col|
+        [*"#{file}1".."#{file}8"].map.with_index { |alg, row| [alg.to_sym, row * 8 + col] }
+      end.to_h.freeze
+
       private
 
       # Recursively find the next position depending on direction
@@ -81,11 +86,6 @@ module ConsoleGame
         movements
       end
 
-      # Generate and memorize the algebraic chess notation to positional value reference hash
-      def alg_map
-        @alg_map ||= algebraic_notation_generator
-      end
-
       # Convert coordinate array to cell position
       # @param coord [Array<Integer>] `[row, col]`
       # @param bound [Array<Integer>] `[row, col]`
@@ -146,15 +146,9 @@ module ConsoleGame
 
       # == Algebraic natation ==
 
-      # Algebraic chess notation to positional value generator
-      # @return [Hash] Algebraic notation to positional values map
-      def algebraic_notation_generator
-        alg_map = {}
-        [*"a".."h"].each_with_index do |file, idx|
-          col = pathfinder(idx, :n, length: :max)
-          [*"#{file}1".."#{file}8"].each_with_index { |alg, i| alg_map[alg.to_sym] = col[i] }
-        end
-        alg_map
+      # Generate and memorize the algebraic chess notation to positional value reference hash
+      def alg_map
+        ALG_MAP
       end
     end
   end
