@@ -14,7 +14,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Level
       include Logic
-      include EndGameLogic
+      include EndgameLogic
       include PieceAnalysis
       include FenImport
       include FenExport
@@ -71,13 +71,25 @@ module ConsoleGame
 
       # Fetch a single chess piece
       # @param query [String] algebraic notation `"e4"`
-      # @param side [Symbol] expects :all, :white or :black
-      # @param usable_pieces [Hash<Array<String>>] algebraic notations in string
+      # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
       # @return [ChessPiece]
-      def fetch_piece(query)
-        return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query)
+      def fetch_piece(query, bypass: false)
+        return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query) || bypass
 
         turn_data[alg_map[query.to_sym]]
+      end
+
+      # Fetch a group of pieces notation from turn_data based on algebraic notation
+      # @param query [Array<String>]
+      # @param pieces [Array<ChessPiece>]
+      # @return [Array<Array<ChessPiece>, Array<String>>]
+      def group_fetch(query, pieces: [])
+        notations = query.flatten.map do |alg_pos|
+          piece = fetch_piece(alg_pos, bypass: true)
+          pieces << piece
+          piece.notation
+        end
+        [pieces, notations]
       end
 
       # Grab all pieces, only whites or only blacks
@@ -174,7 +186,7 @@ module ConsoleGame
         return if en_passant.nil?
 
         pawn_query, ghost_pos = en_passant
-        en_passant[0] = turn_data[alg_map[pawn_query.to_sym]]
+        en_passant[0] = fetch_piece(pawn_query, bypass: true)
         en_passant[1] = alg_map[ghost_pos.to_sym]
       end
 
@@ -186,9 +198,8 @@ module ConsoleGame
       end
 
       # Board state refresher
-      # @param side [Symbol] expects :all, :white or :black
-      def update_board_state(side = :all)
-        @threats_map, @usable_pieces = board_analysis(generate_moves(side))
+      def update_board_state
+        @threats_map, @usable_pieces = board_analysis(generate_moves)
         # puts usable_pieces
         # puts threats_map
       end
@@ -201,52 +212,20 @@ module ConsoleGame
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
-        update_board_state(player.side)
-        [stalemate?(player.side, usable_pieces: usable_pieces, threats_map: threats_map), insufficient_material?,
-         half_move_overflow?(half_move), threefold_repetition?(session[:fens])].any?
+        update_board_state
+        [
+          stalemate?(player.side, usable_pieces, threats_map), half_move_overflow?(half_move),
+          insufficient_material?(*insufficient_material_qualifier), threefold_repetition?(session[:fens])
+        ].any?
       end
 
-      # Game is a draw due to insufficient material
-      # @see https://support.chess.com/en/articles/8705277-what-does-insufficient-mating-material-mean
-      # @return [Boolean] the game is a draw when true
-      def insufficient_material?
+      # Determine the minimium qualifying requirement to enter the #insufficient_material? flow
+      # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
+      def insufficient_material_qualifier
         remaining_pieces_pos = usable_pieces.values
         return false if remaining_pieces_pos.sum(&:size) > 4
 
-        remaining_notations, remaining_pieces = group_fetch(remaining_pieces_pos)
-
-        return false unless bishops_insufficient_material?(remaining_pieces)
-
-        insufficient_patterns = %w[KK KBK KKN KBKB KNKN KKNN]
-        insufficient_patterns.any? { |combo| combo.chars.sort == remaining_notations.sort }
-      end
-
-      # Insufficient material helper: fetch a group of pieces notation from turn_data based on algebraic notation
-      # @param query [Array<String>]
-      # @return [Array<Array<String, ChessPiece>>]
-      def group_fetch(query)
-        pieces = []
-        notations = query.flatten.map do |pos|
-          piece = turn_data[alg_map[pos.to_sym]]
-          pieces << piece
-          piece.notation
-        end
-        [notations, pieces]
-      end
-
-      # Insufficient material helper: check if two bishops are from the same side or on the same color tile
-      # @param pieces [Array<ChessPiece>] remaining ChessPiece
-      # @return [Boolean] continue insufficient material flow
-      def bishops_insufficient_material?(pieces)
-        bishops = pieces.select { |piece| piece.is_a?(Bishop) }
-        return true if bishops.size <= 1
-        return false if bishops.size > 2
-
-        bishop1, bishop2 = bishops
-        return false if bishop1.side == bishop2.side
-
-        b1_ord, b2_ord = bishops.map { |bishop| bishop.info(:file).ord + bishop.info(:rank).to_i }
-        b1_ord == b2_ord
+        remaining_pieces_pos.sum(&:size) > 4 ? [nil, nil] : group_fetch(remaining_pieces_pos)
       end
     end
   end
