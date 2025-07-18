@@ -54,7 +54,13 @@ module ConsoleGame
         opt = game_selection
         id = opt == 1 ? new_game : load_game
         fen = sessions.dig(id, :fens, -1)
-        Level.new(mode, controller, side, sessions[id], fen).open_level
+        Level.new(controller, side, sessions[id], fen).open_level
+        end_game
+      end
+
+      # Endgame handling
+      def end_game
+        puts "Game session complete, \nShould return to game.rb"
       end
 
       # Prompt player for new game or load game

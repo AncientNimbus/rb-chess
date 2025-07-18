@@ -23,24 +23,24 @@ module ConsoleGame
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :half_move,
                     :full_move, :game_ended
-      attr_reader :mode, :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
+      attr_reader :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
-      # @param mode [Integer]
       # @param input [ChessInput]
       # @param sides [hash]
       #   @option sides [ChessPlayer, ChessComputer] :white Player who plays as White
       #   @option sides [ChessPlayer, ChessComputer] :black Player who plays as Black
       # @param session [hash] current session
       # @param import_fen [String] expects a valid FEN string
-      def initialize(mode, input, sides, session, import_fen = nil)
-        @mode = mode
+      def initialize(input, sides, session, import_fen = nil)
         @controller = input
         @w_player, @b_player = sides.values
         @session = session
         @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
-        @board = Board.new(self)
         @game_ended = false
+        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
+          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+        @board = Board.new(self)
       end
 
       # == Flow ==
@@ -49,7 +49,6 @@ module ConsoleGame
       def open_level
         init_level
         play_chess until game_ended
-        end_game
       end
 
       # == Game Logic ==
@@ -85,8 +84,7 @@ module ConsoleGame
       # @return [Array<Array<ChessPiece>, Array<String>>]
       def group_fetch(query, pieces: [])
         notations = query.flatten.map do |alg_pos|
-          piece = fetch_piece(alg_pos, bypass: true)
-          pieces << piece
+          pieces << (piece = fetch_piece(alg_pos, bypass: true))
           piece.notation
         end
         [pieces, notations]
@@ -101,22 +99,17 @@ module ConsoleGame
       end
 
       # Lookup a piece based on its possible move position
-      # @param side [Symbol]
-      # @param type [Symbol]
-      # @param target [String]
-      # @param file_rank [String]
+      # @param side [Symbol] :black or :white
+      # @param type [Symbol] expects a notation
+      # @param target [String] expects a algbraic notation
+      # @param file_rank [String] expects a file rank data
+      # @return [ChessPiece, nil]
       def reverse_lookup(side, type, target, file_rank = nil)
         type = Chess.const_get(FEN.dig(type, :class))
         filtered_pieces = fetch_all(side, type: type)
-        new_alg_pos = alg_map[target.to_sym]
-        result = filtered_pieces.select do |piece|
-          next unless usable_pieces[side].include?(piece.info)
-
-          piece.possible_moves.include?(new_alg_pos) && (file_rank.nil? || piece.info.include?(file_rank))
-        end
-        return nil if result.size > 1
-
-        result[0]
+        new_pos = alg_map[target.to_sym]
+        result = refinded_lookup(filtered_pieces, side, new_pos, file_rank)
+        result.size > 1 ? nil : result[0]
       end
 
       # == Board Logic ==
@@ -125,7 +118,7 @@ module ConsoleGame
       # @return [Boolean] true if the operation is a success
       def refresh
         update_board_state
-        self.game_ended = any_checkmate? || draw?
+        self.game_ended = any_checkmate?(kings) || draw?
         board.print_chessboard
         true
       end
@@ -134,12 +127,10 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
-        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
-          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         controller.link_level(self)
-        @kings = { white: nil, black: nil }
-        @threats_map = { white: [], black: [] }
-        @usable_pieces = { white: [], black: [] }
+        @kings = BW_HASH[:new_nil].call
+        @threats_map = BW_HASH[:new_arr].call
+        @usable_pieces = BW_HASH[:new_arr].call
         @player = white_turn ? w_player : b_player
         kings_table
         load_en_passant_state
@@ -171,11 +162,6 @@ module ConsoleGame
         controller.save
       end
 
-      # Endgame handling
-      def end_game
-        p "Game session complete, \nShould return to game.rb"
-      end
-
       # Get and store both Kings
       def kings_table
         fetch_all(type: King).each { |king| kings[king.side] = king }
@@ -190,39 +176,40 @@ module ConsoleGame
         en_passant[1] = alg_map[ghost_pos.to_sym]
       end
 
-      # Generate possible moves & targets for all pieces, all whites or all blacks
-      # @param side [Symbol] expects :all, :white or :black
-      def generate_moves(side = :all)
-        side = :all unless %i[black white].include?(side)
-        fetch_all(side).each(&:query_moves)
+      #  Helper: Filter pieces by checking whether it is usable at the current term with file info for extra measure
+      # @param filtered_pieces [Array<ChessPiece>]
+      # @param side [Symbol] :black or :white
+      # @param new_pos [Integer] expects a positional value
+      # @param file_rank [String] expects a file rank data
+      # @return [Array<ChessPiece>]
+      def refinded_lookup(filtered_pieces, side, new_pos, file_rank)
+        filtered_pieces.select do |piece|
+          next unless usable_pieces[side].include?(piece.info)
+
+          piece.possible_moves.include?(new_pos) && (file_rank.nil? || piece.info.include?(file_rank))
+        end
       end
 
       # Board state refresher
       def update_board_state
-        @threats_map, @usable_pieces = board_analysis(generate_moves)
+        # Generate all possible move and send it to board analysis
+        @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
         # puts usable_pieces
         # puts threats_map
-      end
-
-      # End game if either side achieved a checkmate
-      def any_checkmate?
-        kings.values.any?(&:checkmate?)
       end
 
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
         update_board_state
-        [
-          stalemate?(player.side, usable_pieces, threats_map), half_move_overflow?(half_move),
-          insufficient_material?(*insufficient_material_qualifier), threefold_repetition?(session[:fens])
-        ].any?
+        [stalemate?(player.side, usable_pieces, threats_map), half_move_overflow?(half_move),
+         insufficient_material?(*insufficient_material_qualifier), threefold_repetition?(session[:fens])].any?
       end
 
       # Determine the minimium qualifying requirement to enter the #insufficient_material? flow
+      # @param remaining_pieces_pos [Array<Array<String>>] a combined array of all usable pieces from both colors
       # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
-      def insufficient_material_qualifier
-        remaining_pieces_pos = usable_pieces.values
+      def insufficient_material_qualifier(remaining_pieces_pos = usable_pieces.values)
         remaining_pieces_pos.sum(&:size) > 4 ? [nil, nil] : group_fetch(remaining_pieces_pos)
       end
     end

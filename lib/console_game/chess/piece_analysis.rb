@@ -5,7 +5,11 @@ module ConsoleGame
     # The Piece Analysis module handles the overall stats of the chessboard
     # @author Ancient Nimbus
     module PieceAnalysis
-      private
+      # Default hash pattern
+      BW_HASH = {
+        new_nil: -> { Hash.new { |h, k| h[k] = nil }.merge({ white: nil, black: nil }) },
+        new_arr: -> { Hash.new { |h, k| h[k] = [] }.merge({ white: [], black: [] }) }
+      }.freeze
 
       # Analyse the board
       # usable_pieces: usable pieces of the given turn
@@ -13,8 +17,8 @@ module ConsoleGame
       # @param all_pieces [Array<ChessPiece>]
       # @return [Array<Hash<ChessPiece>>] usable_pieces and threats_map
       def board_analysis(all_pieces)
-        usable_pieces = { white: [], black: [] }
-        threats_map = { white: [], black: [] }
+        usable_pieces = BW_HASH[:new_arr].call
+        threats_map = BW_HASH[:new_arr].call
         pieces_group(all_pieces).each do |side, pieces|
           threats_map[side] = add_pos_to_blunder_tracker(pieces)
           usable_pieces[side] = pieces.map { |piece| piece.info unless piece.possible_moves.empty? }.compact
@@ -26,7 +30,7 @@ module ConsoleGame
       # @param all_piece [Array<ChessPiece>]
       # @return [Hash]
       def pieces_group(all_pieces)
-        grouped_pieces = { white: nil, black: nil }
+        grouped_pieces = BW_HASH[:new_nil].call
         grouped_pieces[:white], grouped_pieces[:black] = all_pieces.partition { |piece| piece.side == :white }
         grouped_pieces
       end

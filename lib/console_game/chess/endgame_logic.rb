@@ -5,6 +5,14 @@ module ConsoleGame
     # The EndgameLogic module defines the various logics to determine whether the game is a draw or checkmates
     # @author Ancient Nimbus
     module EndgameLogic
+      # == Checkmate ==
+      # End game if either side achieved a checkmate
+      # @param kings [Hash<King>] a hash with Kings in it
+      # @return [Boolean] return true if either side is checkmate
+      def any_checkmate?(kings)
+        kings.values.any?(&:checkmate?)
+      end
+
       # == Rules for Draw ==
 
       # Game is a stalemate

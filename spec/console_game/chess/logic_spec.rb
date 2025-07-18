@@ -104,7 +104,7 @@ describe ConsoleGame::Chess::Logic do
       let(:range) { :nil }
 
       it "returns an empty array" do
-        p result = logic_test.send(:path, pos, path, range: range)
+        result = logic_test.send(:path, pos, path, range: range)
         expect(result).to eq([])
       end
     end
