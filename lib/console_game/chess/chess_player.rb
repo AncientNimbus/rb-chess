@@ -160,10 +160,10 @@ module ConsoleGame
       # @param current_level [Level]
       # @return [ChessPiece]
       def store_active_piece(piece, current_level = level)
-        current_level.previous_piece = piece_at_hand
+        # current_level.previous_piece = piece_at_hand
         self.piece_at_hand = piece
         current_level.active_piece = piece_at_hand
-        current_level.previous_piece ||= piece_at_hand
+        # current_level.previous_piece ||= piece_at_hand
         piece_at_hand
       end
 

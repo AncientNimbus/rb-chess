@@ -17,8 +17,7 @@ module ConsoleGame
       # @param all_pieces [Array<ChessPiece>]
       # @return [Array<Hash<ChessPiece>>] usable_pieces and threats_map
       def board_analysis(all_pieces)
-        usable_pieces = BW_HASH[:new_arr].call
-        threats_map = BW_HASH[:new_arr].call
+        threats_map, usable_pieces = Array.new(2) { BW_HASH[:new_arr].call }
         pieces_group(all_pieces).each do |side, pieces|
           threats_map[side] = add_pos_to_blunder_tracker(pieces)
           usable_pieces[side] = pieces.map { |piece| piece.info unless piece.possible_moves.empty? }.compact

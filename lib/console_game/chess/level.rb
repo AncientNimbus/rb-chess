@@ -21,8 +21,7 @@ module ConsoleGame
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
-      attr_accessor :white_turn, :turn_data, :active_piece, :previous_piece, :en_passant, :player, :half_move,
-                    :full_move, :game_ended
+      attr_accessor :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move, :game_ended
       attr_reader :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
@@ -38,8 +37,9 @@ module ConsoleGame
         @session = session
         @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
         @game_ended = false
-        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
-          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
+          :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
+        )
         @board = Board.new(self)
       end
 
@@ -128,9 +128,7 @@ module ConsoleGame
       # Initialise the chessboard
       def init_level
         controller.link_level(self)
-        @kings = BW_HASH[:new_nil].call
-        @threats_map = BW_HASH[:new_arr].call
-        @usable_pieces = BW_HASH[:new_arr].call
+        @threats_map, @usable_pieces, = Array.new(2) { BW_HASH[:new_arr].call }
         @player = white_turn ? w_player : b_player
         kings_table
         load_en_passant_state
@@ -154,9 +152,11 @@ module ConsoleGame
 
       # Save turn handling
       def save_turn
-        level_data =
-          { turn_data: turn_data, white_turn: white_turn, castling_states: castling_states, en_passant: en_passant,
-            half: half_move, full: full_move }
+        level_data = {
+          turn_data: turn_data, white_turn: white_turn,
+          castling_states: castling_states, en_passant: en_passant,
+          half: half_move, full: full_move
+        }
         fen_str = to_fen(level_data)
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
         controller.save
@@ -164,16 +164,15 @@ module ConsoleGame
 
       # Get and store both Kings
       def kings_table
-        fetch_all(type: King).each { |king| kings[king.side] = king }
+        @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
       end
 
       # Restore En passant status based on FEN data
       def load_en_passant_state
         return if en_passant.nil?
 
-        pawn_query, ghost_pos = en_passant
-        en_passant[0] = fetch_piece(pawn_query, bypass: true)
-        en_passant[1] = alg_map[ghost_pos.to_sym]
+        en_passant[0] = fetch_piece(en_passant[0], bypass: true)
+        en_passant[1] = alg_map[en_passant[1].to_sym]
       end
 
       #  Helper: Filter pieces by checking whether it is usable at the current term with file info for extra measure
@@ -202,8 +201,12 @@ module ConsoleGame
       # @return [Boolean] the game is a draw when true
       def draw?
         update_board_state
-        [stalemate?(player.side, usable_pieces, threats_map), half_move_overflow?(half_move),
-         insufficient_material?(*insufficient_material_qualifier), threefold_repetition?(session[:fens])].any?
+        [
+          stalemate?(player.side, usable_pieces, threats_map),
+          insufficient_material?(*insufficient_material_qualifier),
+          half_move_overflow?(half_move),
+          threefold_repetition?(session[:fens])
+        ].any?
       end
 
       # Determine the minimium qualifying requirement to enter the #insufficient_material? flow
