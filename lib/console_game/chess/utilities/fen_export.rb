@@ -10,12 +10,18 @@ module ConsoleGame
       # FEN export helper for simpler ops
       EXPORT_HELPER = {
         to_active_color: ->(white_turn) { white_turn ? "w" : "b" },
-        to_en_passant: ->(en_passant) { en_passant.nil? ? "-" : en_passant[1] }
+        to_en_passant: ->(en_passant) { en_passant.nil? ? "-" : en_passant.fetch(-1) }
       }.freeze
 
       private
 
       # == FEN Export ==
+
+      # FEN core export method
+      # @return [String]
+      def fen_export(**session_data)
+        to_fen(session_data)
+      end
 
       # Transform internal turn data to FEN string
       # @param turn_data [Array<ChessPiece, String>]

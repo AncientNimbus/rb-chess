@@ -14,6 +14,23 @@ describe ConsoleGame::Chess::FenExport do
     end
   end
 
+  describe "#fen_export" do
+    let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
+
+    context "when a value is a valid internal array of a new chess session" do
+      let(:session_data) { fen_export_test.parse_fen(level_double) }
+
+      it "returns a position placements of a new game in FEN format" do
+        turn_data, white_turn, castling_states, en_passant, half_move, full_move =
+          session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+
+        result = fen_export_test.send(:fen_export, turn_data: turn_data, white_turn: white_turn, castling_states: castling_states,
+                                                   en_passant: en_passant, half: half_move, full: full_move)
+        expect(result).to eq("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+      end
+    end
+  end
+
   describe "#to_fen" do
     let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
 

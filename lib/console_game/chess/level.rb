@@ -55,7 +55,6 @@ module ConsoleGame
 
       # Pawn specific: Present a list of option when player can promote a pawn
       def promote_opts
-        refresh
         player.indirect_promote
       end
 
@@ -120,7 +119,7 @@ module ConsoleGame
         update_board_state
         self.game_ended = any_checkmate?(kings) || draw?
         board.print_chessboard
-        true
+        # true
       end
 
       private
@@ -136,35 +135,47 @@ module ConsoleGame
         save_turn
       end
 
+      # Get and store both Kings
+      def kings_table
+        @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
+      end
+
       # Main Game Loop
       def play_chess
-        self.player = white_turn ? w_player : b_player
         # Pre turn
+        self.player = white_turn ? w_player : b_player
         refresh
         return if game_ended
 
         # Play turn
         player.play_turn
+
         # Post turn
         self.white_turn = !white_turn
         save_turn
       end
 
+      # Board state refresher
+      def update_board_state
+        # Generate all possible move and send it to board analysis
+        @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
+        # puts usable_pieces
+        # puts threats_map
+      end
+
       # Save turn handling
       def save_turn
-        level_data = {
-          turn_data: turn_data, white_turn: white_turn,
-          castling_states: castling_states, en_passant: en_passant,
-          half: half_move, full: full_move
-        }
-        fen_str = to_fen(level_data)
+        fen_str = fen_export(
+          turn_data: turn_data, white_turn: white_turn, castling_states: castling_states,
+          en_passant: format_en_passant, half: half_move, full: full_move
+        )
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
         controller.save
       end
 
-      # Get and store both Kings
-      def kings_table
-        @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
+      # Helper: Convert en passant data before export
+      def format_en_passant
+        en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
       end
 
       # Restore En passant status based on FEN data
@@ -187,14 +198,6 @@ module ConsoleGame
 
           piece.possible_moves.include?(new_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
-      end
-
-      # Board state refresher
-      def update_board_state
-        # Generate all possible move and send it to board analysis
-        @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
-        # puts usable_pieces
-        # puts threats_map
       end
 
       # End game if is it a draw

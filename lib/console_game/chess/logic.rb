@@ -146,9 +146,16 @@ module ConsoleGame
 
       # == Algebraic natation ==
 
-      # Generate and memorize the algebraic chess notation to positional value reference hash
+      # Call the algebraic chess notation to positional value reference hash
       def alg_map
         ALG_MAP
+      end
+
+      # Convert positional value to Algbraic notation string
+      # @param pos [Integer]
+      # @return [String]
+      def to_alg_pos(pos)
+        ALG_MAP.key(pos).to_s
       end
     end
   end

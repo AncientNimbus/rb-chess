@@ -70,7 +70,7 @@ module ConsoleGame
       # @param query [Symbol] expects `:file`, `:rank` or `:all`
       # @return [String] file, rank, or full algebraic position
       def info(query = :all)
-        alg_pos = alg_map.key(curr_pos).to_s
+        alg_pos = to_alg_pos(curr_pos)
         case query
         when :file then alg_pos[0]
         when :rank then alg_pos[1]
