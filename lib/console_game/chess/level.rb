@@ -260,7 +260,12 @@ module ConsoleGame
       # Game is a draw due to Threefold Repetition
       # @return [Boolean] the game is a draw when true
       def threefold_repetition?
-        false
+        fen_records = session[:fens]
+        return false unless fen_records.size > 10
+
+        sectioned_fen_records = fen_records.last(100).map { |fen| fen.split(" ")[0...-2].join(" ") }
+        last_turn = sectioned_fen_records.last
+        sectioned_fen_records.count(last_turn) >= 3
       end
     end
   end
