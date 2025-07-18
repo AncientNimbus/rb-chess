@@ -41,6 +41,7 @@ module ConsoleGame
           :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
         )
         @board = Board.new(self)
+        controller.link_level(self)
       end
 
       # == Flow ==
@@ -107,7 +108,7 @@ module ConsoleGame
         type = Chess.const_get(FEN.dig(type, :class))
         filtered_pieces = fetch_all(side, type: type)
         new_pos = alg_map[target.to_sym]
-        result = refinded_lookup(filtered_pieces, side, new_pos, file_rank)
+        result = refined_lookup(filtered_pieces, side, new_pos, file_rank)
         result.size > 1 ? nil : result[0]
       end
 
@@ -119,30 +120,23 @@ module ConsoleGame
         update_board_state
         self.game_ended = any_checkmate?(kings) || draw?
         board.print_chessboard
-        # true
       end
 
       private
 
       # Initialise the chessboard
       def init_level
-        controller.link_level(self)
         @threats_map, @usable_pieces, = Array.new(2) { BW_HASH[:new_arr].call }
         @player = white_turn ? w_player : b_player
-        kings_table
+        @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
         load_en_passant_state
         update_board_state
-        save_turn
-      end
-
-      # Get and store both Kings
-      def kings_table
-        @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
       end
 
       # Main Game Loop
       def play_chess
         # Pre turn
+        save_turn
         self.player = white_turn ? w_player : b_player
         refresh
         return if game_ended
@@ -152,15 +146,12 @@ module ConsoleGame
 
         # Post turn
         self.white_turn = !white_turn
-        save_turn
       end
 
       # Board state refresher
+      # Generate all possible move and send it to board analysis
       def update_board_state
-        # Generate all possible move and send it to board analysis
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
-        # puts usable_pieces
-        # puts threats_map
       end
 
       # Save turn handling
@@ -186,13 +177,13 @@ module ConsoleGame
         en_passant[1] = alg_map[en_passant[1].to_sym]
       end
 
-      #  Helper: Filter pieces by checking whether it is usable at the current term with file info for extra measure
+      # Helper: Filter pieces by checking whether it is usable at the current term with file info for extra measure
       # @param filtered_pieces [Array<ChessPiece>]
       # @param side [Symbol] :black or :white
       # @param new_pos [Integer] expects a positional value
       # @param file_rank [String] expects a file rank data
       # @return [Array<ChessPiece>]
-      def refinded_lookup(filtered_pieces, side, new_pos, file_rank)
+      def refined_lookup(filtered_pieces, side, new_pos, file_rank)
         filtered_pieces.select do |piece|
           next unless usable_pieces[side].include?(piece.info)
 
