@@ -181,7 +181,7 @@ module ConsoleGame
       def validate_moves(turn_data, pos = curr_pos)
         self.sights = []
         targets.transform_values! { |_| nil }
-        possible_moves = all_paths(pos)
+        possible_moves = all_paths(movements, pos)
         possible_moves.each do |path, positions|
           # remove blocked spot and onwards
           possible_moves[path] = detect_occupied_tiles(path, turn_data, positions)
@@ -206,41 +206,6 @@ module ConsoleGame
           break
         end
         new_positions
-      end
-
-      # Calculate valid sequence based on positional value
-      # @param pos [Integer] positional value within a matrix
-      # @return [Hash<Array<Integer>>] an array of valid directional path within given bound
-      def all_paths(pos = curr_pos)
-        paths = Hash.new { |h, k| h[k] = nil }
-        movements.each do |path, range|
-          next if range.nil?
-
-          sequence = path(pos, path, range: range)
-          paths[path] = sequence unless sequence.empty?
-        end
-        paths
-      end
-
-      # Path via Pathfinder
-      # @param pos [Integer] board positional value
-      # @param path [Symbol] compass direction
-      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
-      # @return [Array<Integer>]
-      def path(pos = 0, path = :e, range: 1)
-        seq_length = range.is_a?(Integer) ? range + 1 : range
-        path = pathfinder(pos, path, length: seq_length)
-        path.size > 1 ? path : []
-      end
-
-      # Possible movement direction for the given piece
-      # @param directions [Array<Symbol>] possible paths
-      # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
-      def movement_range(directions = [], range: 1)
-        movements = Hash.new { |h, k| h[k] = nil }
-        DIRECTIONS.each_key { |k| movements[k] }
-        directions.each { |dir| movements[dir] = range }
-        movements
       end
     end
   end
