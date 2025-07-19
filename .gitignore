@@ -2,3 +2,5 @@ coverage/*
 doc/*
 .yardoc/*
 user_data/*
+.config/locale/debug_en.yml
+.config/locale/debug_en.json

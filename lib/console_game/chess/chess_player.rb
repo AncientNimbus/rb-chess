@@ -37,10 +37,10 @@ module ConsoleGame
       # @param id [Integer] session id
       # @param p2_name [String] player 2's name
       # @param mode [Integer] game mode
-      # @param event [String] name of the event
+      # @param _event [String] name of the event
       # @param site [String] name of the site
       # @param date [Time] time of the event
-      def register_session(id, p2_name, mode, event: "Casual", site: "Ruby Arcade by Ancient Nimbus",
+      def register_session(id, p2_name, mode, _event: "Casual", site: "Ruby Arcade by Ancient Nimbus",
                            date: Time.new.ceil)
         players = [name, p2_name].map { |name| Paint.unpaint(name) }
         white, black = side == :white ? players : players.reverse
@@ -166,10 +166,8 @@ module ConsoleGame
       # @param current_level [Level]
       # @return [ChessPiece]
       def store_active_piece(piece, current_level = level)
-        # current_level.previous_piece = piece_at_hand
         self.piece_at_hand = piece
         current_level.active_piece = piece_at_hand
-        # current_level.previous_piece ||= piece_at_hand
         piece_at_hand
       end
 
