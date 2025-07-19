@@ -39,6 +39,7 @@ module Console
   # @param err_msg [String] second print
   # @param reg [Regexp, String] pattern to match
   # @param empty [Boolean] allow empty input value, default to false
+  # @return [String]
   def ask(msg = "", cmds: { "exit" => method(:exit) }, err_msg: D_MSG[:err_msg], reg: /.*/, empty: false)
     input = prompt_user(msg, err_msg: err_msg, reg: reg, empty: empty)
     return input if input.empty?

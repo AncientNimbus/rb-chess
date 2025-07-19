@@ -28,14 +28,12 @@ module ConsoleGame
     # @param reg [Regexp, String, Array<String>] pattern to match, use an Array when input type is :range
     # @param empty [Boolean] allow empty input value, default to false
     # @param input_type [Symbol] expects the following option: :any, :range, :custom
+    # @return [String]
     def ask(msg = "", cmds: commands, err_msg: s("cli.std_err"), reg: ".*", empty: false, input_type: :any)
       reg = case input_type
-            when :range
-              regexp_range(cmd_pattern, min: reg[0], max: reg[1])
-            when :custom
-              regexp_formatter(cmd_pattern, reg)
-            else
-              reg
+            when :range then regexp_range(cmd_pattern, min: reg[0], max: reg[1])
+            when :custom then regexp_formatter(cmd_pattern, reg)
+            else reg
             end
       # p "location: #{self.class}, reg: #{reg}"
       # p reg

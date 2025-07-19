@@ -32,7 +32,7 @@ module ConsoleGame
       # Get user input and process them accordingly
       # @param player [ChessPlayer]
       def turn_action(player)
-        input = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom)
+        input = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom, empty: true)
         ops = case input_scheme
               when smith_reg then validate_smith(input)
               when alg_reg then validate_algebraic(input, player.side, input_scheme)
@@ -100,7 +100,7 @@ module ConsoleGame
       def smith(_args = [])
         return if level.nil?
 
-        p "Input settings updated! The game will detect Smith notation."
+        puts "The game will detect Smith notation starting from the next prompt, press 'enter' to confirm."
         self.input_scheme = smith_reg
         self.input_parser = SMITH_PARSER
       end
@@ -109,7 +109,7 @@ module ConsoleGame
       def alg(_args = [])
         return if level.nil?
 
-        p "Input settings updated! The game will detect Algebraic notation."
+        puts "The game will detect Algebraic notation starting from the next prompt, press 'enter' to confirm."
         self.input_scheme = alg_reg
       end
 

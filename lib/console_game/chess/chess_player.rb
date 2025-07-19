@@ -134,6 +134,12 @@ module ConsoleGame
         move_piece(target)
       end
 
+      # Invalid input
+      def invalid_input(input)
+        puts input.empty? ? "Input scheme has been updated!" : "'#{input}' is not a valid notation"
+        false
+      end
+
       private
 
       # Process player action

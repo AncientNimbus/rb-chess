@@ -35,7 +35,7 @@ module ConsoleGame
       # @return [Hash] a command pattern hash
       def validate_algebraic(input, side, reg)
         captures = alg_output_capture_gps(input, reg)
-        return { type: :invalid_notation, args: [input] } unless captures
+        return { type: :invalid_input, args: [input] } unless captures
 
         if captures[:castle]
           parse_castling(side, captures[:castle])
