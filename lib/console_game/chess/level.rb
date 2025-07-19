@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "game"
-require_relative "logic"
-require_relative "endgame_logic"
+require_relative "logics/logic"
+require_relative "logics/piece_analysis"
+require_relative "logics/endgame_logic"
 require_relative "board"
-require_relative "piece_analysis"
 require_relative "utilities/fen_import"
 require_relative "utilities/fen_export"
 

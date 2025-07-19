@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "paint"
-require_relative "../../nimbus_file_utils/nimbus_file_utils"
+require_relative "../../../nimbus_file_utils/nimbus_file_utils"
 
 module ConsoleGame
   module Chess

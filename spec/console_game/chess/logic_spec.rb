@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../../lib/console_game/chess/logic"
+require_relative "../../../lib/console_game/chess/logics/logic"
 
 describe ConsoleGame::Chess::Logic do
   subject(:logic_test) { dummy_class.new }

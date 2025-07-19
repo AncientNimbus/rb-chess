@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "../logic"
-require_relative "../display"
+require_relative "../logics/logic"
+require_relative "../logics/display"
 require_relative "../utilities/fen_import"
 
 module ConsoleGame

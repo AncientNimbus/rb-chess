@@ -151,7 +151,7 @@ module ConsoleGame
         ALG_MAP
       end
 
-      # Convert positional value to Algbraic notation string
+      # Convert positional value to Algebraic notation string
       # @param pos [Integer]
       # @return [String]
       def to_alg_pos(pos)

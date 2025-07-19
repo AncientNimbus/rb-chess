@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "../base_game"
-require_relative "logic"
-require_relative "display"
-require_relative "input/chess_input"
 require_relative "chess_player"
 require_relative "chess_computer"
 require_relative "level"
+require_relative "input/chess_input"
+require_relative "logics/logic"
+require_relative "logics/display"
 require_relative "pieces/chess_piece"
 require_relative "pieces/king"
 require_relative "pieces/queen"
@@ -18,7 +18,7 @@ require_relative "pieces/pawn"
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
   # @author Ancient Nimbus
-  # @version 0.6.0
+  # @version 0.7.0
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
