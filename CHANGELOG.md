@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2025-07-19
+
+### 🚀 Features
+
+- Add #build_table to Console module
+- Add logics to display loadable sessions
+- Add logic to check for Stalemate
+- Add logic to check for insufficient material
+- Add logic to check for fifty-move rule
+- Add logic to check #threefold_repetition?
+- Add the ability to play with computer player
+- Add support to load Player vs AI sessions
+
+### 🐛 Bug Fixes
+
+- Address an issue when user load a chess game
+- Add a new flow to prevent a load game crash
+- #insufficient_material validation logics
+- Resolve an issue in insufficient material flow
+- Address a crash bug during move preview
+- Address an issue during FEN export
+- Resolve a bug during checkmate detection
+
+### 🚜 Refactor
+
+- Move draw logics to EndgameLogic
+- Optmise #insufficient_material flow
+- Move movement specific logics to Logic
+- Optimise Level class
+- Optimise methods in Level class
+- Optimise #alg_map
+- Optimise Level save flow
+
+### 📚 Documentation
+
+- Update CHANGELOG
+
+### 🧪 Testing
+
+- Add test cases for #all_paths
+- Add test cases for #path
+
 ## [0.5.0] - 2025-07-16
 
 ### 🚀 Features
