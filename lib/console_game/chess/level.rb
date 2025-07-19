@@ -113,11 +113,12 @@ module ConsoleGame
       # == Board Logic ==
 
       # Actions to perform when player input is valid
+      # @param print_board [Boolean] print board if is it set to true
       # @return [Boolean] true if the operation is a success
-      def refresh
+      def refresh(print_board: true)
         update_board_state
         game_ended
-        board.print_chessboard
+        board.print_chessboard if print_board
       end
 
       private
@@ -128,7 +129,7 @@ module ConsoleGame
         @player = white_turn ? w_player : b_player
         @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
         load_en_passant_state
-        refresh
+        refresh(print_board: false)
       end
 
       # Main Game Loop

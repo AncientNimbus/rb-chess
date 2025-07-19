@@ -103,7 +103,7 @@ module NimbusFileUtils
     # @param extname [String] set target file extension, default: `:yml`
     # @return [String]
     def get_string(key_path, extname: ".yml")
-      p path = filepath(locale_filename, ".config", "locale")
+      path = filepath(locale_filename, ".config", "locale")
       @strings ||= load_file(path, extname: extname, symbols: false)
 
       locale_strings = @strings[locale]

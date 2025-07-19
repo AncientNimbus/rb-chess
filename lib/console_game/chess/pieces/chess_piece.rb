@@ -63,7 +63,6 @@ module ConsoleGame
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
         threat_response
         @possible_moves = possible_moves & limiter unless limiter.empty?
-        # puts "#{info}: #{possible_moves}"
       end
 
       # Return alg notation of current position
@@ -124,6 +123,7 @@ module ConsoleGame
       end
 
       # Last move formatted as algebraic notation
+      # @return [String]
       def store_last_move(move_type = :move, file = nil)
         alg_notation = notation.to_s.upcase
         move = "#{alg_notation}#{info}"
@@ -144,13 +144,14 @@ module ConsoleGame
       # == Threat Query ==
 
       # Handle events when the opposite active piece can capture self in the upcoming turn
+      # Switch color when under threat
       def threat_response
-        # Switch color when under threat
         self.color = under_threat_by?([level.active_piece], self) ? highlight : std_color
       end
 
       # Determine if a piece is currently under threats
-      # #param piece [ChessPiece]
+      # @param piece [ChessPiece]
+      # @return [Boolean]
       def under_threat?
         opposite_side = opposite_of(side)
         level.threats_map[opposite_side].include?(curr_pos)
