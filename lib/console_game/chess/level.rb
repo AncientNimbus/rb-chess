@@ -118,7 +118,6 @@ module ConsoleGame
       # @return [Boolean] true if the operation is a success
       def refresh
         update_board_state
-        self.game_ended = any_checkmate?(kings) || draw?
         board.print_chessboard
       end
 
@@ -130,7 +129,7 @@ module ConsoleGame
         @player = white_turn ? w_player : b_player
         @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
         load_en_passant_state
-        update_board_state
+        refresh
       end
 
       # Main Game Loop
@@ -152,6 +151,7 @@ module ConsoleGame
       # Generate all possible move and send it to board analysis
       def update_board_state
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
+        self.game_ended = any_checkmate?(kings) || draw?
       end
 
       # Save turn handling
@@ -194,7 +194,6 @@ module ConsoleGame
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
-        update_board_state
         [
           stalemate?(player.side, usable_pieces, threats_map),
           insufficient_material?(*insufficient_material_qualifier),

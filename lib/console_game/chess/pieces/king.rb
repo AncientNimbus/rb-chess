@@ -119,13 +119,32 @@ module ConsoleGame
       # @return [Boolean] true if someone can come save the King
       def any_saviours?(king_allies, attacker)
         attack_path = find_attacker_path(attacker)
-        saviours = king_allies.map do |ally|
-          ally unless (ally.possible_moves & attack_path).empty?
-        end.compact
-        saviours.each { |ally| ally.query_moves(attack_path) }
-        level.usable_pieces[side] = saviours.push(self).map(&:info)
-        query_moves # update self
+        saviours = find_saviours(king_allies, attack_path)
+        limit_saviours_movements(saviours, attack_path)
+        add_saviours(saviours)
         !saviours.empty?
+      end
+
+      # Helper for any_saviours?, find all saviours
+      # @param king_allies [Array<ChessPiece>] expects an array of King's army
+      # @param attack_path [Array<Integer>]
+      # @return [Array<ChessPiece>]
+      def find_saviours(king_allies, attack_path)
+        king_allies.map { |ally| ally unless (ally.possible_moves & attack_path).empty? }.compact
+      end
+
+      # Helper for any_saviours?, Update and limits saviours path to attacker's path
+      # @param saviours [Array<ChessPiece>] expects an array of King's saviours
+      # @param attack_path [Array<Integer>]
+      def limit_saviours_movements(saviours, attack_path)
+        saviours.each { |ally| ally.query_moves(attack_path) }
+      end
+
+      # Helper for any_saviours?, add saviours and King to the usable pieces if King still move
+      # @param saviours [Array<ChessPiece>] expects an array of King's saviours
+      def add_saviours(saviours)
+        query_moves # update self
+        level.usable_pieces[side] = saviours.push(self).map(&:info) unless possible_moves.empty?
       end
 
       # Determine if there are no escape route for the King
