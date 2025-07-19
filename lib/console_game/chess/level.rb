@@ -21,7 +21,7 @@ module ConsoleGame
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
-      attr_accessor :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move, :game_ended
+      attr_accessor :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move
       attr_reader :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
@@ -36,7 +36,6 @@ module ConsoleGame
         @w_player, @b_player = sides.values
         @session = session
         @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
-        @game_ended = false
         @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
           :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
         )
@@ -107,8 +106,7 @@ module ConsoleGame
       def reverse_lookup(side, type, target, file_rank = nil)
         type = Chess.const_get(FEN.dig(type, :class))
         filtered_pieces = fetch_all(side, type: type)
-        new_pos = alg_map[target.to_sym]
-        result = refined_lookup(filtered_pieces, side, new_pos, file_rank)
+        result = refined_lookup(filtered_pieces, side, alg_map[target.to_sym], file_rank)
         result.size > 1 ? nil : result[0]
       end
 
@@ -118,6 +116,7 @@ module ConsoleGame
       # @return [Boolean] true if the operation is a success
       def refresh
         update_board_state
+        game_ended
         board.print_chessboard
       end
 
@@ -151,7 +150,12 @@ module ConsoleGame
       # Generate all possible move and send it to board analysis
       def update_board_state
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
-        self.game_ended = any_checkmate?(kings) || draw?
+      end
+
+      # Check for end game condition
+      # @return [Boolean]
+      def game_ended
+        any_checkmate?(kings) || draw?
       end
 
       # Save turn handling
@@ -196,6 +200,7 @@ module ConsoleGame
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
+        update_board_state
         [
           stalemate?(player.side, usable_pieces, threats_map),
           insufficient_material?(*insufficient_material_qualifier),
