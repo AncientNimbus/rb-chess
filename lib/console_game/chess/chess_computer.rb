@@ -6,13 +6,21 @@ module ConsoleGame
   module Chess
     # Chess computer player class
     class ChessComputer < ChessPlayer
-      def initialize(name = "Computer")
-        super(name)
+      def initialize(name = "", controller = nil, color = nil)
+        super
       end
 
-      # Play a turn in chess as an AI player
-      def play_turn
-        p "Computer's move"
+      private
+
+      # Process player action
+      # Computer player's move
+      def player_action
+        selection = level.usable_pieces[side].sample
+
+        assign_piece(selection)
+        target = piece_at_hand.possible_moves.to_a.sample
+
+        move_piece(target)
       end
     end
   end

@@ -60,10 +60,10 @@ module ConsoleGame
       def play_turn
         link_level
         puts "It is #{name}'s turn." # @todo: replace with TF string
-        # Prompt player to enter notation value
-        controller.turn_action(self)
-        level.reset_en_passant
 
+        player_action
+
+        level.reset_en_passant
         put_piece_down
       end
 
@@ -136,6 +136,12 @@ module ConsoleGame
 
       private
 
+      # Process player action
+      # Prompt player to enter notation value
+      def player_action
+        controller.turn_action(self)
+      end
+
       # Handling piece assignment
       # @param alg_pos [String] algebraic notation
       # @return [ChessPiece]
@@ -177,7 +183,7 @@ module ConsoleGame
       # Helper: Explicitly state that player action has ended
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
-        # p piece_at_hand.last_move
+        p piece_at_hand.last_move
         true
       end
 

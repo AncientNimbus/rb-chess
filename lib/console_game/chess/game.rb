@@ -121,7 +121,7 @@ module ConsoleGame
       # @param player [ConsoleGame::ChessPlayer, nil]
       # @return [ChessPlayer, ChessComputer]
       def player_profile(player)
-        player ||= mode == 1 ? ChessPlayer.new("", controller) : ChessComputer.new(game_manager)
+        player ||= mode == 1 ? ChessPlayer.new("", controller) : ChessComputer.new("Computer", controller)
         return player if player.is_a?(ChessComputer)
 
         # flow 2: name players

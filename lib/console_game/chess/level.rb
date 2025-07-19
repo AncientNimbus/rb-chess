@@ -101,7 +101,7 @@ module ConsoleGame
       # Lookup a piece based on its possible move position
       # @param side [Symbol] :black or :white
       # @param type [Symbol] expects a notation
-      # @param target [String] expects a algbraic notation
+      # @param target [String] expects a algebraic notation
       # @param file_rank [String] expects a file rank data
       # @return [ChessPiece, nil]
       def reverse_lookup(side, type, target, file_rank = nil)
