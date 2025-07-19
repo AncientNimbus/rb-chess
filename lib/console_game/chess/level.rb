@@ -191,6 +191,8 @@ module ConsoleGame
         end
       end
 
+      # == Endgame Logics ==
+
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
@@ -202,7 +204,7 @@ module ConsoleGame
         ].any?
       end
 
-      # Determine the minimium qualifying requirement to enter the #insufficient_material? flow
+      # Determine the minimum qualifying requirement to enter the #insufficient_material? flow
       # @param remaining_pieces_pos [Array<Array<String>>] a combined array of all usable pieces from both colors
       # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
       def insufficient_material_qualifier(remaining_pieces_pos = usable_pieces.values)

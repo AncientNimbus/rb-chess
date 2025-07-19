@@ -83,12 +83,32 @@ module ConsoleGame
       # Handle load game sequence
       def load_game
         user_opt, session = select_session
-        if mode == 1
-          @p1, @p2 = %i[white black].map { |side| ChessPlayer.new(session[side], controller, side) }
-          side[:white] = p1
-          side[:black] = p2
-        end
+        @p1, @p2 = build_players(session)
+        assign_sides(p1, p2)
         user_opt
+      end
+
+      # Create player classes based on load mode
+      # @param session [Hash] game session to load
+      # @return [Array<ChessPlayer, ChessComputer>]
+      def build_players(session)
+        if mode == 1
+          %i[white black].map { |side| ChessPlayer.new(session[side], controller, side) }
+        else
+          computer_side = session.key("Computer")
+          player_side = opposite_of(computer_side)
+          [
+            ChessPlayer.new(session[player_side], controller, player_side),
+            ChessComputer.new(session[computer_side], controller, computer_side)
+          ]
+        end
+      end
+
+      # Assign players
+      # @param players [ChessPlayer, ChessComputer] expects two ChessPlayer objects
+      def assign_sides(*players)
+        side[:white], side[:black] = players
+        side[:white], side[:black] = side[:black], side[:white] if p1.side == :black
       end
 
       # Helper to print list of sessions to load
