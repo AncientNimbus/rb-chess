@@ -96,8 +96,8 @@ describe NimbusFileUtils do
       let(:valid_json_file) { F.filepath("debug_en", ".config", "locale") }
 
       it "is a valid filepath, return true" do
-        skip "To update"
-        expect(F.file_exist?(valid_json_file, type: ".json")).to be true
+        result = F.file_exist?(valid_json_file, extname: ".json")
+        expect(result).to be true
       end
     end
 
@@ -118,14 +118,84 @@ describe NimbusFileUtils do
     end
   end
 
+  describe "#file_list" do
+    context "when a valid folder directory is given, searching for .yml files" do
+      let(:valid_file_path) { F.filepath("locale", ".config") }
+
+      it "returns an array of filenames as string" do
+        result = F.file_list(valid_file_path)
+        expect(result).to eq(["debug_en.yml", "en.yml"])
+      end
+    end
+
+    context "when a valid folder directory is given, searching for .json files" do
+      let(:valid_file_path) { F.filepath("locale", ".config") }
+
+      it "returns an array of filenames as string" do
+        result = F.file_list(valid_file_path, extname: ".json")
+        expect(result).to eq(["debug_en.json"])
+      end
+    end
+  end
+
+  describe "#write_to_disk" do
+    context "when filepath is set to spec/.debug, with extension set as .yml" do
+      let(:spec_debug_path) { F.filepath("file_w_test.yml", "spec", ".debug") }
+      let(:data) do
+        {
+          debug_en: {
+            test_msg: "Hello, you are using the debug_en.yml text file.",
+            test_msg2: "This is %{adj}!",
+            test_array: [{ "obj": "nested" }, 123, ".yml"]
+          }
+        }
+      end
+
+      it "creates a file at the given directory with the provided data saved" do
+        F.write_to_disk(spec_debug_path, data)
+        result = F.file_exist?(spec_debug_path, use_filetype: false)
+        expect(result).to be true
+      end
+    end
+
+    context "when filepath is set to spec/.debug, with extension set as .json" do
+      let(:spec_debug_path) { F.filepath("file_w_test.json", "spec", ".debug") }
+      let(:data) do
+        {
+          debug_en: {
+            test_msg: "Hello, you are using the debug_en.json text file.",
+            test_msg2: "This is %{adj}!",
+            test_array: [{ "obj": "nested" }, 123, ".json"]
+          }
+        }
+      end
+
+      it "creates a file at the given directory with the provided data saved" do
+        F.write_to_disk(spec_debug_path, data)
+        result = F.file_exist?(spec_debug_path, use_filetype: false)
+        expect(result).to be true
+      end
+    end
+
+    context "when filepath is set to spec/.debug, with extension set as .txt" do
+      let(:spec_debug_path) { F.filepath("file_w_test.txt", "spec", ".debug") }
+      let(:data) { "Ancient Nimbus" }
+
+      it "creates a file at the given directory with the provided data saved" do
+        F.write_to_disk(spec_debug_path, data)
+        result = F.file_exist?(spec_debug_path, use_filetype: false)
+        expect(result).to be true
+      end
+    end
+  end
+
   describe "#load_file" do
-    let(:valid_yaml_file) { F.filepath("debug_en", ".config", "locale") }
-    let(:valid_json_file) { F.filepath("debug_en", ".config", "locale") }
+    let(:valid_yaml_file) { F.filepath("debug_en.yml", ".config", "locale") }
+    let(:valid_json_file) { F.filepath("debug_en.json", ".config", "locale") }
 
     context "when target file is a yaml and symbol keys format is set true" do
       symbol_hash = { debug_en: { test_msg: "Hello, you are using the debug_en.yml text file.", test_msg2: "This is %{adj}!", test_array: [{ obj: "nested" }, 123, ".yml"] } }
       it "returns a hash with symbols as keys" do
-        skip "To update"
         expect(F.load_file(valid_yaml_file)).to eq(symbol_hash)
       end
     end
@@ -133,7 +203,6 @@ describe NimbusFileUtils do
     context "when target file is a yaml and symbol keys format is set false" do
       string_hash = { "debug_en" => { "test_msg" => "Hello, you are using the debug_en.yml text file.", "test_msg2" => "This is %{adj}!", "test_array" => [{ "obj" => "nested" }, 123, ".yml"] } }
       it "returns a hash with string as keys" do
-        skip "To update"
         expect(F.load_file(valid_yaml_file, symbols: false)).to eq(string_hash)
       end
     end
@@ -141,51 +210,51 @@ describe NimbusFileUtils do
     context "when target file is a json and symbol keys format is set true" do
       symbol_hash = { debug_en: { test_msg: "Hello, you are using the debug_en.json text file.", test_msg2: "This is %{adj}!", test_array: [{ obj: "nested" }, 123, ".json"] } }
       it "returns a hash with symbols as keys" do
-        skip "To update"
-        expect(F.load_file(valid_yaml_file, format: :json)).to eq(symbol_hash)
+        result = F.load_file(valid_json_file, extname: ".json")
+        expect(result).to eq(symbol_hash)
       end
     end
 
     context "when target file is a json and symbol keys format is set false" do
       string_hash = { "debug_en" => { "test_msg" => "Hello, you are using the debug_en.json text file.", "test_msg2" => "This is %{adj}!", "test_array" => [{ "obj" => "nested" }, 123, ".json"] } }
       it "returns a hash with string as keys" do
-        skip "To update"
-        expect(F.load_file(valid_yaml_file, format: :json, symbols: false)).to eq(string_hash)
+        result = F.load_file(valid_json_file, extname: ".json", symbols: false)
+        expect(result).to eq(string_hash)
       end
     end
 
     context "when argument is invalid" do
       it "raises an argument error if an incorrect format symbol is provided" do
-        skip "To update"
-        expect { F.load_file(valid_yaml_file, format: :txt) }.to raise_error(ArgumentError, "Invalid format key: only :yml or :json is accepted")
+        expect { F.load_file(valid_yaml_file, extname: ".txt") }.to raise_error(ArgumentError, "Invalid extension: only .yml or .json is accepted")
       end
 
       it "prints a warning on the console with filepath attached if file does not exist" do
-        skip "To update"
-        path = F.filepath("bad_file")
-        expect { F.load_file(path, format: :yml) }.to output("File not found: #{path}.yml\n").to_stdout
+        path = F.filepath("bad_file.yml")
+        expect { F.load_file(path, extname: ".yml") }.to output("File not found: #{path}\n").to_stdout
       end
     end
   end
 
   describe "#get_string" do
-    F.set_locale("debug_en")
     context "when file is yaml" do
       before { F.instance_variable_set(:@strings, nil) }
 
       it "returns the target string if the key is valid" do
+        F.set_locale("debug_en", extname: ".yml")
         str_key = "test_msg"
         result = F.get_string(str_key)
         expect(result).to eq("Hello, you are using the debug_en.yml text file.")
       end
 
       it "returns the target string if the key is valid and the is pointing to an array object" do
+        F.set_locale("debug_en", extname: ".yml")
         str_key = "test_array"
         result = F.get_string(str_key)
         expect(result[1]).to eq(123)
       end
 
       it "returns missing string warning if the key is invalid" do
+        F.set_locale("debug_en", extname: ".yml")
         str_key = "bad_msg"
         result = F.get_string(str_key)
         expect(result).to eq("Missing string: 'bad_msg'")
@@ -196,23 +265,23 @@ describe NimbusFileUtils do
       before { F.instance_variable_set(:@strings, nil) }
 
       it "returns the target string if the key is valid" do
-        skip "To update"
+        F.set_locale("debug_en", extname: ".json")
         str_key = "test_msg"
-        result = F.get_string(str_key, format: :json)
+        result = F.get_string(str_key, extname: ".json")
         expect(result).to eq("Hello, you are using the debug_en.json text file.")
       end
 
       it "returns the target string if the key is valid and the is pointing to an array object" do
-        skip "To update"
+        F.set_locale("debug_en", extname: ".json")
         str_key = "test_array"
-        result = F.get_string(str_key, format: :json)
+        result = F.get_string(str_key, extname: ".json")
         expect(result[1]).to eq(123)
       end
 
       it "returns missing string warning if the key is invalid" do
-        skip "To update"
+        F.set_locale("debug_en", extname: ".json")
         str_key = "bad_msg"
-        result = F.get_string(str_key, format: :json)
+        result = F.get_string(str_key, extname: ".json")
         expect(result).to eq("Missing string: 'bad_msg'")
       end
     end

@@ -6,7 +6,7 @@ require "paint"
 
 # File operations helper module
 # @author Ancient Nimbus
-# @version 0.5.1
+# @version 0.6.0
 module NimbusFileUtils
   # Valid filename pattern
   FILENAME_REG = '[\sa-zA-Z0-9._-]+'
@@ -68,18 +68,15 @@ module NimbusFileUtils
     # Writes the given data and save it to the specified file path.
     # @param filepath [String] The base path of the file to write (expects complete filepath with extension).
     # @param data [Object] The data to serialize and write.
-    def write_to_disk(filepath, data) # rubocop:disable Metrics/MethodLength
+    def write_to_disk(filepath, data)
       extname = File.extname(filepath)
       return "Operation error! File extension is missing." if extname.empty?
 
       File.open(filepath, "w") do |output|
         case extname
-        when ".yml"
-          return output.puts data.to_yaml
-        when ".json"
-          return output.puts JSON.pretty_generate(data)
-        else
-          return output.puts data
+        when ".yml" then output.puts data.to_yaml
+        when ".json" then output.puts JSON.pretty_generate(data)
+        else output.puts data
         end
       end
     end
@@ -106,7 +103,7 @@ module NimbusFileUtils
     # @param extname [String] set target file extension, default: `:yml`
     # @return [String]
     def get_string(key_path, extname: ".yml")
-      path = filepath(locale_filename, ".config", "locale")
+      p path = filepath(locale_filename, ".config", "locale")
       @strings ||= load_file(path, extname: extname, symbols: false)
 
       locale_strings = @strings[locale]
