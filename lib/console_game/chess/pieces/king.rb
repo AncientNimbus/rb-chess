@@ -82,7 +82,6 @@ module ConsoleGame
         distance = curr_pos - old_pos
         return unless distance.abs == 2
 
-        file, rank = info.split("")
         alg_pos = distance.positive? ? "h#{rank}" : "a#{rank}"
 
         rook_query, rook_pos = file == "g" ? [alg_pos, curr_pos - 1] : [alg_pos, curr_pos + 1]

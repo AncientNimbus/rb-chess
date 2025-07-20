@@ -100,8 +100,7 @@ module ConsoleGame
       # @return [ChessPiece, nil]
       def reverse_lookup(side, type, target, file_rank = nil)
         type = Chess.const_get(FEN.dig(type, :class))
-        filtered_pieces = fetch_all(side, type: type)
-        result = refined_lookup(filtered_pieces, side, alg_map[target.to_sym], file_rank)
+        result = refined_lookup(fetch_all(side, type: type), side, alg_map[target.to_sym], file_rank)
         result.size > 1 ? nil : result[0]
       end
 
@@ -173,15 +172,18 @@ module ConsoleGame
       def format_en_passant = en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
 
       # Helper: Process move history and full move counter
-      # @param [Array<Array<String>>] expects players moves history array
       # @return [Integer]
-      def format_full_move(all_moves = [w_player, b_player].map(&:moves_history))
+      def format_full_move
         w_moves, b_moves = all_moves
         move_pair = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
         curr_turn = session[:moves].size + 1
         session[:moves][curr_turn] = move_pair if white_turn && !move_pair.nil?
         curr_turn
       end
+
+      # Helper: Fetch moves history from both player
+      # @return [Array<Array<String>>]
+      def all_moves = [w_player, b_player].map(&:moves_history)
 
       # Restore En passant status based on FEN data
       def load_en_passant_state

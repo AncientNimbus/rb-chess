@@ -144,9 +144,7 @@ module ConsoleGame
 
       # Process player action
       # Prompt player to enter notation value
-      def player_action
-        controller.turn_action(self)
-      end
+      def player_action = controller.turn_action(self)
 
       # Handling piece assignment
       # @param alg_pos [String] algebraic notation

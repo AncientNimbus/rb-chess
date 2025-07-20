@@ -125,9 +125,7 @@ module ConsoleGame
       # @param value [Integer]
       # @param bound [Array<Integer>] grid size `[row, col]`
       # @return [Boolean]
-      def out_of_bound?(value, bound)
-        value.negative? || value > bound.reduce(:*) - 1
-      end
+      def out_of_bound?(value, bound) = value.negative? || value > bound.reduce(:*) - 1
 
       # Helper method to check for out of bound cases for left and right borders (Previously: not_one_unit_apart?)
       # @param path [Symbol] see DIRECTIONS for available options. E.g., :e for count from left to right
@@ -147,16 +145,12 @@ module ConsoleGame
       # == Algebraic natation ==
 
       # Call the algebraic chess notation to positional value reference hash
-      def alg_map
-        ALG_MAP
-      end
+      def alg_map = ALG_MAP
 
       # Convert positional value to Algebraic notation string
       # @param pos [Integer]
       # @return [String]
-      def to_alg_pos(pos)
-        ALG_MAP.key(pos).to_s
-      end
+      def to_alg_pos(pos) = ALG_MAP.key(pos).to_s
     end
   end
 end

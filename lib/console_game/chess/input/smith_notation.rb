@@ -34,9 +34,7 @@ module ConsoleGame
 
       # Smith Regexp pattern builder
       # @return [String]
-      def regexp_smith
-        "#{SMITH_PATTERN.values.join('')}?"
-      end
+      def regexp_smith = "#{SMITH_PATTERN.values.join('')}?"
     end
   end
 end

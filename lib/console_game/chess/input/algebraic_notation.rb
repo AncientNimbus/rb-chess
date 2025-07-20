@@ -50,9 +50,7 @@ module ConsoleGame
       # @param input [String] input value from prompt
       # @param reg [String] regexp pattern
       # @return [Hash]
-      def alg_output_capture_gps(input, reg)
-        input.match(reg)&.named_captures(symbolize_names: true)&.compact
-      end
+      def alg_output_capture_gps(input, reg) = input.match(reg)&.named_captures(symbolize_names: true)&.compact
 
       # Helper: parse castling input
       # @param side [Symbol] player side :white or :black

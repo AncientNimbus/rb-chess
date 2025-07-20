@@ -26,7 +26,7 @@ module ConsoleGame
       def disable_castling
         return unless at_start
 
-        kingside = info(:file) == "h"
+        kingside = file == "h"
         query = kingside ? :k : :q
         query = query.upcase if side == :white
         level.castling_states[query] = false

@@ -65,17 +65,17 @@ module ConsoleGame
         @possible_moves = possible_moves & limiter unless limiter.empty?
       end
 
-      # Return alg notation of current position
-      # @param query [Symbol] expects `:file`, `:rank` or `:all`
-      # @return [String] file, rank, or full algebraic position
-      def info(query = :all)
-        alg_pos = to_alg_pos(curr_pos)
-        case query
-        when :file then alg_pos[0]
-        when :rank then alg_pos[1]
-        else alg_pos
-        end
-      end
+      # Returns the algebraic notation of current position
+      # @return [String] full algebraic position
+      def info = to_alg_pos(curr_pos)
+
+      # Returns the file of current position
+      # @return [String] file of the piece
+      def file = info[0]
+
+      # Returns the rank of current position
+      # @return [String] file of the piece
+      def rank = info[1]
 
       private
 
@@ -145,17 +145,12 @@ module ConsoleGame
 
       # Handle events when the opposite active piece can capture self in the upcoming turn
       # Switch color when under threat
-      def threat_response
-        self.color = under_threat_by?([level.active_piece], self) ? highlight : std_color
-      end
+      def threat_response = self.color = under_threat_by?([level.active_piece], self) ? highlight : std_color
 
       # Determine if a piece is currently under threats
       # @param piece [ChessPiece]
       # @return [Boolean]
-      def under_threat?
-        opposite_side = opposite_of(side)
-        level.threats_map[opposite_side].include?(curr_pos)
-      end
+      def under_threat? = level.threats_map[opposite_of(side)].include?(curr_pos)
 
       # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
       # @param threat_side [Array<ChessPiece>]

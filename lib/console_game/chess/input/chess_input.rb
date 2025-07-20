@@ -23,9 +23,7 @@ module ConsoleGame
 
       # Store active level object
       # @param level [Chess::Level] expects a chess Level class object
-      def link_level(level)
-        @level = level
-      end
+      def link_level(level) = @level = level
 
       # == Core methods ==
 

@@ -58,7 +58,7 @@ module ConsoleGame
       # Helper: Return valid adjacent tiles
       def fetch_adjacent_tiles
         tiles_to_query = [curr_pos - 1, curr_pos + 1].map { |pos| level.turn_data.fetch(pos) }
-        tiles_to_query.select { |tile| tile.is_a?(Pawn) && tile.info(:rank) == info(:rank) && tile.side != side }
+        tiles_to_query.select { |tile| tile.is_a?(Pawn) && tile.rank == rank && tile.side != side }
       end
 
       # Perform pawn promotion
@@ -73,9 +73,7 @@ module ConsoleGame
       end
 
       # Check if the pawn is at the other end of the board
-      def at_end?
-        @at_end = at_rank?(%i[a8 h8], %i[a1 h1])
-      end
+      def at_end? = @at_end = at_rank?(%i[a8 h8], %i[a1 h1])
 
       # Parallel query to check if pawn is at a certain rank
       # @param white_range [Array<Symbol>] `[:a2, :h2]`
@@ -117,9 +115,7 @@ module ConsoleGame
       end
 
       # Helper: add en passant capture position to possible moves
-      def en_passant_add
-        level.en_passant[1] unless level.en_passant.nil?
-      end
+      def en_passant_add = level.en_passant[1] unless level.en_passant.nil?
 
       # Override path
       # Path via Pathfinder
