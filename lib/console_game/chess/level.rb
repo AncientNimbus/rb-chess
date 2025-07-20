@@ -21,8 +21,8 @@ module ConsoleGame
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
-      attr_accessor :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move
-      attr_reader :controller, :w_player, :b_player, :fen_data, :session, :board, :kings, :castling_states,
+      attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move
+      attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
       # @param input [ChessInput]
@@ -35,12 +35,9 @@ module ConsoleGame
         @controller = input
         @w_player, @b_player = sides.values
         @session = session
-        @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
-        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
-          :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
-        )
         @board = Board.new(self)
         controller.link_level(self)
+        @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
       end
 
       # == Flow ==
@@ -125,9 +122,12 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
+        @kings = BW_HASH[:new_nil].call
+        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
+          :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
+        )
         @threats_map, @usable_pieces, = Array.new(2) { BW_HASH[:new_arr].call }
         @player = white_turn ? w_player : b_player
-        @kings = BW_HASH[:new_nil].call.tap { |kings| fetch_all(type: King).each { |king| kings[king.side] = king } }
         load_en_passant_state
         refresh(print_board: false)
       end

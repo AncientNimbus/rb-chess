@@ -33,6 +33,7 @@ module ConsoleGame
       # Override query_moves
       # Query and update possible_moves
       def query_moves
+        king_to_the_table
         can_castle?
         super
       end
@@ -53,6 +54,13 @@ module ConsoleGame
       end
 
       private
+
+      # Add king reference to level
+      def king_to_the_table
+        return unless level.kings[side].nil?
+
+        level.kings[side] = self
+      end
 
       # Determine if the King can perform castling
       def can_castle?
