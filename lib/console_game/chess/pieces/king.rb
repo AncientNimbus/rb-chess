@@ -151,8 +151,8 @@ module ConsoleGame
       # Helper for any_saviours?, add saviours and King to the usable pieces if King still move
       # @param saviours [Array<ChessPiece>] expects an array of King's saviours
       def add_saviours(saviours)
-        query_moves # update self
-        level.usable_pieces[side] = saviours.push(self).map(&:info) unless possible_moves.empty?
+        saviours.push(self) unless possible_moves.empty?
+        level.usable_pieces[side] = saviours.map(&:info)
       end
 
       # Determine if there are no escape route for the King

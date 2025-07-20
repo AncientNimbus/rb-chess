@@ -156,7 +156,7 @@ module ConsoleGame
       # Check for end game condition
       # @return [Boolean]
       def game_ended
-        any_checkmate?(kings) || draw?
+        draw? || any_checkmate?(kings)
       end
 
       # Save turn handling
