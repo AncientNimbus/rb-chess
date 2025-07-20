@@ -9,10 +9,10 @@ module ConsoleGame
     class ChessPlayer < Player
       # @!attribute [w] piece_at_hand
       #   @return [ChessPiece]
-      attr_accessor :side, :piece_at_hand, :move_count
+      attr_accessor :side, :piece_at_hand
       # @!attribute [r] controller
       #   @return [ChessInput]
-      attr_reader :level, :controller
+      attr_reader :level, :controller, :moves_history
 
       # @param name [String]
       # @param controller [ChessInput]
@@ -21,7 +21,7 @@ module ConsoleGame
         super(name, controller)
         @side = color
         @piece_at_hand = nil
-        @move_count = 0
+        @moves_history = []
       end
 
       # Override: Initialise player save data
@@ -187,7 +187,7 @@ module ConsoleGame
       # Helper: Explicitly state that player action has ended
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
-        p piece_at_hand.last_move
+        moves_history << piece_at_hand.last_move
         true
       end
 

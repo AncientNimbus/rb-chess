@@ -163,7 +163,7 @@ module ConsoleGame
       def save_turn
         fen_str = fen_export(
           turn_data: turn_data, white_turn: white_turn, castling_states: castling_states,
-          en_passant: format_en_passant, half: half_move, full: full_move
+          en_passant: format_en_passant, half: half_move, full: format_full_move
         )
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
         controller.save
@@ -172,6 +172,17 @@ module ConsoleGame
       # Helper: Convert en passant data before export
       def format_en_passant
         en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
+      end
+
+      # Helper: Process move history and full move counter
+      # @param [Array<Array<String>>] expects players moves history array
+      # @return [Integer]
+      def format_full_move(all_moves = [w_player, b_player].map(&:moves_history))
+        w_moves, b_moves = all_moves
+        move_pair = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
+        curr_turn = session[:moves].size + 1
+        session[:moves][curr_turn] = move_pair if white_turn && !move_pair.nil?
+        curr_turn
       end
 
       # Restore En passant status based on FEN data
