@@ -136,34 +136,34 @@ describe ConsoleGame::Chess::FenImport do
     end
   end
 
-  # describe "#parse_active_color" do
-  #   context "when value is a valid FEN active color data: w" do
-  #     let(:active_color) { "w" }
+  describe "#parse_active_color" do
+    context "when value is a valid FEN active color data: w" do
+      let(:active_color) { "w" }
 
-  #     it "returns a hash where white_turn is set to true" do
-  #       result = fen_import_test.send(:parse_active_color, active_color)
-  #       expect(result).to eq({ white_turn: true })
-  #     end
-  #   end
+      it "returns a hash where white_turn is set to true" do
+        result = fen_import_test.send(:parse_active_color, active_color)
+        expect(result).to eq({ white_turn: true })
+      end
+    end
 
-  #   context "when value is a valid FEN active color data: b" do
-  #     let(:active_color) { "b" }
+    context "when value is a valid FEN active color data: b" do
+      let(:active_color) { "b" }
 
-  #     it "returns a hash where white_turn is set to true" do
-  #       result = fen_import_test.send(:parse_active_color, active_color)
-  #       expect(result).to eq({ white_turn: false })
-  #     end
-  #   end
+      it "returns a hash where white_turn is set to true" do
+        result = fen_import_test.send(:parse_active_color, active_color)
+        expect(result).to eq({ white_turn: false })
+      end
+    end
 
-  #   context "when value is invalid" do
-  #     let(:active_color) { "c" }
+    context "when value is invalid" do
+      let(:active_color) { "c" }
 
-  #     it "returns nil" do
-  #       result = fen_import_test.send(:parse_active_color, active_color)
-  #       expect(result).to be_nil
-  #     end
-  #   end
-  # end
+      it "returns nil" do
+        result = fen_import_test.send(:parse_active_color, active_color)
+        expect(result).to be_nil
+      end
+    end
+  end
 
   describe "#parse_castling_str" do
     context "when value is a valid FEN castling sequence: KQkq" do
@@ -259,47 +259,47 @@ describe ConsoleGame::Chess::FenImport do
     end
   end
 
-  # describe "#parse_move_number" do
-  #   context "when value is a number and type is half-move" do
-  #     let(:move_num) { "2" }
-  #     let(:type_is_half_move) { :half }
+  describe "#parse_move_num" do
+    context "when value is a number and type is half-move" do
+      let(:move_num) { "2" }
+      let(:type_is_half_move) { :half }
 
-  #     it "returns a hash where key is set to half and value is converted to an integer" do
-  #       result = fen_import_test.send(:parse_move_number, move_num, type_is_half_move)
-  #       expect(result).to eq({ half: 2 })
-  #     end
-  #   end
+      it "returns a hash where key is set to half and value is converted to an integer" do
+        result = fen_import_test.send(:parse_move_num, move_num, type_is_half_move)
+        expect(result).to eq({ half: 2 })
+      end
+    end
 
-  #   context "when value is a number and type is full-move" do
-  #     let(:move_num) { "20" }
-  #     let(:type_is_full_move) { :full }
+    context "when value is a number and type is full-move" do
+      let(:move_num) { "20" }
+      let(:type_is_full_move) { :full }
 
-  #     it "returns a hash where key is set to full and value is converted to an integer" do
-  #       result = fen_import_test.send(:parse_move_number, move_num, type_is_full_move)
-  #       expect(result).to eq({ full: 20 })
-  #     end
-  #   end
+      it "returns a hash where key is set to full and value is converted to an integer" do
+        result = fen_import_test.send(:parse_move_num, move_num, type_is_full_move)
+        expect(result).to eq({ full: 20 })
+      end
+    end
 
-  #   context "when value is not a number and type is full-move" do
-  #     let(:move_num) { "ABC" }
-  #     let(:type_is_full_move) { :full }
+    context "when value is not a number and type is full-move" do
+      let(:move_num) { "ABC" }
+      let(:type_is_full_move) { :full }
 
-  #     it "returns nil" do
-  #       result = fen_import_test.send(:parse_move_number, move_num, type_is_full_move)
-  #       expect(result).to be_nil
-  #     end
-  #   end
+      it "returns nil" do
+        result = fen_import_test.send(:parse_move_num, move_num, type_is_full_move)
+        expect(result).to be_nil
+      end
+    end
 
-  #   context "when value is a number and type is not valid" do
-  #     let(:move_num) { "123" }
-  #     let(:invalid_type) { :not_valid }
+    context "when value is a number and type is not valid" do
+      let(:move_num) { "123" }
+      let(:invalid_type) { :not_valid }
 
-  #     it "returns nil" do
-  #       result = fen_import_test.send(:parse_move_number, move_num, invalid_type)
-  #       expect(result).to be_nil
-  #     end
-  #   end
-  # end
+      it "returns nil" do
+        result = fen_import_test.send(:parse_move_num, move_num, invalid_type)
+        expect(result).to be_nil
+      end
+    end
+  end
 
   describe "#piece_maker" do
     let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
@@ -445,47 +445,47 @@ describe ConsoleGame::Chess::FenImport do
     end
   end
 
-  # describe "#normalise_fen_rank" do
-  #   context "when the value is a valid FEN string of rank 1 in a new game" do
-  #     let(:standard_new_rank1) { "rnbqkbnr" }
+  describe "#normalise_fen_rank" do
+    context "when the value is a valid FEN string of rank 1 in a new game" do
+      let(:standard_new_rank1) { "rnbqkbnr" }
 
-  #     it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
-  #       result = fen_import_test.send(:normalise_fen_rank, standard_new_rank1)
-  #       expect(result).to eq(%w[r n b q k b n r])
-  #     end
+      it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
+        result = fen_import_test.send(:normalise_fen_rank, standard_new_rank1)
+        expect(result).to eq(%w[r n b q k b n r])
+      end
 
-  #     it "returns a 1D array of string where the length of the array is 8" do
-  #       result = fen_import_test.send(:normalise_fen_rank, standard_new_rank1)
-  #       expect(result.size).to eq(8)
-  #     end
-  #   end
+      it "returns a 1D array of string where the length of the array is 8" do
+        result = fen_import_test.send(:normalise_fen_rank, standard_new_rank1)
+        expect(result.size).to eq(8)
+      end
+    end
 
-  #   context "when the value is a valid FEN string of rank 3 in a new game" do
-  #     let(:standard_new_rank3) { "8" }
+    context "when the value is a valid FEN string of rank 3 in a new game" do
+      let(:standard_new_rank3) { "8" }
 
-  #     it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
-  #       result = fen_import_test.send(:normalise_fen_rank, standard_new_rank3)
-  #       expect(result).to eq(%w[0 0 0 0 0 0 0 0])
-  #     end
+      it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
+        result = fen_import_test.send(:normalise_fen_rank, standard_new_rank3)
+        expect(result).to eq(%w[0 0 0 0 0 0 0 0])
+      end
 
-  #     it "returns a 1D array of string where the length of the array is 8" do
-  #       result = fen_import_test.send(:normalise_fen_rank, standard_new_rank3)
-  #       expect(result.size).to eq(8)
-  #     end
-  #   end
+      it "returns a 1D array of string where the length of the array is 8" do
+        result = fen_import_test.send(:normalise_fen_rank, standard_new_rank3)
+        expect(result.size).to eq(8)
+      end
+    end
 
-  #   context "when the value is a valid FEN string of rank 1 in an ongoing game" do
-  #     let(:ongoing_game_board_rank1) { "r5rk" }
+    context "when the value is a valid FEN string of rank 1 in an ongoing game" do
+      let(:ongoing_game_board_rank1) { "r5rk" }
 
-  #     it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
-  #       result = fen_import_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
-  #       expect(result).to eq(%w[r 0 0 0 0 0 r k])
-  #     end
+      it "returns a 1D array of string where empty tiles are replaced with 0 and each letters are separated" do
+        result = fen_import_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
+        expect(result).to eq(%w[r 0 0 0 0 0 r k])
+      end
 
-  #     it "returns a 1D array of string where the length of the array is 8" do
-  #       result = fen_import_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
-  #       expect(result.size).to eq(8)
-  #     end
-  #   end
-  # end
+      it "returns a 1D array of string where the length of the array is 8" do
+        result = fen_import_test.send(:normalise_fen_rank, ongoing_game_board_rank1)
+        expect(result.size).to eq(8)
+      end
+    end
+  end
 end
