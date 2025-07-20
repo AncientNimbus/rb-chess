@@ -13,9 +13,7 @@ module ConsoleGame
 
       # FEN core export method
       # @return [String]
-      def fen_export(**session_data)
-        to_fen(session_data)
-      end
+      def fen_export(**session_data) = to_fen(session_data)
 
       # Transform internal turn data to FEN string
       # @param turn_data [Array<ChessPiece, String>]

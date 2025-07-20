@@ -23,6 +23,8 @@ module ConsoleGame
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
       # @param notation [Symbol] expects a chess notation of a specific piece, e.g., Knight = :n
+      # @param movements [Hash] expects compass direction
+      # @param range [Integer, Symbol] unit movement range
       # @param level [Chess::Level] chess level object
       # @param at_start [Boolean] determine if the piece is at its start location
       def initialize(alg_pos = :e1, side = :white, notation = :k, movements: DIRECTIONS.keys, range: 1, level: nil,

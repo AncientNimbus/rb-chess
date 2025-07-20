@@ -9,6 +9,7 @@ module ConsoleGame
     class Bishop < ChessPiece
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
+      # @param level [Level] Chess::Level object
       def initialize(alg_pos = :c1, side = :white, level: nil)
         super(alg_pos, side, :b, movements: %i[ne se sw nw], range: :max, level: level)
       end

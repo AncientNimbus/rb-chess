@@ -12,6 +12,7 @@ module ConsoleGame
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
+      # @param level [Level] Chess::Level object
       def initialize(alg_pos = :e1, side = :white, level: nil)
         super(alg_pos, side, :k, level: level)
         @castle_dirs = %i[e w]
@@ -143,9 +144,7 @@ module ConsoleGame
       # Helper for any_saviours?, Update and limits saviours path to attacker's path
       # @param saviours [Array<ChessPiece>] expects an array of King's saviours
       # @param attack_path [Array<Integer>]
-      def limit_saviours_movements(saviours, attack_path)
-        saviours.each { |ally| ally.query_moves(attack_path) }
-      end
+      def limit_saviours_movements(saviours, attack_path) = saviours.each { |ally| ally.query_moves(attack_path) }
 
       # Helper for any_saviours?, add saviours and King to the usable pieces if King still move
       # @param saviours [Array<ChessPiece>] expects an array of King's saviours
@@ -156,9 +155,7 @@ module ConsoleGame
 
       # Determine if there are no escape route for the King
       # @return [Boolean] true if King cannot escape
-      def crown_has_fallen?
-        (possible_moves - level.threats_map[opposite_of(side)]).empty?
-      end
+      def crown_has_fallen? = (possible_moves - level.threats_map[opposite_of(side)]).empty?
 
       # == Check event flow ==
 

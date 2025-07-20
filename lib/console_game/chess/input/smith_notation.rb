@@ -7,9 +7,7 @@ module ConsoleGame
       # Smith Input Regexp pattern
       # The first capture group is used to support move preview mode
       # The second capture group is used to support direct move and place
-      SMITH_PATTERN = {
-        gp1: "(?:[a-h][1-8])", gp2: "|(?:[a-h][1-8]){2}", promotion: "(?:[qrbn])"
-      }.freeze
+      SMITH_PATTERN = { gp1: "(?:[a-h][1-8])", gp2: "|(?:[a-h][1-8]){2}", promotion: "(?:[qrbn])" }.freeze
 
       # Smith regexp pattern parser
       SMITH_PARSER = /[a-z]\d*/

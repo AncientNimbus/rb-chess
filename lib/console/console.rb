@@ -10,13 +10,7 @@ module Console
   D_MSG = { msg: "Using message printer", err_msg: "Invalid input, please try again: ",
             prompt_prefix: ">>> ", query_prefix: "? ", warn_prefix: "! ",
             cmd_err: "Invalid commands, type --help to view all available commands.",
-            cmd_pattern: "--(exit).*?" }.freeze
-
-  # Print formatting helper
-  P_HELPER = {
-    ol_prefix: ->(i) { "* [#{i + 1}] - " },
-    h_sep: ->(length) { "-" * length }, v_sep: "| "
-  }.freeze
+            cmd_pattern: "--(exit).*?", v_sep: "| " }.freeze
 
   # prompt message helper
   # @param msgs [Array<String>] message to print
@@ -93,9 +87,7 @@ module Console
   # @param pre [String] pattern prefix
   # @param suf [String] pattern suffix
   # @return [String]
-  def regexp_capturing_gp(reg = %w[reg abc], pre: "", suf: "")
-    "#{pre}(#{reg.join('|')})#{suf}"
-  end
+  def regexp_capturing_gp(reg = %w[reg abc], pre: "", suf: "") = "#{pre}(#{reg.join('|')})#{suf}"
 
   private
 
@@ -124,9 +116,7 @@ module Console
   # @param reg [Regexp] pattern to match
   # @param empty [Boolean] allow empty input value, default to false
   # @return [Boolean] true when requirement is met
-  def met_requirement?(input, reg, empty)
-    input.match?(reg) || (input.empty? if empty)
-  end
+  def met_requirement?(input, reg, empty) = input.match?(reg) || (input.empty? if empty)
 
   # returns true if user input matches available commands
   # @param input [String] user input
@@ -166,8 +156,8 @@ module Console
   # @return [Array]
   def table_formatter(data_arr)
     row_counts = data_arr.size
-    prefix_size = P_HELPER[:ol_prefix].call(row_counts).size
-    auto_pad = row_counts * 2 + P_HELPER[:v_sep].size
+    prefix_size = ol_prefix(row_counts).size
+    auto_pad = row_counts * 2 + D_MSG[:v_sep].size
     max_length = data_arr.map { |arr| arr.max_by(&:size) }.sum(&:size) + auto_pad + prefix_size
     max_length = 80 if max_length > 80
     [prefix_size, max_length]
@@ -177,8 +167,8 @@ module Console
   # @return [Array<String>]
   def build_header(data, head, prefix_size, row_length)
     tb_col_heads = data.values[0].keys.map { |title| title.to_s.capitalize }
-    col_heads = tb_col_heads.join(P_HELPER[:v_sep].rjust(row_length - prefix_size * 3))
-    separator = P_HELPER[:h_sep].call(row_length)
+    col_heads = tb_col_heads.join(D_MSG[:v_sep].rjust(row_length - prefix_size * 3))
+    separator = horizontal_line(row_length)
     [head, separator, col_heads, separator]
   end
 
@@ -190,8 +180,18 @@ module Console
     data_arr.each_with_index do |entry, i|
       last_col = entry[-1]
       cols = entry[0].ljust(row_length - last_col.size)
-      tb_rows << "#{P_HELPER[:ol_prefix].call(i)}#{cols}#{last_col}"
+      tb_rows << "#{ol_prefix(i)}#{cols}#{last_col}"
     end
     tb_rows
   end
+
+  # Helper: Ordered list prefix builder
+  # @param idx [Integer]
+  # @return [String]
+  def ol_prefix(idx) = "* [#{idx + 1}] - "
+
+  # Helper: Build horizontal line
+  # @param length [Integer]
+  # @return [String]
+  def horizontal_line(length) = "-" * length
 end

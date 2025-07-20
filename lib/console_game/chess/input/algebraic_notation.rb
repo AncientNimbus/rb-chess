@@ -87,13 +87,7 @@ module ConsoleGame
       # == Utilities ==
 
       # Algebraic Regexp pattern builder
-      # @param notation_override [Hash]
-      #   @option :k [String] Notation for King
-      #   @option :q [String] Notation for Queen
-      #   @option :r [String] Notation for Rook
-      #   @option :b [String] Notation for Bishop
-      #   @option :n [String] Notation for Knight
-      # @return [Array<Hash>]
+      # @return [Array<String>]
       def regexp_algebraic
         castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
         regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join

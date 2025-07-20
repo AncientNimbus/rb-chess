@@ -6,6 +6,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     module EndgameLogic
       # == Checkmate ==
+
       # End game if either side achieved a checkmate
       # @param kings [Hash<King>] a hash with Kings in it
       # @return [Boolean] return true if either side is checkmate

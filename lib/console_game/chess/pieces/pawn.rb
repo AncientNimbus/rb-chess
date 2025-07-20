@@ -10,8 +10,8 @@ module ConsoleGame
       attr_reader :at_end
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
-      # @param level [Chess::Level] chess level object
       # @param side [Symbol] specify unit side :black or :white
+      # @param level [Level] Chess::Level object
       def initialize(alg_pos = :a2, side = :white, level: nil)
         movements = side == :white ? %i[n ne nw] : %i[s se sw]
         super(alg_pos, side, :p, movements: movements, range: 1, level: level)
@@ -90,10 +90,7 @@ module ConsoleGame
 
       # Override store_last_move
       # Last move formatted as algebraic notation
-      def store_last_move(move_type = :move, file = nil)
-        move = super
-        move.sub("P", "")
-      end
+      def store_last_move(move_type = :move, file = nil) = super.sub("P", "")
 
       # Override detect_occupied_tiles
       # Detect blocked tile based on the given positions

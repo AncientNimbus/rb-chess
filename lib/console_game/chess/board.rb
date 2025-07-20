@@ -20,9 +20,7 @@ module ConsoleGame
       end
 
       # Print the chessboard
-      def print_chessboard
-        print_msg(*build_chessboard, pre: "* ")
-      end
+      def print_chessboard = print_msg(*build_chessboard, pre: "* ")
 
       # Enable & disable board flipping
       def flip_setting
