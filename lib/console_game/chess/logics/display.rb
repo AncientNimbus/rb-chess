@@ -134,20 +134,16 @@ module ConsoleGame
       # @param right [String] right padding
       # @param length [Integer] times of repetition
       # @param value [String] value to be repeated
-      def border(left, right, length, value)
-        "#{left}#{value.center(length * BOARD[:size], value)}#{right}"
-      end
+      def border(left, right, length, value) = "#{left}#{value.center(length * BOARD[:size], value)}#{right}"
 
       # Helper: Determine the checker order of a specific rank
       # @param rank_num [Integer] rank number
       # @param colors [Array<Symbol, String>] Expects contrasting background colour
       # @return [Array<Symbol, String>] colour values
-      def pattern_order(rank_num, colors: THEME[:classic][:bg])
-        rank_num.even? ? colors : colors.reverse
-      end
+      def pattern_order(rank_num, colors: THEME[:classic][:bg]) = rank_num.even? ? colors : colors.reverse
 
       # Helper: Paint tile
-      # @param item [ChessPiece, String] item
+      # @param item [ChessPiece, Hash, String] item
       # @param tile_w [Integer] width within each tile
       # @param bg_color [Symbol, String] expects a colour value
       # @return [String] coloured string
@@ -163,10 +159,7 @@ module ConsoleGame
       # Helper: Quadratic expression to maintain tile shape, based on n^2-n+1
       # @param size [Integer] padding size
       # @return [Integer] total width of each tile
-      def to_quadratic(size)
-        q = size + 1
-        q**2 - q + 1
-      end
+      def to_quadratic(size) = (size + 1)**2 - (size + 1) + 1
 
       # Convert a 1D array to 2D array based on bound's row value
       # @param flat_arr [Array]

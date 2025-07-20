@@ -81,4 +81,39 @@ describe ConsoleGame::Chess::EndgameLogic do
       end
     end
   end
+
+  describe "#threefold_repetition?" do
+    context "when imported FEN session will result in an insufficient material draw" do
+      subject(:fen_str) { "rnbqkbr1/p3pppp/1p5n/2pp4/P3PPPP/2P5/1P1P4/RNBQKBNR b KQq - 0 6" }
+
+      let(:level) { ConsoleGame::Chess::Level.new(controller, sides, session, fen_str) }
+      let(:fens) do
+        [
+          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          "rnbqkb1r/pppppppp/7n/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 1 1",
+          "rnbqkb1r/pppppppp/7n/8/4PP2/8/PPPP2PP/RNBQKBNR b KQkq - 0 2",
+          "rnbqkb1r/pp1ppppp/7n/2p5/4PP2/8/PPPP2PP/RNBQKBNR w KQkq - 0 2",
+          "rnbqkb1r/pp1ppppp/7n/2p5/4PPP1/8/PPPP3P/RNBQKBNR b KQkq - 0 3",
+          "rnbqkb1r/p2ppppp/1p5n/2p5/4PPP1/8/PPPP3P/RNBQKBNR w KQkq - 0 3",
+          "rnbqkbr1/p3pppp/1p5n/2pp4/P3PPPP/2P5/1P1P4/RNBQKBNR b KQq - 0 6",
+          "rnbqkb1r/p2ppppp/1p5n/2p5/4PPPP/8/PPPP4/RNBQKBNR b KQkq - 0 4",
+          "rnbqkbr1/p2ppppp/1p5n/2p5/4PPPP/8/PPPP4/RNBQKBNR w KQq - 1 4",
+          "rnbqkbr1/p3pppp/1p5n/2pp4/P3PPPP/2P5/1P1P4/RNBQKBNR b KQq - 0 6",
+          "rnbqkbr1/p2ppppp/1p5n/2p5/4PPPP/8/PPPP4/RNBQKBNR w KQq - 1 5",
+          "rnbqkbr1/p2ppppp/1p5n/2p5/4PPPP/2P5/PP1P4/RNBQKBNR b KQq - 0 5",
+          "rnbqkbr1/p3pppp/1p5n/2pp4/4PPPP/2P5/PP1P4/RNBQKBNR w KQq - 0 5",
+          "rnbqkbr1/p3pppp/1p5n/2pp4/4PPPP/2P5/PP1P4/RNBQKBNR w KQq - 0 6",
+          "rnbqkbr1/p3pppp/1p5n/2pp4/P3PPPP/2P5/1P1P4/RNBQKBNR b KQq - 0 6"
+        ]
+      end
+
+      it "returns true if the game is a draw" do
+        allow($stdout).to receive(:puts)
+        session[:fens] = fens
+        level.send(:init_level)
+        result = level.send(:threefold_repetition?, session[:fens])
+        expect(result).to be true
+      end
+    end
+  end
 end
