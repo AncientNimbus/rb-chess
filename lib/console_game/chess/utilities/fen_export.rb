@@ -7,12 +7,6 @@ module ConsoleGame
     # @author Ancient Nimbus
     # @version v1.0.0
     module FenExport
-      # FEN export helper for simpler ops
-      EXPORT_HELPER = {
-        to_active_color: ->(white_turn) { white_turn ? "w" : "b" },
-        to_en_passant: ->(en_passant) { en_passant.nil? ? "-" : en_passant.fetch(-1) }
-      }.freeze
-
       private
 
       # == FEN Export ==
@@ -31,8 +25,8 @@ module ConsoleGame
         turn_data, white_turn, castling_states, en_passant, half_move, full_move =
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
 
-        [to_turn_data(turn_data), EXPORT_HELPER[:to_active_color].call(white_turn), to_castling_states(castling_states),
-         EXPORT_HELPER[:to_en_passant].call(en_passant), half_move.to_s, full_move.to_s].join(" ")
+        [to_turn_data(turn_data), to_active_color(white_turn), to_castling_states(castling_states),
+         to_en_passant(en_passant), half_move.to_s, full_move.to_s].join(" ")
       end
 
       # Convert internal turn data to string
@@ -77,6 +71,11 @@ module ConsoleGame
         compressed_row.tap { |arr| arr.push(count.to_s) if count.positive? }
       end
 
+      # Convert internal white_turn to FEN active colour field
+      # @param white_turn [Boolean]
+      # @return [String]
+      def to_active_color(white_turn) = white_turn ? "w" : "b"
+
       # Convert castling states to FEN castling status field
       # @param castling_states [Hash]
       # @return [String]
@@ -84,6 +83,11 @@ module ConsoleGame
         str = castling_states.reject { |_, v| v == false }.keys.map(&:to_s).join("")
         str.empty? ? "-" : str
       end
+
+      # Convert en passant states to FEN en passant field
+      # @param [Hash]
+      # @return [String]
+      def to_en_passant(en_passant) = en_passant.nil? ? "-" : en_passant.fetch(-1)
     end
   end
 end
