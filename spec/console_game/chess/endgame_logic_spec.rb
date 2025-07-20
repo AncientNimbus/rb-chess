@@ -75,7 +75,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if the game is a draw" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        remaining_pieces, remaining_notations = level.send(:insufficient_material_qualifier, level.usable_pieces.values)
+        remaining_pieces, remaining_notations = level.send(:last_four, level.usable_pieces.values)
         result = level.insufficient_material?(remaining_pieces, remaining_notations)
         expect(result).to be true
       end

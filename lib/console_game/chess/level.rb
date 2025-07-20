@@ -51,9 +51,7 @@ module ConsoleGame
       # == Game Logic ==
 
       # Pawn specific: Present a list of option when player can promote a pawn
-      def promote_opts
-        player.indirect_promote
-      end
+      def promote_opts = player.indirect_promote
 
       # Reset En Passant status when it is not used at the following turn
       def reset_en_passant
@@ -127,7 +125,7 @@ module ConsoleGame
           :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
         )
         @threats_map, @usable_pieces, = Array.new(2) { BW_HASH[:new_arr].call }
-        @player = white_turn ? w_player : b_player
+        set_current_player
         load_en_passant_state
         refresh(print_board: false)
       end
@@ -136,7 +134,7 @@ module ConsoleGame
       def play_chess
         # Pre turn
         save_turn
-        self.player = white_turn ? w_player : b_player
+        set_current_player
         refresh
         return if game_ended
 
@@ -153,11 +151,13 @@ module ConsoleGame
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
       end
 
+      # Set player side
+      # @return [ChessPlayer, ChessComputer]
+      def set_current_player = @player = white_turn ? w_player : b_player
+
       # Check for end game condition
       # @return [Boolean]
-      def game_ended
-        draw? || any_checkmate?(kings)
-      end
+      def game_ended = draw? || any_checkmate?(kings)
 
       # Save turn handling
       def save_turn
@@ -170,9 +170,7 @@ module ConsoleGame
       end
 
       # Helper: Convert en passant data before export
-      def format_en_passant
-        en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
-      end
+      def format_en_passant = en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
 
       # Helper: Process move history and full move counter
       # @param [Array<Array<String>>] expects players moves history array
@@ -215,18 +213,16 @@ module ConsoleGame
         update_board_state
         [
           stalemate?(player.side, usable_pieces, threats_map),
-          insufficient_material?(*insufficient_material_qualifier),
+          insufficient_material?(*last_four),
           half_move_overflow?(half_move),
           threefold_repetition?(session[:fens])
         ].any?
       end
 
       # Determine the minimum qualifying requirement to enter the #insufficient_material? flow
-      # @param remaining_pieces_pos [Array<Array<String>>] a combined array of all usable pieces from both colors
+      # @param pieces_pos [Array<Array<String>>] a combined array of all usable pieces from both colors
       # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
-      def insufficient_material_qualifier(remaining_pieces_pos = usable_pieces.values)
-        remaining_pieces_pos.sum(&:size) > 4 ? [nil, nil] : group_fetch(remaining_pieces_pos)
-      end
+      def last_four(pieces = usable_pieces.values) = pieces.sum(&:size) > 4 ? [nil, nil] : group_fetch(pieces)
     end
   end
 end
