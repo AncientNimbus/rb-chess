@@ -115,7 +115,7 @@ module ConsoleGame
       end
 
       # Helper: add en passant capture position to possible moves
-      def en_passant_add = level.en_passant[1] unless level.en_passant.nil?
+      def en_passant_add = level.en_passant.nil? ? nil : level.en_passant[1]
 
       # Override path
       # Path via Pathfinder
