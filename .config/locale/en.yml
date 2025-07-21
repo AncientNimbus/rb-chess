@@ -1,7 +1,7 @@
 # Textfile for Chess
 en:
   cli:
-    ver: "|<<<───────────────|⟡ Ruby Arcade ⟡ v0.3.0 by Ancient Nimbus|───────────────>>>|"
+    ver: "|<<<───────────────|⟡ Ruby Arcade ⟡ v0.7.0 by Ancient Nimbus|───────────────>>>|"
     boot: |
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       * │                                     *                                      │ 
@@ -58,7 +58,7 @@ en:
       exit: "👾 Thank you for visiting Ruby Arcade 👾"
     new:
       msg: |
-        * Welcome to ⟡ Ruby Arcade ⟡
+        * Welcome to ⟡ Ruby Arcade ⟡ T.O.P. Edition
         * 
         * If this is your first visit to the Arcade, enter [1] to create a new profile.
         * If you have already created a profile, enter [2] to load your profile.
@@ -118,7 +118,7 @@ en:
         *
         * 2. Select a game mode: (When New Game is selected)
         *    • [1] Player vs Player
-        *    • [2] Player vs Computer (Coming soon)
+        *    • [2] Player vs Computer (Level: Easy)
         *
         * 2. Select a game session to resume: (When Load Game is selected)
         *    • A list of session linked to you will be loaded 
@@ -143,25 +143,33 @@ en:
         *
         * To learn more about chess, see: ↴
         *   https://www.instructables.com/Playing-Chess/
-        * To learn more about notation, see: ↴
+        * To learn more about Algebraic notation, see: ↴
         *   https://www.chessable.com/blog/chess-notation-for-beginners/
-        *
+        * To learn more about Smith notation, see: ↴
+        *   https://en.wikipedia.org/wiki/Chess_notation#Notation_systems
       help: |
-        * Chess | Help Menu
+        * ♞ Chess | Help Menu
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * │ * Available commands:               |                                      │
         * │ * Help - [--help]                   | * Display all available commands     │
+        * │ * Help Algebraic - [--help alg]     | * Display Algebraic input examples   │
+        * │ * Help Smith - [--help smith]       | * Display Smith input examples       │
         * │ * Info - [--info]                   | * Display game info                  │
-        * │ * Save - [--save]                   | * Save session to player profile     │
-        * │ * Load - [--load]                   | * Load session from player profile   │
-        * │ * Export game - [--export]          | * Export current game as PGN file    │
-        * │ * Exit - [--exit | --ttfn]          | * Safely exit the game.              │
+        * │ * Exit - [--exit|--ttfn]            | * Safely exit the game.              │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-        * 
-        * **Input examples**
-        * Algebraic notation:
+        * │ * In-Game settings                  │                                      │
+        * │ * Save - [--save]                   | * Save session to player profile     │
+        * │ * Load - [--load]                   | * Load another session from profile  │
+        * │ * Input Algebraic - [--alg]         | * Use Algebraic notation as input    │
+        * │ * Input Smith - [--smith]           | * Use Smith notation as input        │
+        * │ * Board size - [--board size]       | * Set the board size to 1x or 2x     │
+        * │ * Board flip - [--board flip]       | * Enable/Disable board flipping      │
+        * │ * Export game - [--export]          | * Export current game as PGN file    │
+        * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+      alg_h: |
+        * **Algebraic notation: Input examples**
         * Pieces Symbols:
-        * • ♔: K, ♕: Q, ♖: R, ♗: B, ♘: N, ♙: (P) No symbol
+        * • ♚: K, ♛: Q, ♜: R, ♝: B, ♞: N, ♟: (P) No symbol
         *
         * Movements:
         * • 'e4' => 'Pawn to e4'
@@ -175,19 +183,35 @@ en:
         * Use file to specify (a to h):
         * • 'Nbd2' => 'b-Knight to d2'
         * • 'Rbxd4' => 'b-Rook captures d4'
-        *
-        * Use rank to specify (1 to 8):
-        * • 'N1d2' => 'Knight on first rank to d2'
-        * • 'R1xd4' => 'Rook on first rank captures d4'
         * 
         * Castling:
-        * • '0-0' => 'Castle kingside'
-        * • '0-0-0' => 'Castle queenside'
+        * • '0-0' => 'Castle Kingside'
+        * • '0-0-0' => 'Castle Queenside'
         * 
         * Pawn Promotion:
-        * Pawn can be prompted to a queen, rook, bishop or a knight.
+        * Pawn can be prompted to a queen(Q), rook(R), bishop(B) or a knight(N).
         * • 'e8=Q' => 'Pawn promotes to queen'
         * • 'e8=R' => 'Pawn promotes to rook'
+      sm_h: |
+        * **Smith notation: Input examples**
+        * Pieces Symbols:
+        * • ♚: k, ♛: q, ♜: r, ♝: b, ♞: n, ♟: (p) No symbol
+        *
+        * Single Prompt Movement/Capturing:
+        * • 'e2e4' => 'Move a piece from e2 to e4'
+        *
+        * Dual Prompt Movement/Capturing:
+        * • 'e2' => Enter 'Preview mode' (Note: Once selected, you must play this piece)
+        * • 'e4' => Piece at 'e2' will move to 'e4'
+        * 
+        * Castling:
+        * • 'e1g1' => 'Castle Kingside'
+        * • 'e1c1' => 'Castle Queenside'
+        * 
+        * Pawn Promotion:
+        * Pawn can be prompted to a queen(q), rook(r), bishop(b) or a knight(n).
+        * • 'e7e8q' => 'Pawn promotes to queen'
+        * • 'e7e8r' => 'Pawn promotes to rook'
       pieces:
         k:
           name: "King"
