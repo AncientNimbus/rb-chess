@@ -17,7 +17,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if black is checkmated" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.any_checkmate?(level.kings)
+        result = level.send(:any_checkmate?, level.kings)
         expect(result).to be true
       end
     end
@@ -30,7 +30,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if white is checkmated" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.any_checkmate?(level.kings)
+        result = level.send(:any_checkmate?, level.kings)
         expect(result).to be true
       end
     end
@@ -43,7 +43,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if white is checkmated" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.any_checkmate?(level.kings)
+        result = level.send(:any_checkmate?, level.kings)
         expect(result).to be true
       end
     end
@@ -58,7 +58,7 @@ describe ConsoleGame::Chess::EndgameLogic do
         allow(level.controller).to receive(:save)
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.any_checkmate?(level.kings)
+        result = level.send(:any_checkmate?, level.kings)
         expect(result).to be false
       end
     end
@@ -73,7 +73,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if the game is a draw" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.stalemate?(level.player.side, level.usable_pieces, level.threats_map)
+        result = level.send(:stalemate?, level.player.side, level.usable_pieces, level.threats_map)
         expect(result).to be true
       end
     end
@@ -89,7 +89,7 @@ describe ConsoleGame::Chess::EndgameLogic do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
         remaining_pieces, remaining_notations = level.send(:last_four, level.usable_pieces.values)
-        result = level.insufficient_material?(remaining_pieces, remaining_notations)
+        result = level.send(:insufficient_material?, remaining_pieces, remaining_notations)
         expect(result).to be true
       end
     end

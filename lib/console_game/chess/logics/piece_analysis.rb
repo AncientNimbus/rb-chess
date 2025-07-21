@@ -11,6 +11,8 @@ module ConsoleGame
         new_arr: -> { Hash.new { |h, k| h[k] = [] }.merge({ white: [], black: [] }) }
       }.freeze
 
+      private
+
       # Analyse the board
       # usable_pieces: usable pieces of the given turn
       # threats_map: all blunder tile for each side
@@ -33,8 +35,6 @@ module ConsoleGame
         grouped_pieces[:white], grouped_pieces[:black] = all_pieces.partition { |piece| piece.side == :white }
         grouped_pieces
       end
-
-      private
 
       # Helper: add blunder tiles to session variable
       # @param pieces [ChessPiece]

@@ -5,6 +5,8 @@ module ConsoleGame
     # The EndgameLogic module defines the various logics to determine whether the game is a draw or checkmates
     # @author Ancient Nimbus
     module EndgameLogic
+      private
+
       # == Checkmate ==
 
       # End game if either side achieved a checkmate
