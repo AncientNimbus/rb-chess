@@ -21,7 +21,8 @@ module ConsoleGame
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
-      attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move
+      attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move,
+                    :game_ended
       attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
@@ -111,7 +112,7 @@ module ConsoleGame
       # @return [Boolean] true if the operation is a success
       def refresh(print_board: true)
         update_board_state
-        game_ended
+        game_end_check
         board.print_chessboard if print_board
       end
 
@@ -126,7 +127,7 @@ module ConsoleGame
         @threats_map, @usable_pieces, = Array.new(2) { BW_HASH[:new_arr].call }
         set_current_player
         load_en_passant_state
-        refresh(print_board: false)
+        refresh(print_board: true)
       end
 
       # Main Game Loop
@@ -156,7 +157,7 @@ module ConsoleGame
 
       # Check for end game condition
       # @return [Boolean]
-      def game_ended = draw? || any_checkmate?(kings)
+      def game_end_check = @game_ended = draw? || any_checkmate?(kings) ? true : false
 
       # Save turn handling
       def save_turn
