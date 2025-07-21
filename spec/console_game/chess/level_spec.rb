@@ -270,6 +270,69 @@ describe ConsoleGame::Chess::Level do
     end
   end
 
+  describe "Test Computer's movements" do
+    context "when both players are Chess Computer player" do
+      subject(:fen_str) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }
+
+      let(:sides) { { white: ConsoleGame::Chess::ChessComputer.new("Robocop", controller, :white), black: ConsoleGame::Chess::ChessComputer.new("Data", controller, :black) } }
+      let(:level_test) { described_class.new(controller, sides, session, fen_str) }
+
+      before do
+        allow($stdout).to receive(:puts)
+        allow(level_test).to receive(:save_turn)
+      end
+
+      it "enters the game loop and each take turn to make a move" do
+        allow(level_test).to receive(:game_ended).and_return(false, false, false, false, true)
+        level_test.open_level
+        result = level_test.send(:all_moves).flatten.compact.size
+        expect(result).to eq(2)
+      end
+    end
+  end
+
+  describe "Test user's commands" do
+    context "when prompt input is --board size" do
+      subject(:fen_str) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }
+
+      let(:level_test) { described_class.new(controller, sides, session, fen_str) }
+
+      before do
+        allow($stdout).to receive(:puts)
+        allow(level_test).to receive(:save_turn)
+        controller.input_scheme = controller.alg_reg
+      end
+
+      it "adjusts the chessboard size by making it bigger" do
+        allow(Readline).to receive(:readline).and_return("--board size", "e4")
+        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        level_test.open_level
+        result = level_test.board.board_size == 2
+        expect(result).to be true
+      end
+    end
+
+    context "when prompt input is --board flip" do
+      subject(:fen_str) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }
+
+      let(:level_test) { described_class.new(controller, sides, session, fen_str) }
+
+      before do
+        allow($stdout).to receive(:puts)
+        allow(level_test).to receive(:save_turn)
+        controller.input_scheme = controller.alg_reg
+      end
+
+      it "disable the chessboard flip feature" do
+        allow(Readline).to receive(:readline).and_return("--board flip", "e4")
+        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        level_test.open_level
+        result = level_test.board.flip_board == false
+        expect(result).to be true
+      end
+    end
+  end
+
   describe "#init_level" do
     context "when imported FEN is a new game string" do
       subject(:fen_str) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }
