@@ -41,7 +41,7 @@ module ConsoleGame
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
       # @param player [ChessPlayer]
       def make_a_move(player)
-        input = ask("Make a move: ", reg: SMITH_PATTERN[:gp1], input_type: :custom)
+        input = ask("Make a move: ", reg: SMITH_PATTERN[:gp1], input_type: :custom, empty: true)
         ops = case input.scan(input_parser)
               in [new_pos] then { type: :move_piece, args: [new_pos] }
               else { type: :invalid_input, args: [input] }
