@@ -40,13 +40,19 @@ module ConsoleGame
       def add_pos_to_blunder_tracker(pieces)
         bad_moves = []
         pawns, back_row = pieces.partition { |piece| piece.is_a?(Pawn) }
-        pawns.each { |piece| bad_moves << piece.sights }
-        back_row.each do |piece|
-          bad_moves << piece.sights
-          bad_moves << piece.possible_moves.compact
-        end
+        bad_moves.push(pawns_threat(pawns) + back_rows_threat(back_row))
         bad_moves.flatten.sort.to_set
       end
+
+      # Helper: Add pawn pieces's threat to map
+      # @param pieces [Pawn]
+      # @return [Array<Integer>]
+      def pawns_threat(pawns) = pawns.map { |p| p.sights + p.targets.values.compact }
+
+      # Helper: Add back row pieces's threat to map
+      # @param pieces [King, Queen, Bishop, Knight, Rook]
+      # @return [Array<Integer>]
+      def back_rows_threat(back_row) = back_row.map { |p| p.sights + p.possible_moves.compact }
     end
   end
 end

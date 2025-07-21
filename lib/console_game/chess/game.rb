@@ -71,7 +71,7 @@ module ConsoleGame
 
       # Handle new game sequence
       # @param err [Boolean] is use when there is a load err
-      def new_game(err: true)
+      def new_game(err: false)
         print_msg("Sessions not found, entering new game creation mode...") if err
         print_msg(s("new.f1"))
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i

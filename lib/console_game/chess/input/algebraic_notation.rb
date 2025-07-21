@@ -97,11 +97,7 @@ module ConsoleGame
       # Helper: Convert algebraic notation to internal symbol
       # @param notation [String]
       # @return [Symbol]
-      def notation_to_sym(notation)
-        return notation if notation.is_a?(Symbol)
-
-        notation.downcase.to_sym
-      end
+      def notation_to_sym(notation) = notation.is_a?(Symbol) ? notation : notation.downcase.to_sym
     end
   end
 end
