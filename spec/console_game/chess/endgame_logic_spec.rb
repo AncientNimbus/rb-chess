@@ -35,6 +35,19 @@ describe ConsoleGame::Chess::EndgameLogic do
       end
     end
 
+    context "when imported FEN session will result in white being checkmate 2" do
+      subject(:fen_str) { "2k5/1p3p1p/2p5/P6p/4pbnP/2Nb1p2/5nK1/3r4 w - - 1 31" }
+
+      let(:level) { ConsoleGame::Chess::Level.new(controller, sides, session, fen_str) }
+
+      it "returns true if white is checkmated" do
+        allow($stdout).to receive(:puts)
+        level.send(:init_level)
+        result = level.any_checkmate?(level.kings)
+        expect(result).to be true
+      end
+    end
+
     context "when imported FEN session is a new game" do
       subject(:fen_str) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }
 

@@ -161,7 +161,7 @@ module ConsoleGame
       def under_threat_by?(threat_side, target)
         return false unless target.is_a?(ChessPiece) && !threat_side.compact.empty?
 
-        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) }
+        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) && piece.possible_moves.include?(curr_pos) }
       end
 
       # Returns the path of an attacking chess piece based on the current position of self

@@ -25,7 +25,7 @@ module ConsoleGame
         [threats_map, usable_pieces]
       end
 
-      # Refresh possible move and split chess pieces into two group
+      # Split chess pieces into two group
       # @param all_piece [Array<ChessPiece>]
       # @return [Hash]
       def pieces_group(all_pieces)
@@ -33,6 +33,8 @@ module ConsoleGame
         grouped_pieces[:white], grouped_pieces[:black] = all_pieces.partition { |piece| piece.side == :white }
         grouped_pieces
       end
+
+      private
 
       # Helper: add blunder tiles to session variable
       # @param pieces [ChessPiece]
