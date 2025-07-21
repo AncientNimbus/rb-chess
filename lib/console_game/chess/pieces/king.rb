@@ -89,7 +89,7 @@ module ConsoleGame
         rook = level.fetch_piece(rook_query)
         rook.move(rook_pos)
 
-        p "King is castling"
+        puts "King is castling" # @todo: TF replace
       end
 
       # disable castling
