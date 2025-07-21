@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../../../lib/console_game/chess/chess_player"
+require_relative "../../../lib/console_game/chess/level"
 require_relative "../../../lib/console_game/chess/input/chess_input"
 require_relative "../../../lib/nimbus_file_utils/nimbus_file_utils"
 
@@ -138,6 +139,168 @@ describe ConsoleGame::Chess::ChessInput do
         allow(player).to receive(:invalid_input).and_return(true)
         chess_input_test.make_a_move(player)
         expect(player).to have_received(:invalid_input).with("")
+      end
+    end
+  end
+
+  describe "#promote_a_pawn" do
+    context "when input scheme is set to check for Smith notation" do
+      it "returns a single letter string if input is q" do
+        allow(Readline).to receive(:readline).and_return("q")
+        result = chess_input_test.promote_a_pawn
+        expect(result).to eq("q")
+      end
+
+      it "returns a single letter string if input is b" do
+        allow(Readline).to receive(:readline).and_return("b")
+        result = chess_input_test.promote_a_pawn
+        expect(result).to eq("b")
+      end
+
+      it "returns a single letter string if input is r" do
+        allow(Readline).to receive(:readline).and_return("r")
+        result = chess_input_test.promote_a_pawn
+        expect(result).to eq("r")
+      end
+
+      it "returns a single letter string if input is n" do
+        allow(Readline).to receive(:readline).and_return("n")
+        result = chess_input_test.promote_a_pawn
+        expect(result).to eq("n")
+      end
+    end
+  end
+
+  describe "#quit" do
+    context "when the method is called" do
+      it "exits the program" do
+        expect { chess_input_test.quit }.to raise_error(SystemExit)
+      end
+    end
+  end
+
+  describe "#save" do
+    context "when Chess Level object is present" do
+      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
+
+      it "calls the save_profile method from game manager" do
+        skip "todo"
+      end
+    end
+
+    context "when Chess Level object is nil" do
+      it "changes the input scheme to detect Smith notation" do
+        result = chess_input_test.save
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#load" do
+    context "when Chess Level object is present" do
+      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
+
+      it "calls the load method from game manager" do
+        skip "todo"
+      end
+    end
+
+    context "when Chess Level object is nil" do
+      it "returns nil" do
+        result = chess_input_test.load
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#export" do
+    context "when Chess Level object is present" do
+      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
+
+      it "calls the export method from game manager" do
+        skip "todo"
+      end
+    end
+
+    context "when Chess Level object is nil" do
+      it "returns nil" do
+        result = chess_input_test.export
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#smith" do
+    context "when Chess Level object is present" do
+      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
+
+      it "changes the input scheme to detect Smith notation" do
+        chess_input_test.instance_variable_set(:@level, real_level)
+        chess_input_test.smith
+        expect(chess_input_test.input_scheme).to eq(chess_input_test.smith_reg)
+      end
+    end
+
+    context "when Chess Level object is nil" do
+      it "returns nil" do
+        result = chess_input_test.smith
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#alg" do
+    context "when Chess Level object is present" do
+      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
+
+      it "changes the input scheme to detect Algebraic notation" do
+        chess_input_test.instance_variable_set(:@level, real_level)
+        chess_input_test.alg
+        expect(chess_input_test.input_scheme).to eq(chess_input_test.alg_reg)
+      end
+    end
+
+    context "when Chess Level object is nil" do
+      it "returns nil" do
+        result = chess_input_test.alg
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#board" do
+    context "when Chess Level object is present" do
+      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, { white: "nil", black: "nil" }, {}) }
+
+      before do
+        allow(real_level.board).to receive(:adjust_board_size)
+        allow(real_level.board).to receive(:flip_setting)
+      end
+
+      it "update the board size if the optional argument is size" do
+        chess_input_test.instance_variable_set(:@level, real_level)
+        real_level.board.flip_board = false
+        chess_input_test.board(["size"])
+        expect(real_level.board).to have_received(:adjust_board_size)
+      end
+
+      it "update the board size if the optional argument is flip" do
+        chess_input_test.instance_variable_set(:@level, real_level)
+        chess_input_test.board(["flip"])
+        expect(real_level.board).to have_received(:flip_setting)
+      end
+
+      it "returns nil and prints a user warning if optional argument is invalid" do
+        chess_input_test.instance_variable_set(:@level, real_level)
+        result = chess_input_test.board(["abc"])
+        expect(result).to be_nil
+      end
+    end
+
+    context "when Chess Level object is nil" do
+      it "returns nil" do
+        result = chess_input_test.board
+        expect(result).to be_nil
       end
     end
   end
