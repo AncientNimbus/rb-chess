@@ -123,6 +123,9 @@ module NimbusFileUtils
     # @param file [File]
     def handle_yaml(file)
       YAML.safe_load(file, permitted_classes: [Time, Symbol], aliases: true, freeze: true)
+    rescue Psych::SyntaxError => e
+      puts "Textfile parsing error: '#{e.message}.'\nPlease verify the following file: \n#{File.path(file)}"
+      exit(1)
     end
 
     # Helper to handle json data

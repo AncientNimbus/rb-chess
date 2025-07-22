@@ -56,7 +56,8 @@ en:
     lobby:
       msg: "Get started by typing a command: "
       exit: "👾 Thank you for visiting Ruby Arcade 👾"
-      arcade: "Exiting %{app}... beaming you back to Ruby Arcade lobby.
+      arcade: "Exiting %{app}... beaming you back to Ruby Arcade lobby."
+
     new:
       msg: |
         * Welcome to ⟡ Ruby Arcade ⟡ T.O.P. Edition
@@ -88,8 +89,6 @@ en:
       test: "Launching %{app}... %{msg}"
       run_err: "Invalid launch code, please try again."
       gm_err: "No game manager available"
-    info:
-
   app:
     chess:
       boot: |
