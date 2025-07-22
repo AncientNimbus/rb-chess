@@ -9,7 +9,7 @@ module Console
   # Default message strings
   D_MSG = { msg: "Using message printer", err_msg: "Invalid input, please try again: ",
             prompt_prefix: ">>> ", query_prefix: "? ", warn_prefix: "! ",
-            cmd_err: "Invalid commands, type --help to view all available commands.",
+            cmd_err: "Invalid command, type --help to view all available commands.",
             cmd_pattern: "--(exit).*?", v_sep: "| " }.freeze
 
   # prompt message helper
@@ -139,8 +139,9 @@ module Console
   # @param opt_arg [String]
   # @param cmds [Array]
   # @param is_valid [Boolean]
-  def handle_command(cmd, opt_arg, cmds, is_valid)
-    return print_msg(D_MSG[:cmd_err], pre: D_MSG[:warn_prefix]) unless is_valid
+  # @param cmd_err [String] custom error message
+  def handle_command(cmd, opt_arg, cmds, is_valid, cmd_err: D_MSG[:cmd_err])
+    return print_msg(cmd_err, pre: Paint[D_MSG[:warn_prefix], :red]) unless is_valid
 
     begin
       cmds.fetch(cmd).call(opt_arg)

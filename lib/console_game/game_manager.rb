@@ -45,12 +45,13 @@ module ConsoleGame
 
     # Greet user
     def greet
+      # print_msg(*tf_fetcher("", *%w[.how_to .help .alg_h .sm_h], root: "app.chess"))
       print_msg(*tf_fetcher("", *%w[.ver .boot], root: "cli"))
     end
 
     # Setup user profile
     def assign_user_profile
-      print_msg(s("cli.new.msg"), pre: "* ")
+      print_msg(s("cli.new.msg"))
 
       mode = base_input.ask(s("cli.new.msg2"), reg: [1, 2], input_type: :range).to_i
       @user = mode == 1 ? new_profile : load_profile
@@ -137,7 +138,7 @@ module ConsoleGame
       return nil if profiles.empty?
 
       # Print the list
-      print_file_list(folder_path, profiles)
+      print_file_list(folder_path, profiles, col1: s("cli.load.li_col1"), col2: s("cli.load.li_col2"))
       # Handle selection
       profile = base_input.pick_from(profiles, msg: s("cli.load.msg2"), err_msg: s("cli.load.input_err"))
       # Returns a valid filename

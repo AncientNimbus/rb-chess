@@ -172,10 +172,11 @@ module NimbusFileUtils
   # @param paint_str [Array<Symbol, String, nil>]
   # @param extname [String]
   # @return [String] the translated and interpolated string
-  def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
+  def s(key_path, subs = {}, paint_str: %i[default default], extname: ".yml")
     str = NimbusFileUtils.get_string(key_path, extname: extname)
 
-    Paint % [str, *paint_str, subs]
+    output = Paint % [str, *paint_str, subs]
+    paint_str.uniq.include?(:default) ? Paint.unpaint(output) : output
   end
 
   # Textfile strings fetcher

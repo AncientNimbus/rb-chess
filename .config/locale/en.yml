@@ -41,8 +41,8 @@ en:
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       * │ * Available commands:               |                                      │
       * │ * Help - [--help]                   | * Display all available commands     │
-      * │ * Load - [--load]                   | * Load user profile from local disc  │
       * │ * Save - [--save]                   | * Save user profile to local disc    │
+      * │ * Load - [--load]                   | * Load user profile from local disc  │
       * │ * Self - [--self]                   | * Retrieve player profile info       │
       * │ * Play - [--play] [<app name>]      | * Run an app e.g., '--play chess'    │
       * │ * Info - [--info]                   | * Display system info                │
@@ -52,12 +52,11 @@ en:
     std_err: "Invalid input, please try again: "
     prompt_prefix: ">>> "
     query_prefix: "? "
-    cmd_err: "Invalid commands, type --help to view all available commands."
+    cmd_err: "Invalid command! type --help to view all available commands."
     lobby:
       msg: "Get started by typing a command: "
       exit: "👾 Thank you for visiting Ruby Arcade 👾"
       arcade: "Exiting %{app}... beaming you back to Ruby Arcade lobby."
-
     new:
       msg: |
         * Welcome to ⟡ Ruby Arcade ⟡ T.O.P. Edition
@@ -69,6 +68,8 @@ en:
       msg4: |
         * 👋 Greetings %{name}!
     load:
+      li_col1: "List of Files"
+      li_col2: "Last modified date"
       msg: "Fetching user profile..."
       msg2: "Choose a profile by typing the corresponding number:"
       msg3: "Profile loaded! Welcome back %{name}!"

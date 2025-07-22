@@ -78,5 +78,13 @@ module ConsoleGame
     def setup_commands
       { "exit" => method(:quit), "help" => method(:help), "info" => method(:info) }
     end
+
+    # Override: Handle command
+    # @param cmd [String]
+    # @param opt_arg [String]
+    # @param cmds [Array]
+    # @param is_valid [Boolean]
+    # @param cmd_err [String] custom error message
+    def handle_command(cmd, opt_arg, cmds, is_valid, cmd_err: s("cli.cmd_err")) = super
   end
 end
