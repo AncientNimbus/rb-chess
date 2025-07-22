@@ -682,7 +682,6 @@ describe ConsoleGame::Chess::Logic do
       bound = [8, 8]
       it "returns coordinates value [0, 0] when positional value is 0" do
         pos = 0
-        # expect(logic_test.send(:to_coord, pos, bound: bound)).to eq([0, 0])
         expect(logic_test.send(:to_coord, pos, bound: bound)).to eq([0, 0])
       end
 

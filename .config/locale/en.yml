@@ -56,6 +56,7 @@ en:
     lobby:
       msg: "Get started by typing a command: "
       exit: "👾 Thank you for visiting Ruby Arcade 👾"
+      arcade: "Exiting %{app}... beaming you back to Ruby Arcade lobby.
     new:
       msg: |
         * Welcome to ⟡ Ruby Arcade ⟡ T.O.P. Edition
@@ -134,7 +135,7 @@ en:
         *    • [3] Choose for me
         *
         * 5. A game save will be created, and it is stored locally at the ./data folder.
-        *
+      how_to: |
         * **How to play**
         * 1. In chess, White makes the first move, follow by Black.
         * 2. This game uses Algebraic notation standard to process movements.
@@ -148,16 +149,17 @@ en:
         * To learn more about Smith notation, see: ↴
         *   https://en.wikipedia.org/wiki/Chess_notation#Notation_systems
       help: |
-        * ♞ Chess | Help Menu
+        * ♞ Ruby Chess by Ancient Nimbus | Help Menu
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * │ * Available commands:               |                                      │
         * │ * Help - [--help]                   | * Display all available commands     │
-        * │ * Help Algebraic - [--help alg]     | * Display Algebraic input examples   │
-        * │ * Help Smith - [--help smith]       | * Display Smith input examples       │
+        * │ * Algebraic Helper - [--help alg]   | * Display Algebraic input examples   │
+        * │ * Smith Helper - [--help smith]     | * Display Smith input examples       │
         * │ * Info - [--info]                   | * Display game info                  │
-        * │ * Exit - [--exit|--ttfn]            | * Safely exit the game.              │
+        * │ * Arcade - [--arcade]               | * Quit game and return to Ruby Arcade│
+        * │ * Exit - [--exit | --ttfn]          | * Safely exit the game.              │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-        * │ * In-Game settings                  │                                      │
+        * │ * In-Game settings:                 │                                      │
         * │ * Save - [--save]                   | * Save session to player profile     │
         * │ * Load - [--load]                   | * Load another session from profile  │
         * │ * Input Algebraic - [--alg]         | * Use Algebraic notation as input    │
@@ -212,6 +214,46 @@ en:
         * Pawn can be prompted to a queen(q), rook(r), bishop(b) or a knight(n).
         * • 'e7e8q' => 'Pawn promotes to queen'
         * • 'e7e8r' => 'Pawn promotes to rook'
+      load:
+        f1: |
+          * Start a new game or load game from profile
+          *   • [1] New Game
+          *   • [2] Load Game
+        f1a: "Please select a load mode: "
+        f1a_err: "Invalid input, please choose between 1 or 2"
+        f2a: "Please enter a number to indicate the session you wish to load"
+        f2b: "Select a game session to resume:"
+        f2b_err: "Invalid input, please choose between 1 to %{max}"
+      new:
+        f1: |
+          * Select a game mode:
+          *   • [1] Player vs Player
+          *   • [2] Player vs Computer (Coming soon)
+        f1a: "Please select a game mode: "
+        f1a_err: "Invalid input, please choose between 1 or 2"
+        f2: "Please name Player %{count} (Default: %{name})"
+      order:
+        f1: |
+          * You can choose to play as White or Black, or let the game decide randomly.
+          *   • [1] Play as White
+          *   • [2] Play as Black
+          *   • [3] Choose for me
+        f1a: "Please enter a number: "
+        f1a_err: "Invalid input, please choose between 1 to 3"
+        f2: "All set! %{p1} will play as %{c1}, %{p2} will play as %{c2}."
+      session:
+        new: "Starting session: '%{event}'"
+        load: "Session %{event} restored successfully. Welcome back %{p1}!"
+      cmd:
+        save: "This game features autosave. Progress is saved automatically at the end of each turn."
+        load: "Opening the list of past sessions..."
+        info: |
+          * Last saved date: %{date}
+          * FEN: %{fen}
+          * Event: %{event}
+          * White: %{w_player}
+          * Black: %{b_player}
+          * Chess version: %{ver}
       pieces:
         k:
           name: "King"
@@ -243,33 +285,6 @@ en:
           notation: "P"
           style1: "♟"
           style2: "♙"
-      load:
-        f1: |
-          * Start a new game or load game from profile
-          *   • [1] New Game
-          *   • [2] Load Game
-        f1a: "Please select a load mode: "
-        f1a_err: "Invalid input, please choose between 1 or 2"
-        f2a: "Please enter a number to indicate the session you wish to load"
-        f2b: "Select a game session to resume:"
-        f2b_err: "Invalid input, please choose between 1 or %{max}"
-      new:
-        f1: |
-          * Select a game mode:
-          *   • [1] Player vs Player
-          *   • [2] Player vs Computer (Coming soon)
-        f1a: "Please select a game mode: "
-        f1a_err: "Invalid input, please choose between 1 or 2"
-        f2: "Please name Player %{count} (Default: %{name})"
-      order:
-        f1: |
-          * You can choose to play as White or Black, or let the game decide randomly.
-          *   • [1] Play as White
-          *   • [2] Play as Black
-          *   • [3] Choose for me
-        f1a: "Please enter a number: "
-        f1a_err: "Invalid input, please choose between 1 or 3"
-        f2: "%{player} will play as %{color}"
       board:
         frame:
           h: "═"

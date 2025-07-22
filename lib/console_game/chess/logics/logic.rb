@@ -11,10 +11,14 @@ module ConsoleGame
 
       # A hash of lambda functions for calculating movement in 8 directions on a grid
       DIRECTIONS = {
-        n: ->(value, step, row) { value + row * step }, ne: ->(value, step, row) { value + row * step + step },
-        e: ->(value, step, _row) { value + step }, se: ->(value, step, row) { value - row * step + step },
-        s: ->(value, step, row) { value - row * step }, sw: ->(value, step, row) { value - row * step - step },
-        w: ->(value, step, _row) { value - step }, nw: ->(value, step, row) { value + row * step - step }
+        n: ->(value, step, row) { value + row * step },
+        ne: ->(value, step, row) { value + row * step + step },
+        e: ->(value, step, _row) { value + step },
+        se: ->(value, step, row) { value - row * step + step },
+        s: ->(value, step, row) { value - row * step },
+        sw: ->(value, step, row) { value - row * step - step },
+        w: ->(value, step, _row) { value - step },
+        nw: ->(value, step, row) { value + row * step - step }
       }.freeze
 
       # Algebraic chess notation to positional value hash
