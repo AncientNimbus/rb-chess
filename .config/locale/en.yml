@@ -253,6 +253,46 @@ en:
           * White: %{w_player}
           * Black: %{b_player}
           * Chess version: %{ver}
+        export: |
+          Session has been exported as %{file_name}
+          It can be found at the following directory: \n==> '%{dir}'
+        input:
+          alg: "Press 'enter' switch input detection to Algebraic notation."
+          smith: "Press 'enter' switch input detection to Smith notation."
+          done: "Input scheme has been updated!"
+          err: "%{input} is not a valid notation."
+        board:
+          err: "'board' command is expecting an additional keyword, type --help to view all possible commands."
+          size1: "Board size is set to standard."
+          size2: "Board size is set to large."
+          flip_on: "Board flipping enabled."
+          flip_off: "Board flipping disabled."
+      level:
+        white: "White"
+        Black: "Black"
+        turn: "It is %{player}'s turn."
+        preview: "Previewing %{name} at %{info}"
+        move: "Moving %{name} to %{info}"
+        capture: "%{atk} is capturing %{def} at %{def_info}"
+        promo: "%{name} is promoting to %{new_name} at %{info}"
+        castle: "King is castling to %{info}"
+        en_passant: "%{name} is performing en passant maneuver at %{info}"
+        check:
+          - "%{king_side} king is in check, he'll have to respond!"
+          - "A check from the %{type}! %{king_side} king is under attack!"
+          - "It appears the %{king_side} king is in deep water!"
+        checkmate:
+          - "That's checkmate! %{win_player} is victorious!"
+          - "A beautiful checkmate to end the game, congratulation %{win_player}!"
+          - "%{win_side} delivered mate, the %{lose_side} crown has fallen!"
+        draw:
+          stalemate: "It's a stalemate, the game is a draw!"
+          insufficient: "The game is a draw by insufficient material!"
+          fifty_move: "Fifty moves without a capture or pawn move, the game is a draw!"
+          threefold: "Round and around, the game is a draw by Threefold repetition!"
+        err:
+          select: "%{input} is not a valid selection, please try again."
+          move: "%{input} is not a valid move, please try again."
       pieces:
         k:
           name: "King"
