@@ -1,0 +1,13 @@
+{
+  "debug_en": {
+    "test_msg": "Hello, you are using the debug_en.json text file.",
+    "test_msg2": "This is %{adj}!",
+    "test_array": [
+      {
+        "obj": "nested"
+      },
+      123,
+      ".json"
+    ]
+  }
+}
