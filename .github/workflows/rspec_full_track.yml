@@ -25,8 +25,17 @@ jobs:
           bundler-cache: true
       - name: Run tests
         run: bundle exec rspec --format documentation
+      - name: Build YARD docs
+        run: bundle exec yard doc --output-dir yard_output
+      - name: Pages artifact prep
+        run: |
+          mkdir -p public/coverage
+          mkdir -p public/doc
+          mv coverage/* public/coverage/
+          mv yard_output/* public/doc/
+          touch public/.nojekyll
       - name: Deploy coverage to Github page
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ github.workspace }}/coverage
+          path: public
       - uses: actions/deploy-pages@v4
