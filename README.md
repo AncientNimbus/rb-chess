@@ -1,6 +1,6 @@
 # ♟️Ruby Chess 
 ![Ruby](https://img.shields.io/badge/ruby-%23CC342D.svg?style=for-the-badge&logo=ruby&logoColor=white)
-
+[![Rspec Test Fulltrack](https://github.com/AncientNimbus/rb-chess/actions/workflows/rspec_full_track.yml/badge.svg)](https://github.com/AncientNimbus/rb-chess/actions/workflows/rspec_full_track.yml)
 ![Status](https://img.shields.io/badge/Status-In_Development-cccc00)
 
 
