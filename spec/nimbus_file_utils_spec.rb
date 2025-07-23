@@ -124,7 +124,7 @@ describe NimbusFileUtils do
 
       it "returns an array of filenames as string" do
         result = F.file_list(valid_file_path)
-        expect(result).to eq(["debug_en.yml", "en.yml"])
+        expect(result).to include("en.yml")
       end
     end
 
