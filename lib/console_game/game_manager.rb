@@ -145,12 +145,10 @@ module ConsoleGame
     # @param err_label [Symbol] control which error message to print
     # @return [UserProfile]
     def load_err(err_label = :no_profile)
-      case err_label
-      when :no_profile then print_msg(s("cli.load.no_profile_err"), pre: "! ")
-      when :no_profile2 then print_msg(s("cli.load.no_profile_err2"), pre: "! ")
-      when :bad_profile then print_msg(s("cli.load.bad_file_err"), pre: "! ")
-      else print_msg(s("cli.load.unknown_err"), pre: "! ")
-      end
+      err_msgs ||= { no_profile: "cli.load.no_profile_err", no_profile2: "cli.load.no_profile_err2",
+                     bad_profile: "cli.load.bad_file_err" }
+      keypath = err_msgs.fetch(err_label, "cli.load.unknown_err")
+      print_msg(s(keypath), pre: "! ")
       new_profile
     end
 

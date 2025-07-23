@@ -40,14 +40,10 @@ module ConsoleGame
     end
 
     # Change game state to paused
-    def pause
-      self.state = :paused
-    end
+    def pause = self.state = :paused
 
     # Change game state to playing
-    def resume
-      self.state = :playing
-    end
+    def resume = self.state = :playing
 
     # Change game state to ended
     def end_game(result)
@@ -58,17 +54,12 @@ module ConsoleGame
     end
 
     # Check if current game session is active
-    def active?
-      state == :playing
-    end
+    def active? = state == :playing
 
     private
 
     # Print the boot screen
-    def boot
-      # system("clear")
-      # print_msg(s("cli.play.run", { app: [title, :yellow] }))
-    end
+    def boot; end
 
     def setup_game; end
 

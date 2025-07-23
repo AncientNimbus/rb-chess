@@ -149,12 +149,18 @@ module ConsoleGame
       # == Algebraic natation ==
 
       # Call the algebraic chess notation to positional value reference hash
+      # @return [Hash<Integer>]
       def alg_map = ALG_MAP
 
       # Convert positional value to Algebraic notation string
       # @param pos [Integer]
       # @return [String]
-      def to_alg_pos(pos) = ALG_MAP.key(pos).to_s
+      def to_alg_pos(pos) = alg_map.key(pos).to_s
+
+      # Fetch positional value from Algebraic notation string or symbol
+      # @param alg_pos [String, Symbol] expects notation e.g., `"e4"` or `:e4`
+      # @return [Integer] 1D board positional value
+      def to_1d_pos(alg_pos) = alg_map.fetch((alg_pos.is_a?(Symbol) ? alg_pos : alg_pos.to_sym))
     end
   end
 end

@@ -27,7 +27,7 @@ module ConsoleGame
 
       attr_reader :mode, :p1, :p2, :side, :sessions
 
-      def initialize(game_manager = nil, title = "Base Game")
+      def initialize(game_manager = nil, title = "Chess")
         super(game_manager, title, ChessInput.new(game_manager))
         Player.player_count(0)
         @p1 = ChessPlayer.new(user.profile[:username], controller)
@@ -40,10 +40,11 @@ module ConsoleGame
       private
 
       def boot
-        super
-        # boot, intro, help = tf_fetcher("", *%w[boot intro help])
-        # print_msg(boot, intro, help)
-        print_msg(s("boot"))
+        # print_msg(*tf_fetcher("", *%w[boot how_to help]))
+        tf_fetcher("", *%w[boot how_to help]).each do |msg|
+          print_msg(msg)
+          ask("Press enter to continue", empty: true)
+        end
       end
 
       # == Flow ==

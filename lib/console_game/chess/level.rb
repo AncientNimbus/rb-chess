@@ -65,21 +65,23 @@ module ConsoleGame
 
       # Fetch a single chess piece
       # @param query [String] algebraic notation `"e4"`
+      # @param choices [Array<String>] usable pieces available to the current player
+      # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
       # @return [ChessPiece]
-      def fetch_piece(query, bypass: false)
-        return puts "'#{query}' is not a valid notation." unless usable_pieces[player.side].include?(query) || bypass
-
-        turn_data[alg_map[query.to_sym]]
+      def fetch_piece(query, choices: usable_pieces[player.side], t_data: turn_data, bypass: false)
+        choices.include?(query) || bypass ? t_data[to_1d_pos(query)] : puts("Invalid #{query}") # @todo: TF
       end
 
       # Fetch a group of pieces notation from turn_data based on algebraic notation
       # @param query [Array<String>]
       # @param pieces [Array<ChessPiece>]
+      # @param choices [Array<String>] usable pieces available to the current player
+      # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @return [Array<Array<ChessPiece>, Array<String>>]
-      def group_fetch(query, pieces: [])
+      def group_fetch(query, pieces: [], choices: usable_pieces[player.side], t_data: turn_data)
         notations = query.flatten.map do |alg_pos|
-          pieces << (piece = fetch_piece(alg_pos, bypass: true))
+          pieces << (piece = fetch_piece(alg_pos, choices:, t_data:, bypass: true))
           piece.notation
         end
         [pieces, notations]
@@ -88,9 +90,10 @@ module ConsoleGame
       # Grab all pieces, only whites or only blacks
       # @param side [Symbol] expects :all, :white or :black
       # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
+      # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @return [Array<ChessPiece>] a list of chess pieces
-      def fetch_all(side = :all, type: ChessPiece)
-        turn_data.select { |tile| tile.is_a?(type) && (%i[black white].include?(side) ? tile.side == side : true) }
+      def fetch_all(side = :all, type: ChessPiece, t_data: turn_data)
+        t_data.select { |tile| tile.is_a?(type) && (%i[black white].include?(side) ? tile.side == side : true) }
       end
 
       # Lookup a piece based on its possible move position
@@ -101,7 +104,7 @@ module ConsoleGame
       # @return [ChessPiece, nil]
       def reverse_lookup(side, type, target, file_rank = nil)
         type = Chess.const_get(FEN.dig(type, :class))
-        result = refined_lookup(fetch_all(side, type: type), side, alg_map[target.to_sym], file_rank)
+        result = refined_lookup(fetch_all(side, type:), side, to_1d_pos(target), file_rank)
         result.size > 1 ? nil : result[0]
       end
 
@@ -133,6 +136,7 @@ module ConsoleGame
       # Main Game Loop
       def play_chess
         # Pre turn
+        system("clear")
         save_turn
         set_current_player
         refresh
