@@ -176,7 +176,6 @@ en:
         * │ * Algebraic Helper - [--help alg]   | * Display Algebraic input examples   │
         * │ * Smith Helper - [--help smith]     | * Display Smith input examples       │
         * │ * Info - [--info]                   | * Display game info                  │
-        * │ * Arcade - [--arcade]               | * Quit game and return to Ruby Arcade│
         * │ * Exit - [--exit | --ttfn]          | * Safely exit the game.              │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * │ * In-Game settings:                 │                                      │
@@ -269,7 +268,7 @@ en:
         load: "Session %{event} restored successfully. Welcome back %{p1}!"
       cmd:
         save: "This game features autosave. Progress is saved automatically at the end of each turn."
-        load: "Opening the list of past sessions..."
+        load: "Opening the list of available sessions..."
         info: |
           * ♞ Ruby Chess by Ancient Nimbus ver: %{ver}
         info2: |

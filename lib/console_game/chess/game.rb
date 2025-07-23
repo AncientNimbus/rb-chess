@@ -22,6 +22,7 @@ module ConsoleGame
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
+      include Logic
       include Display
 
       attr_reader :ver, :mode, :p1, :p2, :side, :sessions
@@ -37,6 +38,16 @@ module ConsoleGame
         @sessions = user.profile[:appdata][:chess]
       end
 
+      # Setup sequence
+      def setup_game
+        # new game or load game
+        opt = game_selection
+        id = opt == 1 ? new_game : load_game
+        fen = sessions.dig(id, :fens, -1)
+        @level = Level.new(controller, side, sessions[id], fen).open_level
+        end_game
+      end
+
       private
 
       def boot
@@ -47,16 +58,6 @@ module ConsoleGame
       end
 
       # == Flow ==
-
-      # Setup sequence
-      def setup_game
-        # new game or load game
-        opt = game_selection
-        id = opt == 1 ? new_game : load_game
-        fen = sessions.dig(id, :fens, -1)
-        Level.new(controller, side, sessions[id], fen).open_level
-        end_game
-      end
 
       # Endgame handling
       def end_game

@@ -44,9 +44,9 @@ module Console
     return input if input.empty?
 
     input_arr = input.split(" ")
-    @input_is_cmd, is_valid, cmd = command?(input_arr[0], cmds)
+    input_is_cmd, is_valid, cmd = command?(input_arr[0], cmds)
 
-    return input unless @input_is_cmd
+    return input unless input_is_cmd
 
     handle_command(cmd, input_arr[1..], cmds, is_valid)
     ask(msg, cmds:, err_msg:, reg:, empty:)

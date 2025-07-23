@@ -16,7 +16,6 @@ module ConsoleGame
       @game_manager = game_manager
       @commands = setup_commands
       @cmd_pattern = regexp_capturing_gp(commands.keys, pre: "--", suf: '(\s.*)?')
-      @input_is_cmd = false
     end
 
     # == Core methods ==

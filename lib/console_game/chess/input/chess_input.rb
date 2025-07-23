@@ -101,25 +101,27 @@ module ConsoleGame
         game_manager.save_user_profile(mute:)
       end
 
-      # Load session from player data | command pattern: `load`
+      # Load another session from player data | command pattern: `load`
       def load(_args = [])
         return cmd_disabled if level.nil?
 
-        p "Will allow player to switch between other sessions stored within their own user profile"
+        print_msg(s("cmd.load"), pre: "* ")
+        chess_manager.setup_game
       end
 
       # Export current game session as pgn file | command pattern: `export`
+      # @todo: not ready
       def export(_args = [])
         return cmd_disabled if level.nil?
 
-        p "Will export session to local directory as a pgn file"
+        print_msg(s("cmd.export"), pre: "* ")
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
       def smith(_args = [])
         return cmd_disabled if level.nil?
 
-        puts "The game will detect Smith notation starting from the next prompt, press 'enter' to confirm."
+        print_msg(s("cmd.input.smith"), pre: "* ")
         self.input_scheme = smith_reg
         self.input_parser = SMITH_PARSER
       end
@@ -128,7 +130,7 @@ module ConsoleGame
       def alg(_args = [])
         return cmd_disabled if level.nil?
 
-        puts "The game will detect Algebraic notation starting from the next prompt, press 'enter' to confirm."
+        print_msg(s("cmd.input.alg"), pre: "* ")
         self.input_scheme = alg_reg
       end
 
@@ -142,7 +144,7 @@ module ConsoleGame
         case args
         in ["size"] then level.board.adjust_board_size
         in ["flip"] then level.board.flip_setting
-        else puts "Invalid command detected, type --help to view all possible commands." # @todo: Move to TF
+        else print_msg(s("cmd.err"), pre: D_MSG[:warn_prefix])
         end
       end
 
