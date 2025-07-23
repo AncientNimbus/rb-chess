@@ -40,10 +40,9 @@ module ConsoleGame
       private
 
       def boot
-        # print_msg(*tf_fetcher("", *%w[boot how_to help]))
         tf_fetcher("", *%w[boot how_to help]).each do |msg|
           print_msg(msg)
-          ask("Press enter to continue", empty: true)
+          controller.ask(s("blanks.enter"), empty: true)
         end
       end
 

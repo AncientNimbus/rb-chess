@@ -136,7 +136,7 @@ module ConsoleGame
       # Main Game Loop
       def play_chess
         # Pre turn
-        system("clear")
+        # system("clear")
         save_turn
         set_current_player
         refresh

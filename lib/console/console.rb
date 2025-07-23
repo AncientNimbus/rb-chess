@@ -8,7 +8,7 @@ require "readline"
 module Console
   # Default message strings
   D_MSG = { msg: "Using message printer", err_msg: "Invalid input, please try again: ",
-            prompt_prefix: ">>> ", query_prefix: "? ", warn_prefix: "! ",
+            prompt_prefix: ">>> ", query_prefix: "? ", warn_prefix: "! ", gear_icon: "⛭ ",
             cmd_err: "Invalid command, type --help to view all available commands.",
             cmd_pattern: "--(exit).*?", v_sep: "| " }.freeze
 
@@ -17,9 +17,12 @@ module Console
   # @param pre [String] message prefix
   # @param suf [String] message suffix
   # @param mode [Symbol] expecting the following symbols: `puts`, `print`, `p`
-  def print_msg(*msgs, pre: "", suf: "", mode: :puts, delay: 0)
+  # @param delay [Integer] add delay between message print
+  # @param clear [Boolean] clear screen before print?
+  def print_msg(*msgs, pre: "", suf: "", mode: :puts, delay: 0, clear: false)
     return ArgumentError("Invalid mode used for this method") unless %i[puts print p].include?(mode)
 
+    system("clear") if clear
     msgs.each do |msg|
       formatted_msg = "#{pre}#{msg}#{suf}"
       method(mode).call(formatted_msg)
@@ -44,7 +47,7 @@ module Console
     return input unless @input_is_cmd
 
     handle_command(cmd, input_arr[1..], cmds, is_valid)
-    ask(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
+    ask(msg, cmds:, err_msg:, reg:, empty:)
   end
 
   # Build table

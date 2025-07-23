@@ -1,7 +1,10 @@
 # Textfile for Chess
 en:
   cli:
-    ver: "|<<<───────────────|⟡ Ruby Arcade ⟡ v0.7.0 by Ancient Nimbus|───────────────>>>|"
+    ver: "|<<-───────────────|⟡ Ruby Arcade ⟡ v0.7.0 by Ancient Nimbus|───────────────->>|"
+    guideline: |
+      ___________________ ⟡ Ruby Arcade ⟡ v0.7.0 by Ancient Nimbus ___________________
+      |<<-|For best experience, adjust the terminal to fit this in a single line |->>|
     boot: |
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       * │                                     *                                      │ 
@@ -24,7 +27,7 @@ en:
       * │          \/__/     \|__|     \/__/     \/__/     \/__/     \/__/           │
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       * 
-      * Type '--exit' to quit leave the arcade at this stage.
+      * To leave the arcade, type '--exit'.
     menu: |
       * Games available in this release:
       * +───────────────+───────────────+────────────────────────────────────────────+
@@ -50,6 +53,7 @@ en:
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
     std_msg_prefix: "* "
     std_err: "Invalid input, please try again: "
+    std_blank: "Press enter to continue"
     std_help: |
       * Ruby Arcade Intro | Help Menu
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
@@ -224,6 +228,9 @@ en:
         * Pawn can be prompted to a queen(q), rook(r), bishop(b) or a knight(n).
         * • 'e7e8q' => 'Pawn promotes to queen'
         * • 'e7e8r' => 'Pawn promotes to rook'
+      blanks:
+        enter: "Press enter to continue"
+        wait: "Please wait..."
       load:
         f1: |
           * Start a new game or load game from profile
@@ -268,16 +275,16 @@ en:
           Session has been exported as %{file_name}
           It can be found at the following directory: \n==> '%{dir}'
         input:
-          alg: "Press 'enter' switch input detection to Algebraic notation."
-          smith: "Press 'enter' switch input detection to Smith notation."
+          alg: "Press 'enter' to switch input detection to Algebraic notation"
+          smith: "Press 'enter' to switch input detection to Smith notation"
           done: "Input scheme has been updated!"
           err: "%{input} is not a valid notation."
         board:
           err: "'board' command is expecting an additional keyword, type --help to view all possible commands."
-          size1: "Board size is set to standard."
-          size2: "Board size is set to large."
-          flip_on: "Board flipping enabled."
-          flip_off: "Board flipping disabled."
+          size1: "Board size is set to standard"
+          size2: "Board size is set to large"
+          flip_on: "Board flipping enabled"
+          flip_off: "Board flipping disabled"
       level:
         white: "White"
         Black: "Black"

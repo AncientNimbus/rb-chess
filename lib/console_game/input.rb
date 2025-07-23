@@ -37,7 +37,7 @@ module ConsoleGame
             end
       # p "location: #{self.class}, reg: #{reg}"
       # p reg
-      super(msg, cmds: cmds, err_msg: err_msg, reg: reg, empty: empty)
+      super(msg, cmds:, err_msg:, reg:, empty:)
     end
 
     # Process user input where bound checks are required

@@ -9,9 +9,11 @@ module ConsoleGame
     module Display
       include ::NimbusFileUtils
       # Default design for the chessboard
+      # Board padding is added as an UX enhancement, with 80 character width as design blueprint.
+      # Standard board padding is set to 23, while large board is set to 7.
       BOARD = { size: 8, turn_data: Array.new(8) { [" "] }, file: [*"a".."h"], std_tile: 3, h: "═", decors: %w[◆ ◇],
                 head_l: "╔═══╦", head_r: "╦═══╗", sep_l: "╠═══╬", sep_r: "╬═══╣", tail_l: "╚═══╩", tail_r: "╩═══╝",
-                side: ->(v) { "║ #{v} ║" } }.freeze
+                side: ->(v) { "║ #{v} ║" }, b_size_s: [1, 23], b_size_l: [2, 7] }.freeze
 
       # Default design for chess pieces
       PIECES = { k: { name: "King", notation: "K", style1: "♚", style2: "♔" },

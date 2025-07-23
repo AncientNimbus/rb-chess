@@ -67,7 +67,12 @@ module ConsoleGame
     private
 
     # Greet user
-    def greet = print_msg(*tf_fetcher("", *%w[.ver .boot], root: "cli"))
+    def greet
+      tf_fetcher("", *%w[.guideline .boot], root: "cli").each do |msg|
+        print_msg(msg)
+        base_input.ask(s("cli.std_blank"), empty: true)
+      end
+    end
 
     # Arcade lobby
     def lobby
@@ -82,7 +87,7 @@ module ConsoleGame
     def chess
       self.active_game = Chess::Game.new(self)
       active_game.start
-      print_msg("app.chess.end.home")
+      print_msg(s("app.chess.end.home"))
       self.active_game = nil
     end
 

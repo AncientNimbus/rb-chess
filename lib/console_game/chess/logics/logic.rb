@@ -4,7 +4,7 @@ module ConsoleGame
   module Chess
     # Logic module for the game Chess in Console Game
     # @author Ancient Nimbus
-    # @version 1.0.0
+    # @version 1.3.2
     module Logic
       # Default values
       PRESET = { bound: [8, 8], nil_hash: -> { Hash.new { |h, k| h[k] = nil } } }.freeze
@@ -50,7 +50,7 @@ module ConsoleGame
           return length == :max ? combination[0..-2] : []
         end
 
-        pathfinder(pos, path, combination, length: length, bound: bound)
+        pathfinder(pos, path, combination, length:, bound:)
       end
 
       # Calculate valid sequence based on positional value
