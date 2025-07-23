@@ -19,6 +19,7 @@ module Console
   # @param mode [Symbol] expecting the following symbols: `puts`, `print`, `p`
   # @param delay [Integer] add delay between message print
   # @param clear [Boolean] clear screen before print?
+  # @return [nil]
   def print_msg(*msgs, pre: "", suf: "", mode: :puts, delay: 0, clear: false)
     return ArgumentError("Invalid mode used for this method") unless %i[puts print p].include?(mode)
 
@@ -28,6 +29,7 @@ module Console
       method(mode).call(formatted_msg)
       sleep(delay) if delay.positive?
     end
+    nil
   end
 
   # process user input
