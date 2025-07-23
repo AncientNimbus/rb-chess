@@ -24,9 +24,7 @@ module NimbusFileUtils
 
     # Return the root path.
     # @return [String] project root path
-    def proj_root
-      @proj_root ||= File.expand_path("../..", __dir__)
-    end
+    def proj_root = @proj_root ||= File.expand_path("../..", __dir__)
 
     # Return cross-system friendly filename.
     # @param filename [String] file name
@@ -41,9 +39,8 @@ module NimbusFileUtils
     # Return the full path of a specific file.
     # @param filename [String]
     # @param dirs [Array<String>] `filepath("en", ".config", "locale")` will return <root...>/.config/locale/en
-    def filepath(filename, *dirs)
-      File.join(proj_root, *dirs, filename)
-    end
+    # @return [String] full file path
+    def filepath(filename, *dirs) = File.join(proj_root, *dirs, filename)
 
     # Check if a file exist in the given file path.
     # @param filepath [String]
@@ -130,40 +127,39 @@ module NimbusFileUtils
 
     # Helper to handle json data
     # @param file [File]
-    def handle_json(file)
-      JSON.parse(file.read)
-    end
+    # @return [Hash]
+    def handle_json(file) = JSON.parse(file.read)
 
     # Convert string keys to symbol keys.
     # @param obj [Object]
     # @return [Hash]
     def to_symbols(obj)
       case obj
-      when Hash
-        obj.transform_keys(&:to_sym).transform_values { |v| to_symbols(v) }
-      when Array
-        obj.map { |e| to_symbols(e) }
-      else
-        obj
+      when Hash then obj.transform_keys(&:to_sym).transform_values { |v| to_symbols(v) }
+      when Array then obj.map { |e| to_symbols(e) }
+      else obj
       end
     end
   end
 
-  # Pretty print a list of files with last modified date as metadata field
+  # Build a list of files with last modified date as metadata field
   # @param folder_path [String] folder path
   # @param filenames [Array<String>] filenames within the given directory
   # @param col1 [String] header name for the file name col
   # @param col2 [String] header name for the last modified name col
   # @param list_width [Integer] the width of the table
-  def print_file_list(folder_path, filenames, col1: "List of Files", col2: "Last modified date", list_width: 80) # rubocop:disable Metrics/AbcSize
-    puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
-    puts "-" * list_width
+  # @return [Array<String>]
+  def build_file_list(folder_path, filenames, col1: "List of Files", col2: "Last modified date", list_width: 80)
+    # puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
+    # puts "-" * list_width
+    file_list = file_list_head(col1:, col2:)
     filenames.each_with_index do |entry, i|
       prefix = "* [#{i + 1}] - "
       filename = File.basename(entry, File.extname(entry)).ljust(list_width * 0.6 - (prefix.size % 8))
       mod_time = File.new(folder_path + entry).mtime.strftime("%m/%d/%Y %I:%M %p")
-      puts "#{prefix}#{filename} | #{mod_time}"
+      file_list.push("#{prefix}#{filename} | #{mod_time}")
     end
+    file_list
   end
 
   # Retrieves a localized string and perform String interpolation and paint text if needed.
@@ -174,17 +170,22 @@ module NimbusFileUtils
   # @return [String] the translated and interpolated string
   def s(key_path, subs = {}, paint_str: %i[default default], extname: ".yml")
     str = NimbusFileUtils.get_string(key_path, extname: extname)
-
     output = Paint % [str, *paint_str, subs]
-    paint_str.uniq.include?(:default) ? Paint.unpaint(output) : output
+    paint_str.uniq.all?(:default) && subs.values.flatten[1..].nil? ? Paint.unpaint(output) : output
   end
 
   # Textfile strings fetcher
   # @param sub [String] sub-head
   # @param keys [Array<String>] key
   # @return [Array<String>] array of textfile strings
-  def tf_fetcher(sub, *keys, root: "")
-    # sub = ".#{sub}" unless sub.empty?
-    keys.map { |key| s("#{root}#{sub}#{key}") }
-  end
+  def tf_fetcher(sub, *keys, root: "") = keys.map { |key| s("#{root}#{sub}#{key}") }
+
+  private
+
+  # Helper: Build the header for file list
+  # @param col1 [String]
+  # @param col2 [String]
+  # @param list_width [Integer]
+  # @return [Array<String>]
+  def file_list_head(col1:, col2:, list_width: 80) = ["#{col1.ljust(list_width * 0.7)} | #{col2}", "-" * list_width]
 end
