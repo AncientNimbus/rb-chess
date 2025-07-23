@@ -10,7 +10,7 @@ module ConsoleGame
       include Console
       include Display
 
-      attr_accessor :board_size, :board_side, :flip_board, :highlight
+      attr_accessor :board_size, :board_side, :board_padding, :flip_board, :highlight
       attr_reader :level
 
       # @param level [Level] chess Level object
@@ -20,27 +20,29 @@ module ConsoleGame
       end
 
       # Print the chessboard
-      def print_chessboard = print_msg(*build_chessboard, pre: "* ")
+      def print_chessboard = print_msg(*build_chessboard, pre: "".ljust(board_padding), clear: false)
 
       # Enable & disable board flipping
       def flip_setting
         self.flip_board = !flip_board
         print_chessboard
-        puts flip_board ? "Board flipping enabled." : "Board flipping disabled." # @todo: to TF
+        keypath = flip_board ? "cmd.board.flip_on" : "cmd.board.flip_off"
+        print_msg(s(keypath), pre: D_MSG[:gear_icon])
       end
 
       # Make board bigger or smaller
       def adjust_board_size
-        self.board_size = board_size == 1 ? 2 : 1
+        self.board_size, self.board_padding = board_size == 1 ? BOARD[:b_size_l] : BOARD[:b_size_s]
         print_chessboard
-        puts board_size == 1 ? "Board size is set to standard." : "Board size is set to large." # @todo: to TF
+        keypath = board_size == 1 ? "cmd.board.size1" : "cmd.board.size2"
+        print_msg(s(keypath), pre: D_MSG[:gear_icon])
       end
 
       private
 
       # Display configs
       def display_configs
-        @board_size = 1
+        @board_size, @board_padding = BOARD[:b_size_s]
         @flip_board = true
         @board_side = :white
         @highlight = THEME[:classic].slice(:icon, :highlight)
