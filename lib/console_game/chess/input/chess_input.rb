@@ -77,7 +77,7 @@ module ConsoleGame
         return if level.nil?
 
         p "Will save session to player session, then store player data to user profile"
-        game_manager.user.save_profile
+        game_manager.save_user_profile
       end
 
       # Load session from player data | command pattern: `load`

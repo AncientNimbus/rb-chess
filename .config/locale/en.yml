@@ -39,7 +39,7 @@ en:
     help: |
       * Ruby Arcade | Help Menu
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-      * │ * Available commands:               |                                      │
+      * │ * Available commands at this page:  |                                      │
       * │ * Help - [--help]                   | * Display all available commands     │
       * │ * Save - [--save]                   | * Save user profile to local disc    │
       * │ * Load - [--load]                   | * Load user profile from local disc  │
@@ -50,6 +50,14 @@ en:
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
     std_msg_prefix: "* "
     std_err: "Invalid input, please try again: "
+    std_help: |
+      * Ruby Arcade Intro | Help Menu
+      * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
+      * │ * Available commands at this page:  |                                      │
+      * │ * Help - [--help]                   | * Display all available commands     │
+      * │ * Info - [--info]                   | * Display system info                │
+      * │ * Exit - [--exit | --ttfn]          | * Safely close the program           │
+      * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
     prompt_prefix: ">>> "
     query_prefix: "? "
     cmd_err: "Invalid command! type --help to view all available commands."
@@ -68,14 +76,16 @@ en:
       msg4: |
         * 👋 Greetings %{name}!
     load:
-      li_col1: "List of Files"
-      li_col2: "Last modified date"
+      li_col1: "List of User Profiles"
+      li_col2: "Last saved date"
       msg: "Fetching user profile..."
       msg2: "Choose a profile by typing the corresponding number:"
       msg3: "Profile loaded! Welcome back %{name}!"
       input_err: "Invalid input, please try again! To load the first profile, type '1'"
       bad_file_err: "The chosen user profile is corrupted and cannot be loaded, creating a new profile now..."
       no_profile_err: "No profile found, creating a new profile now..."
+      no_profile_err2: "No user profile found, operation cancelled"
+      unknown_err: "Unknown error, creating a new profile now..."
     save:
       msg: "Your profile has been saved and can be found at the following directory: \n==> '%{dir}'"
     self:
@@ -151,7 +161,7 @@ en:
       help: |
         * ♞ Ruby Chess by Ancient Nimbus | Help Menu
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-        * │ * Available commands:               |                                      │
+        * │ * Available commands at this page:  |                                      │
         * │ * Help - [--help]                   | * Display all available commands     │
         * │ * Algebraic Helper - [--help alg]   | * Display Algebraic input examples   │
         * │ * Smith Helper - [--help smith]     | * Display Smith input examples       │
@@ -294,6 +304,8 @@ en:
         err:
           select: "%{input} is not a valid selection, please try again."
           move: "%{input} is not a valid move, please try again."
+      end:
+        home: "Welcome back to the lobby! Hope you have fun playing chess."
       pieces:
         k:
           name: "King"

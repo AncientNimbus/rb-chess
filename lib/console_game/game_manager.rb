@@ -9,9 +9,6 @@ require_relative "player"
 require_relative "base_game"
 require_relative "chess/game"
 
-# Alias for NimbusFileUtils
-F = NimbusFileUtils
-
 # Console Game System v2.0.0
 # @author Ancient Nimbus
 # @version 2.0.0
@@ -20,6 +17,9 @@ module ConsoleGame
   class GameManager
     include Console
     include ::NimbusFileUtils
+
+    # Alias for NimbusFileUtils
+    F = NimbusFileUtils
 
     attr_reader :base_input, :cli, :apps, :user
     attr_accessor :running, :active_game
@@ -37,34 +37,8 @@ module ConsoleGame
     # run the console game manager
     def run
       greet
-      # Create or load user
       assign_user_profile
-      # Enter lobby
       lobby
-    end
-
-    # Greet user
-    def greet
-      # print_msg(*tf_fetcher("", *%w[.how_to .help .alg_h .sm_h], root: "app.chess"))
-      print_msg(*tf_fetcher("", *%w[.ver .boot], root: "cli"))
-    end
-
-    # Setup user profile
-    def assign_user_profile
-      print_msg(s("cli.new.msg"))
-
-      mode = base_input.ask(s("cli.new.msg2"), reg: [1, 2], input_type: :range).to_i
-      @user = mode == 1 ? new_profile : load_profile
-      # Create stats data
-      launch_counter
-      # Save to disk
-      save_user_profile
-    end
-
-    # Arcade lobby
-    def lobby
-      print_msg(s("cli.menu"))
-      cli.ask(empty: true) while running
     end
 
     # Exit Arcade
@@ -74,17 +48,9 @@ module ConsoleGame
       exit
     end
 
-    # Run game: Chess
-    def chess
-      self.active_game = Chess::Game.new(self)
-      active_game.start
-      puts "Welcome back to the lobby! Hope you have fun playing chess."
-      self.active_game = nil
-    end
-
     # Save user profile
     def save_user_profile
-      return puts "No user profile found, operation cancelled" if user.nil?
+      return load_err(:no_profile2) if user.nil?
 
       user.save_profile
       print_msg(s("cli.save.msg", { dir: [user.filepath, :yellow] }))
@@ -92,7 +58,7 @@ module ConsoleGame
 
     # Load another profile when using is at the lobby
     def switch_user_profile
-      return puts "No user profile found, operation cancelled" if user.nil?
+      return load_err(:no_profile2) if user.nil?
 
       @user = load_profile
       launch_counter
@@ -100,25 +66,53 @@ module ConsoleGame
 
     private
 
+    # Greet user
+    def greet = print_msg(*tf_fetcher("", *%w[.ver .boot], root: "cli"))
+
+    # Arcade lobby
+    def lobby
+      print_msg(s("cli.menu"))
+      cli.ask(empty: true) while running
+    end
+
     # Define the app list
-    def load_app_list
-      { "chess" => method(:chess) }
+    def load_app_list = { "chess" => method(:chess) }
+
+    # Run game: Chess
+    def chess
+      self.active_game = Chess::Game.new(self)
+      active_game.start
+      print_msg("app.chess.end.home")
+      self.active_game = nil
+    end
+
+    # Setup user profile
+    def assign_user_profile
+      print_msg(s("cli.new.msg"))
+      mode = base_input.ask(s("cli.new.msg2"), reg: [1, 2], input_type: :range).to_i
+      @user = mode == 1 ? new_profile : load_profile
+      # Create stats data
+      launch_counter
+      # Save to disk
+      save_user_profile
     end
 
     # Handle new user
-    # @param username [String] username for UserProfile, skip prompt stage if it is provided.
+    # @param username [String] username for UserProfile, skip prompt stage if it is provided
+    # @return [UserProfile] user profile
     def new_profile(username = "")
       # Get username
       username = username.empty? ? grab_username : username
       # Create user profile
       profile = UserProfile.new(username)
-
       # Welcome user
       print_msg(s("cli.new.msg4", { name: [profile.username, :yellow] }))
       profile
     end
 
     # Handle returning user
+    # @param extname [String] extension name
+    # @return [UserProfile] user profile
     def load_profile(extname: ".json")
       f_path = select_profile(extname: extname)
       # Load ops
@@ -130,6 +124,8 @@ module ConsoleGame
     end
 
     # Handle profile selection
+    # @param extname [String] extension name
+    # @return [String] filepath
     def select_profile(extname: ".json")
       print_msg(s("cli.load.msg"))
 
@@ -138,7 +134,7 @@ module ConsoleGame
       return nil if profiles.empty?
 
       # Print the list
-      print_file_list(folder_path, profiles, col1: s("cli.load.li_col1"), col2: s("cli.load.li_col2"))
+      print_msg(*build_file_list(folder_path, profiles, col1: s("cli.load.li_col1"), col2: s("cli.load.li_col2")))
       # Handle selection
       profile = base_input.pick_from(profiles, msg: s("cli.load.msg2"), err_msg: s("cli.load.input_err"))
       # Returns a valid filename
@@ -147,27 +143,24 @@ module ConsoleGame
 
     # Edge cases handling when there are issue loading a profile
     # @param err_label [Symbol] control which error message to print
+    # @return [UserProfile]
     def load_err(err_label = :no_profile)
       case err_label
-      when :no_profile
-        print_msg(s("cli.load.no_profile_err"), pre: "! ")
-      when :bad_profile
-        print_msg(s("cli.load.bad_file_err"), pre: "! ")
-      else
-        print_msg("Unknown err, creating a new profile now...", pre: "! ")
+      when :no_profile then print_msg(s("cli.load.no_profile_err"), pre: "! ")
+      when :no_profile2 then print_msg(s("cli.load.no_profile_err2"), pre: "! ")
+      when :bad_profile then print_msg(s("cli.load.bad_file_err"), pre: "! ")
+      else print_msg(s("cli.load.unknown_err"), pre: "! ")
       end
       new_profile
     end
 
     # Get username from prompt
     # @return [String] username
-    def grab_username
-      base_input.ask(s("cli.new.msg3"), reg: F::FILENAME_REG, input_type: :custom, empty: true)
-    end
+    def grab_username = base_input.ask(s("cli.new.msg3"), reg: F::FILENAME_REG, input_type: :custom, empty: true)
 
     # Simple usage stats counting
     def launch_counter
-      return puts "No user profile found, operation cancelled" if user.nil?
+      return load_err(:no_profile2) if user.nil?
 
       user.profile[:stats][:launch_count] ||= 0
       user.profile[:stats][:launch_count] += 1

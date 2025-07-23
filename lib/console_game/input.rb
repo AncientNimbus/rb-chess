@@ -63,21 +63,16 @@ module ConsoleGame
     end
 
     # Display help string | command pattern: `help`
-    def help(_arr = [])
-      print_msg("Type --exit to exit the program")
-    end
+    def help(_arr = []) = print_msg(s("cli.std_help"))
 
     # Display system info | command pattern: `info`
-    def info(_arr = [])
-      print_msg(s("cli.ver"))
-    end
+    def info(_arr = []) = print_msg(s("cli.ver"))
 
     # == Unities ==
 
     # Setup input commands
-    def setup_commands
-      { "exit" => method(:quit), "help" => method(:help), "info" => method(:info) }
-    end
+    def setup_commands = { "exit" => method(:quit), "ttfn" => method(:quit), "help" => method(:help),
+                           "info" => method(:info) }
 
     # Override: Handle command
     # @param cmd [String]

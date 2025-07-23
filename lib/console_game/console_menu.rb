@@ -52,7 +52,7 @@ module ConsoleGame
     def self(_arr = [])
       profile = game_manager.user.profile
       user_color = :yellow
-      p "Debug: #{profile}"
+      # p "Debug: #{profile}"
       print_msg(s("cli.self.msg",
                   { uuid: [profile[:uuid], user_color],
                     date: [profile[:saved_date].strftime("%m/%d/%Y %I:%M %p"), user_color],
@@ -64,7 +64,7 @@ module ConsoleGame
 
     # Setup input commands
     def setup_commands
-      super.merge({ "ttfn" => method(:quit), "save" => method(:save), "load" => method(:load),
+      super.merge({ "save" => method(:save), "load" => method(:load),
                     "play" => method(:play), "self" => method(:self) })
     end
   end

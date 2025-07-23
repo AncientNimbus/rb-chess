@@ -6,6 +6,10 @@ require_relative "../nimbus_file_utils/nimbus_file_utils"
 module ConsoleGame
   # User Profile class
   class UserProfile
+    include ::NimbusFileUtils
+
+    # Alias for NimbusFileUtils
+    F = NimbusFileUtils
     # Expected user profile structure
     PROFILE = { uuid: "", username: "", saved_date: Time, appdata: {}, stats: {} }.freeze
 
