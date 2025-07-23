@@ -6,6 +6,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -23,3 +25,8 @@ jobs:
           bundler-cache: true
       - name: Run tests
         run: bundle exec rspec --format documentation
+      - name: Deploy coverage to Github page
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ github.workspace }}/coverage
+      - uses: actions/deploy-pages@v4
