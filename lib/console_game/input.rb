@@ -57,10 +57,7 @@ module ConsoleGame
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`
-    def quit(_arg = [])
-      print_msg(s("cli.lobby.exit"))
-      exit
-    end
+    def quit(_arg = []) = game_manager.exit_arcade
 
     # Display help string | command pattern: `help`
     def help(_arr = []) = print_msg(s("cli.std_help"))

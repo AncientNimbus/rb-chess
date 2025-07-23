@@ -170,7 +170,7 @@ module ConsoleGame
           en_passant: format_en_passant, half: half_move, full: format_full_move
         )
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
-        controller.save
+        controller.save(mute: true)
       end
 
       # Helper: Convert en passant data before export

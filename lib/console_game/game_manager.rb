@@ -49,11 +49,12 @@ module ConsoleGame
     end
 
     # Save user profile
-    def save_user_profile
+    # @param mute [Boolean] bypass printing when use at the background
+    def save_user_profile(mute: false)
       return load_err(:no_profile2) if user.nil?
 
       user.save_profile
-      print_msg(s("cli.save.msg", { dir: [user.filepath, :yellow] }))
+      print_msg(s("cli.save.msg", { dir: [user.filepath, :yellow] })) unless mute
     end
 
     # Load another profile when using is at the lobby

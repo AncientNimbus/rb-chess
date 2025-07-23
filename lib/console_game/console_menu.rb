@@ -12,7 +12,7 @@ module ConsoleGame
     # Exit sequences | command patterns: `exit`, `ttfn`
     def quit(_arg = [])
       print_msg(s("cli.lobby.exit"))
-      game_manager.exit_arcade
+      super
     end
 
     # Display help string | command pattern: `help`

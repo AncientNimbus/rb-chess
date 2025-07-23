@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../../input"
+require_relative "../logics/display"
 require_relative "smith_notation"
 require_relative "algebraic_notation"
 
@@ -8,14 +9,18 @@ module ConsoleGame
   module Chess
     # Input controller for the game Chess
     class ChessInput < Input
+      include Display
       include SmithNotation
       include AlgebraicNotation
 
       attr_accessor :input_scheme, :input_parser
-      attr_reader :alg_reg, :smith_reg, :level, :active_side
+      attr_reader :alg_reg, :smith_reg, :level, :active_side, :chess_manager
 
-      def initialize(game_manager = nil)
+      # @param game_manager [GameManager]
+      # @param chess_manager [Game]
+      def initialize(game_manager = nil, chess_manager = nil)
         super(game_manager)
+        @chess_manager = chess_manager
         notation_patterns_builder
         @input_scheme = smith_reg
         @input_parser = SMITH_PARSER
@@ -54,49 +59,65 @@ module ConsoleGame
         ask("Your pawn is ready for a promotion ", reg: SMITH_PATTERN[:promotion], input_type: :custom)
       end
 
+      # Chess Override: process user input
+      # @param msg [String] first print
+      # @param cmds [Hash] expects a list of commands hash
+      # @param err_msg [String] second print
+      # @param reg [Regexp, String, Array<String>] pattern to match, use an Array when input type is :range
+      # @param empty [Boolean] allow empty input value, default to false
+      # @param input_type [Symbol] expects the following option: :any, :range, :custom
+      # @return [String]
+      def ask(msg = "", cmds: commands, err_msg: s("cmd.std_err"), reg: ".*", empty: false, input_type: :any) = super
+
       # == Console Commands ==
 
       # Exit sequences | command patterns: `exit`
       def quit(_args = [])
-        print_msg(s("cli.lobby.exit"), pre: "*")
-        exit
+        print_msg(s("cmd.exit"))
+        super
       end
 
       # Display help string | command pattern: `help`
-      def help(_args = [])
-        print_msg("Type --exit to exit the program")
+      def help(args = [])
+        keypath = case args
+                  in ["alg"] then "alg_h"
+                  in ["smith"] then "sm_h"
+                  else "help"
+                  end
+        print_msg(s(keypath))
       end
 
       # Display system info | command pattern: `info`
       def info(_args = [])
-        p "Will print game info"
+        str = level.nil? ? s("cmd.info", { ver: chess_manager.ver }) : s("cmd.info2", build_info_data)
+        print_msg(str)
       end
 
       # Save session to player data | command pattern: `save`
-      def save(_args = [])
-        return if level.nil?
+      # @param mute [Boolean] bypass printing when use at the background
+      def save(_args = [], mute: false)
+        return cmd_disabled if level.nil?
 
-        p "Will save session to player session, then store player data to user profile"
-        game_manager.save_user_profile
+        game_manager.save_user_profile(mute:)
       end
 
       # Load session from player data | command pattern: `load`
       def load(_args = [])
-        return if level.nil?
+        return cmd_disabled if level.nil?
 
         p "Will allow player to switch between other sessions stored within their own user profile"
       end
 
       # Export current game session as pgn file | command pattern: `export`
       def export(_args = [])
-        return if level.nil?
+        return cmd_disabled if level.nil?
 
         p "Will export session to local directory as a pgn file"
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
       def smith(_args = [])
-        return if level.nil?
+        return cmd_disabled if level.nil?
 
         puts "The game will detect Smith notation starting from the next prompt, press 'enter' to confirm."
         self.input_scheme = smith_reg
@@ -105,7 +126,7 @@ module ConsoleGame
 
       # Change input mode to detect Algebraic Notation | command pattern: `alg`
       def alg(_args = [])
-        return if level.nil?
+        return cmd_disabled if level.nil?
 
         puts "The game will detect Algebraic notation starting from the next prompt, press 'enter' to confirm."
         self.input_scheme = alg_reg
@@ -116,7 +137,7 @@ module ConsoleGame
       #  `--board size`
       #  `--board flip`
       def board(args = [])
-        return if level.nil?
+        return cmd_disabled if level.nil?
 
         case args
         in ["size"] then level.board.adjust_board_size
@@ -139,6 +160,17 @@ module ConsoleGame
       def setup_commands
         super.merge({ "save" => method(:save), "load" => method(:load), "export" => method(:export),
                       "smith" => method(:smith), "alg" => method(:alg), "board" => method(:board) })
+      end
+
+      # Print command is disabled at this stage
+      def cmd_disabled = print_msg(s("cmd.disabled"), pre: D_MSG[:warn_prefix])
+
+      # Helper to build session info data
+      # @return [Hash]
+      def build_info_data
+        date, fens, event, white, black = level.session.values_at(:date, :fens, :event, :white, :black)
+        { date: Time.new(date).strftime("%m/%d/%Y %I:%M %p"), fen: fens.last,
+          event: event, w_player: white, b_player: black, ver: chess_manager.ver }
       end
     end
   end

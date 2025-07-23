@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../../../lib/console_game/game_manager"
 require_relative "../../../lib/console_game/chess/chess_player"
 require_relative "../../../lib/console_game/chess/level"
 require_relative "../../../lib/console_game/chess/input/chess_input"
@@ -7,7 +8,7 @@ require_relative "../../../lib/nimbus_file_utils/nimbus_file_utils"
 
 describe ConsoleGame::Chess::ChessInput do
   NimbusFileUtils.set_locale("en")
-  subject(:chess_input_test) { described_class.new(:game_manger) }
+  subject(:chess_input_test) { described_class.new(game_manager) }
 
   let(:game_manager) { instance_double(ConsoleGame::GameManager) }
   let(:level) { instance_double(ConsoleGame::Chess::Level) }
@@ -174,7 +175,8 @@ describe ConsoleGame::Chess::ChessInput do
   describe "#quit" do
     context "when the method is called" do
       it "exits the program" do
-        expect { chess_input_test.quit }.to raise_error(SystemExit)
+        allow(game_manager).to receive(:exit_arcade).and_return(SystemExit)
+        expect(chess_input_test.quit).to be SystemExit
       end
     end
   end

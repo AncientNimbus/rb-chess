@@ -150,8 +150,6 @@ module NimbusFileUtils
   # @param list_width [Integer] the width of the table
   # @return [Array<String>]
   def build_file_list(folder_path, filenames, col1: "List of Files", col2: "Last modified date", list_width: 80)
-    # puts "#{col1.ljust(list_width * 0.7)} | #{col2}"
-    # puts "-" * list_width
     file_list = file_list_head(col1:, col2:)
     filenames.each_with_index do |entry, i|
       prefix = "* [#{i + 1}] - "

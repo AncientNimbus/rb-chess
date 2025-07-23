@@ -27,7 +27,7 @@ en:
       * │          \/__/     \|__|     \/__/     \/__/     \/__/     \/__/           │
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       * 
-      * To leave the arcade, type '--exit'.
+      * To leave the arcade, type '--exit'
     menu: |
       * Games available in this release:
       * +───────────────+───────────────+────────────────────────────────────────────+
@@ -36,7 +36,7 @@ en:
       * │ Chess         │ chess         │ Strategy, Patience, Victory.               │
       * +───────────────+───────────────+────────────────────────────────────────────+
       * 
-      * Type '--help' to see a list of available commands.
+      * Type '--help' will display a list of available commands.
       * To run a game, type '--play <launch code>' to run a game. 
       * E.g., '--play chess'
     help: |
@@ -53,7 +53,7 @@ en:
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
     std_msg_prefix: "* "
     std_err: "Invalid input, please try again: "
-    std_blank: "Press enter to continue"
+    std_blank: "Press enter to continue "
     std_help: |
       * Ruby Arcade Intro | Help Menu
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
@@ -121,7 +121,7 @@ en:
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * │                                   Chess                                    │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-        * │             A Command Line Game by Ancient Nimbus | Ver: 0.7.0             │
+        * │             A Command Line Game by Ancient Nimbus | ver: 0.7.0             │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       intro: |
         * **How to start**
@@ -155,6 +155,12 @@ en:
         * 2. This game uses Algebraic notation standard to process movements.
         * 3. To make a move, type your move in notation format. (More info below)
         * 4. The game features autosave, your progress is saved at the end of each move.
+        *
+        * Type '--help' will display a list of available commands.
+        * 
+        * A quick input tutorial is available by typing the following command:
+        * Type '--help alg' will display Algebraic input examples
+        * Type '--help smith' will display Smith input examples
         *
         * To learn more about chess, see: ↴
         *   https://www.instructables.com/Playing-Chess/
@@ -229,8 +235,8 @@ en:
         * • 'e7e8q' => 'Pawn promotes to queen'
         * • 'e7e8r' => 'Pawn promotes to rook'
       blanks:
-        enter: "Press enter to continue"
-        wait: "Please wait..."
+        enter: "Press enter to continue "
+        wait: "Please wait... "
       load:
         f1: |
           * Start a new game or load game from profile
@@ -265,12 +271,14 @@ en:
         save: "This game features autosave. Progress is saved automatically at the end of each turn."
         load: "Opening the list of past sessions..."
         info: |
+          * ♞ Ruby Chess by Ancient Nimbus ver: %{ver}
+        info2: |
           * Last saved date: %{date}
           * FEN: %{fen}
           * Event: %{event}
           * White: %{w_player}
           * Black: %{b_player}
-          * Chess version: %{ver}
+          * ♞ Ruby Chess by Ancient Nimbusver: %{ver}
         export: |
           Session has been exported as %{file_name}
           It can be found at the following directory: \n==> '%{dir}'
@@ -285,6 +293,10 @@ en:
           size2: "Board size is set to large"
           flip_on: "Board flipping enabled"
           flip_off: "Board flipping disabled"
+        exit: "♚ Thank you for playing Chess, see you soon ♚"
+        err: "Invalid command! Type --help to view all available commands."
+        disabled: "This command is disabled here! Type --help to view all available commands."
+        std_err: "Invalid input, please try again: "
       level:
         white: "White"
         Black: "Black"

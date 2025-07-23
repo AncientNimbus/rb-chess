@@ -22,13 +22,13 @@ module ConsoleGame
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
-      include Logic
       include Display
 
-      attr_reader :mode, :p1, :p2, :side, :sessions
+      attr_reader :ver, :mode, :p1, :p2, :side, :sessions
 
       def initialize(game_manager = nil, title = "Chess")
-        super(game_manager, title, ChessInput.new(game_manager))
+        super(game_manager, title, ChessInput.new(game_manager, self))
+        @ver = "0.7.0"
         Player.player_count(0)
         @p1 = ChessPlayer.new(user.profile[:username], controller)
         @p2 = nil
