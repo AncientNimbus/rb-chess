@@ -296,10 +296,11 @@ en:
         err: "Invalid command! Type --help to view all available commands."
         disabled: "This command is disabled here! Type --help to view all available commands."
         std_err: "Invalid input, please try again: "
+        soon: "This feature will be made available soon."
       level:
         white: "White"
         Black: "Black"
-        turn: "It is %{player}'s turn."
+        turn: "It is %{player}'s turn"
         preview: "Previewing %{name} at %{info}"
         move: "Moving %{name} to %{info}"
         capture: "%{atk} is capturing %{def} at %{def_info}"

@@ -107,6 +107,7 @@ module ConsoleGame
       # Convert cell position to coordinate array
       # @param pos [Integer] positional value
       # @param bound [Array<Integer>] `[row, col]`
+      # @return [Array<Integer>]
       def to_coord(pos = 0, bound: PRESET[:bound])
         raise ArgumentError, "#{pos} is out of bound!" unless pos.between?(0, bound.reduce(:*) - 1)
 

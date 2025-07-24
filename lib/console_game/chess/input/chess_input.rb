@@ -112,9 +112,10 @@ module ConsoleGame
       # Export current game session as pgn file | command pattern: `export`
       # @todo: not ready
       def export(_args = [])
-        return cmd_disabled if level.nil?
+        print_msg(s("cmd.soon"), pre: "* ")
+        # return cmd_disabled if level.nil?
 
-        print_msg(s("cmd.export"), pre: "* ")
+        # print_msg(s("cmd.export"), pre: "* ")
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`

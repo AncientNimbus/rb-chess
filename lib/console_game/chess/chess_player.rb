@@ -59,7 +59,7 @@ module ConsoleGame
       # Play a turn in chess as a human player
       def play_turn
         link_level
-        puts "It is #{name}'s turn." # @todo: replace with TF string
+        level.board.print_msg(level.board.s("level.turn", { player: name }), pre: "* ")
 
         player_action
 
@@ -74,8 +74,9 @@ module ConsoleGame
       def preview_move(curr_alg_pos)
         return false unless assign_piece(curr_alg_pos)
 
-        puts "Previewing #{piece_at_hand.name} at #{piece_at_hand.info}." # @todo Proper feedback
         level.refresh
+        sub = { name: piece_at_hand.name, info: piece_at_hand.info }
+        controller.print_msg(controller.s("level.preview", sub), pre: "* ")
 
         # Second prompt to complete the turn
         controller.make_a_move(self)
@@ -89,7 +90,9 @@ module ConsoleGame
         piece_at_hand.move(new_alg_pos)
         return false unless piece_at_hand.moved
 
-        puts "Moving #{piece_at_hand.name} to #{piece_at_hand.info}." # @todo Proper feedback
+        sub = { name: piece_at_hand.name, info: piece_at_hand.info }
+        level.event_msgs << controller.s("level.move", sub)
+
         turn_end
       end
 
@@ -136,7 +139,8 @@ module ConsoleGame
 
       # Invalid input
       def invalid_input(input)
-        puts input.empty? ? "Input scheme has been updated!" : "'#{input}' is not a valid notation"
+        keypath = input.empty? ? "cmd.input.done" : "'cmd.input.err"
+        level.board.print_msg(level.board.s(keypath, { input: input }), pre: "* ")
         false
       end
 
@@ -153,8 +157,6 @@ module ConsoleGame
         put_piece_down
         piece = level.fetch_piece(alg_pos)
         return nil if piece.nil?
-
-        # p "active piece: #{piece.side} #{piece.name}" # @todo: debug
 
         store_active_piece(piece)
       end
