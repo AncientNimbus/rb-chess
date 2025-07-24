@@ -111,18 +111,31 @@ module ConsoleGame
       # == Board Logic ==
 
       # Actions to perform when player input is valid
-      # @param print_board [Boolean] print board if is it set to true
+      # @param print_turn [Boolean] print board if is it set to true
       # @return [Boolean] true if the operation is a success
-      def refresh(print_board: true)
+      def refresh(print_turn: true)
         update_board_state
         game_end_check
-        board.print_chessboard if print_board
+        board.print_turn(event_msgs) if print_turn
       end
 
       # Board state refresher
       # Generate all possible move and send it to board analysis
       def update_board_state
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
+      end
+
+      # Simulate next move - Find good moves
+      # @param piece [ChessPiece]
+      # @param next_moves [Array<Integer>]
+      # @param good_pos [Array<Integer>]
+      # @return [Array<Integer>] good moves
+      def simulate_next_moves(piece, next_moves, good_pos: [])
+        current_pos = piece.curr_pos
+        turn_data[current_pos] = ""
+        next_moves.each { |new_pos| good_pos << simulate_move(piece, new_pos) }
+        restore_previous_state(piece, current_pos:)
+        good_pos
       end
 
       private
@@ -137,7 +150,7 @@ module ConsoleGame
         @event_msgs = []
         set_current_player
         load_en_passant_state
-        refresh(print_board: false)
+        refresh(print_turn: false)
       end
 
       # Main Game Loop
@@ -145,8 +158,7 @@ module ConsoleGame
         # Pre turn
         save_turn
         set_current_player
-        refresh(print_board: false)
-        board.print_turn(event_msgs)
+        refresh
         return if game_ended
 
         # Play turn
@@ -211,6 +223,26 @@ module ConsoleGame
 
           piece.possible_moves.include?(new_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
+      end
+
+      # @param piece [ChessPiece]
+      # @param new_pos [Integer]
+      # @return [Integer]
+      def simulate_move(piece, new_pos)
+        tile = turn_data[new_pos]
+        piece.curr_pos = new_pos
+        update_board_state
+        turn_data[new_pos] = tile
+        new_pos unless piece.under_threat?
+      end
+
+      # Simulation helper: restore pre simulation state
+      # @param piece [ChessPiece]
+      # @param current_pos [Integer]
+      def restore_previous_state(piece, current_pos:)
+        piece.curr_pos = current_pos
+        turn_data[current_pos] = piece
+        update_board_state
       end
 
       # == Endgame Logics ==

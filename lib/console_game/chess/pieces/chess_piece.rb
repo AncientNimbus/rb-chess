@@ -60,8 +60,8 @@ module ConsoleGame
       # @param limiter [Array] limit piece movement when player is checked
       def query_moves(limiter = [])
         validate_moves(level.turn_data, curr_pos).map { |pos| alg_map.key(pos) }
-        threat_response
         @possible_moves = possible_moves & limiter unless limiter.empty?
+        threat_response
       end
 
       # Returns the algebraic notation of current position
@@ -75,6 +75,10 @@ module ConsoleGame
       # Returns the rank of current position
       # @return [String] file of the piece
       def rank = info[1]
+
+      # Determine if a piece is currently under threats
+      # @return [Boolean]
+      def under_threat? = level.threats_map[opposite_of(side)].include?(curr_pos)
 
       private
 
@@ -145,10 +149,6 @@ module ConsoleGame
       # Switch color when under threat
       def threat_response = self.color = under_threat_by?(level.active_piece) ? highlight : std_color
 
-      # Determine if a piece is currently under threats
-      # @return [Boolean]
-      def under_threat? = level.threats_map[opposite_of(side)].include?(curr_pos)
-
       # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
       # @param attacker [ChessPiece]
       # @param target [ChessPiece]
@@ -156,7 +156,7 @@ module ConsoleGame
       def under_threat_by?(attacker)
         return false unless attacker.is_a?(ChessPiece) && attacker.side != side
 
-        attacker.targets.value?(curr_pos) || possible_moves.include?(curr_pos)
+        attacker.targets.value?(curr_pos) && attacker.possible_moves.include?(curr_pos)
       end
 
       # Returns the path of an attacking chess piece based on the current position of self

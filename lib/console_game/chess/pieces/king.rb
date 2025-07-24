@@ -46,7 +46,7 @@ module ConsoleGame
       def checkmate?
         return false unless in_check?
 
-        simulate_next_move(possible_moves)
+        level.simulate_next_moves(self, possible_moves)
         allies = level.fetch_all(side).select { |ally| ally unless ally.is_a?(King) }
         checked_status[:attackers].each { |attacker| return false if any_saviours?(allies, attacker) }
         crown_has_fallen?
@@ -106,32 +106,6 @@ module ConsoleGame
         @possible_moves = possible_moves - level.threats_map[opposite_of(side)]
       end
 
-      # Simulate next move - Find good moves
-      # @param next_moves [Array<Integer>]
-      # @param current_pos [Integer]
-      # @param good_pos [Array<Integer>]
-      # @return [Array<Integer>] good moves
-      def simulate_next_move(next_moves, current_pos: curr_pos, good_pos: [])
-        level.turn_data[current_pos] = ""
-        next_moves.each do |new_pos|
-          tile = level.turn_data[new_pos]
-          self.curr_pos = new_pos
-          level.update_board_state
-          good_pos << new_pos unless under_threat?
-          level.turn_data[new_pos] = tile
-        end
-        restore_previous_pos(current_pos)
-        good_pos
-      end
-
-      # Simulation helper: restore
-      # @param current_pos [Integer]
-      def restore_previous_pos(current_pos)
-        self.curr_pos = current_pos
-        level.turn_data[current_pos] = self
-        level.update_board_state
-      end
-
       # Override path
       # Path via Pathfinder
       # @param pos [Integer] board positional value
@@ -168,7 +142,12 @@ module ConsoleGame
       # Helper for any_saviours?, Update and limits saviours path to attacker's path
       # @param saviours [Array<ChessPiece>] expects an array of King's saviours
       # @param attack_path [Array<Integer>]
-      def limit_saviours_movements(saviours, attack_path) = saviours.each { |ally| ally.query_moves(attack_path) }
+      def limit_saviours_movements(saviours, attack_path)
+        saviours.each do |ally|
+          ally.query_moves(attack_path)
+          ally.targets.compact.each_value { |pos| level.turn_data[pos].query_moves }
+        end
+      end
 
       # Helper for any_saviours?, add saviours and King to the usable pieces if King still move
       # @param saviours [Array<ChessPiece>] expects an array of King's saviours
