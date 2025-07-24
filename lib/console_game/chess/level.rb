@@ -3,6 +3,7 @@
 require_relative "game"
 require_relative "logics/logic"
 require_relative "logics/piece_analysis"
+require_relative "logics/piece_lookup"
 require_relative "logics/endgame_logic"
 require_relative "board"
 require_relative "utilities/fen_import"
@@ -16,6 +17,7 @@ module ConsoleGame
       include Logic
       include EndgameLogic
       include PieceAnalysis
+      include PieceLookup
       include FenImport
       include FenExport
 
@@ -49,64 +51,45 @@ module ConsoleGame
         play_chess until game_ended
       end
 
-      # == Game Logic ==
-
-      # Pawn specific: Present a list of option when player can promote a pawn
-      def promote_opts = player.indirect_promote
-
-      # Reset En Passant status when it is not used at the following turn
-      def reset_en_passant
-        return if en_passant.nil? || active_piece == en_passant[0]
-
-        self.en_passant = nil if active_piece.curr_pos != en_passant[1]
-      end
-
       # == Utilities ==
 
-      # Fetch a single chess piece
+      # Override: Fetch a single chess piece
       # @param query [String] algebraic notation `"e4"`
       # @param choices [Array<String>] usable pieces available to the current player
       # @param t_data [Array<ChessPiece, String>] expects level turn_data array
+      # @param alg_dict [#call] expects a method to convert query to board position
       # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
+      # @param warn_msg [String] User warning during bad input
       # @return [ChessPiece]
-      def fetch_piece(query, choices: usable_pieces[player.side], t_data: turn_data, bypass: false)
-        choices.include?(query) || bypass ? t_data[to_1d_pos(query)] : puts("Invalid #{query}") # @todo: TF
-      end
+      def fetch_piece(query, choices: usable_pieces[player.side], t_data: turn_data, alg_dict: method(:to_1d_pos),
+                      bypass: false, warn_msg: "#{query} is not a valid notation!") = super # @todo: TF
 
-      # Fetch a group of pieces notation from turn_data based on algebraic notation
+      # Override: Fetch a group of pieces notation from turn_data based on algebraic notation
       # @param query [Array<String>]
       # @param pieces [Array<ChessPiece>]
       # @param choices [Array<String>] usable pieces available to the current player
       # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @return [Array<Array<ChessPiece>, Array<String>>]
-      def group_fetch(query, pieces: [], choices: usable_pieces[player.side], t_data: turn_data)
-        notations = query.flatten.map do |alg_pos|
-          pieces << (piece = fetch_piece(alg_pos, choices:, t_data:, bypass: true))
-          piece.notation
-        end
-        [pieces, notations]
-      end
+      def group_fetch(query, pieces: [], choices: usable_pieces[player.side], t_data: turn_data) = super
 
-      # Grab all pieces, only whites or only blacks
+      # Override: Grab all pieces, only whites or only blacks
       # @param side [Symbol] expects :all, :white or :black
       # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
       # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @return [Array<ChessPiece>] a list of chess pieces
-      def fetch_all(side = :all, type: ChessPiece, t_data: turn_data)
-        t_data.select { |tile| tile.is_a?(type) && (%i[black white].include?(side) ? tile.side == side : true) }
-      end
+      def fetch_all(side = :all, type: ChessPiece, t_data: turn_data) = super
 
-      # Lookup a piece based on its possible move position
+      # Override: Lookup a piece based on its possible move position
       # @param side [Symbol] :black or :white
       # @param type [Symbol] expects a notation
       # @param target [String] expects a algebraic notation
       # @param file_rank [String] expects a file rank data
+      # @param available_pieces [Hash] expects a usable_pieces hash from chess level
+      # @param piece_lib [Hash] expects a FEN reference hash
+      # @param alg_dict [#call] expects a method to convert query to board position
       # @return [ChessPiece, nil]
-      def reverse_lookup(side, type, target, file_rank = nil)
-        type = Chess.const_get(FEN.dig(type, :class))
-        result = refined_lookup(fetch_all(side, type:), side, to_1d_pos(target), file_rank)
-        result.size > 1 ? nil : result[0]
-      end
+      def reverse_lookup(side, type, target, file_rank = nil, available_pieces: usable_pieces, piece_lib: FEN,
+                         alg_dict: method(:to_1d_pos)) = super
 
       # == Board Logic ==
 
@@ -132,6 +115,18 @@ module ConsoleGame
       # @param good_pos [Array<Integer>]
       # @return [Array<Integer>] good moves
       def simulate_next_moves(piece, t_data: turn_data, update_state: method(:update_board_state), good_pos: []) = super
+
+      # == Game Logic ==
+
+      # Pawn specific: Present a list of option when player can promote a pawn
+      def promote_opts = player.indirect_promote
+
+      # Reset En Passant status when it is not used at the following turn
+      def reset_en_passant
+        return if en_passant.nil? || active_piece == en_passant[0]
+
+        self.en_passant = nil if active_piece.curr_pos != en_passant[1]
+      end
 
       private
 
@@ -204,20 +199,6 @@ module ConsoleGame
 
         en_passant[0] = fetch_piece(en_passant[0], bypass: true)
         en_passant[1] = alg_map[en_passant[1].to_sym]
-      end
-
-      # Helper: Filter pieces by checking whether it is usable at the current term with file info for extra measure
-      # @param filtered_pieces [Array<ChessPiece>]
-      # @param side [Symbol] :black or :white
-      # @param new_pos [Integer] expects a positional value
-      # @param file_rank [String] expects a file rank data
-      # @return [Array<ChessPiece>]
-      def refined_lookup(filtered_pieces, side, new_pos, file_rank)
-        filtered_pieces.select do |piece|
-          next unless usable_pieces[side].include?(piece.info)
-
-          piece.possible_moves.include?(new_pos) && (file_rank.nil? || piece.info.include?(file_rank))
-        end
       end
 
       # == Endgame Logics ==
