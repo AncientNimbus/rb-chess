@@ -19,6 +19,15 @@ module ConsoleGame
         display_configs
       end
 
+      # Print turn
+      # @param event_msgs [Array<String>]
+      def print_turn(event_msgs)
+        # system("clear")
+        print_msg(*event_msgs, pre: "* ") unless event_msgs.empty?
+        print_chessboard
+        level.event_msgs.clear
+      end
+
       # Print the chessboard
       def print_chessboard = print_msg(*build_chessboard, pre: "".ljust(board_padding), clear: false)
 
