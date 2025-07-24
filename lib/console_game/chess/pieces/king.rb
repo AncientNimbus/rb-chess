@@ -46,7 +46,7 @@ module ConsoleGame
       def checkmate?
         return false unless in_check?
 
-        level.simulate_next_moves(self, possible_moves)
+        level.simulate_next_moves(self)
         allies = level.fetch_all(side).select { |ally| ally unless ally.is_a?(King) }
         checked_status[:attackers].each { |attacker| return false if any_saviours?(allies, attacker) }
         crown_has_fallen?

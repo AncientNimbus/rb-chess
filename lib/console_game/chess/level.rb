@@ -125,18 +125,13 @@ module ConsoleGame
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
       end
 
-      # Simulate next move - Find good moves
-      # @param piece [ChessPiece]
-      # @param next_moves [Array<Integer>]
+      # Override: Simulate next move - Find good moves
+      # @param piece [ChessPiece] expects a ChessPiece object
+      # @param t_data [Array<ChessPiece, String>] expects turn_data from Level
+      # @param update_state [#call] expects #update_board_state method from Level
       # @param good_pos [Array<Integer>]
       # @return [Array<Integer>] good moves
-      def simulate_next_moves(piece, next_moves, good_pos: [])
-        current_pos = piece.curr_pos
-        turn_data[current_pos] = ""
-        next_moves.each { |new_pos| good_pos << simulate_move(piece, new_pos) }
-        restore_previous_state(piece, current_pos:)
-        good_pos
-      end
+      def simulate_next_moves(piece, t_data: turn_data, update_state: method(:update_board_state), good_pos: []) = super
 
       private
 
@@ -223,26 +218,6 @@ module ConsoleGame
 
           piece.possible_moves.include?(new_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
-      end
-
-      # @param piece [ChessPiece]
-      # @param new_pos [Integer]
-      # @return [Integer]
-      def simulate_move(piece, new_pos)
-        tile = turn_data[new_pos]
-        piece.curr_pos = new_pos
-        update_board_state
-        turn_data[new_pos] = tile
-        new_pos unless piece.under_threat?
-      end
-
-      # Simulation helper: restore pre simulation state
-      # @param piece [ChessPiece]
-      # @param current_pos [Integer]
-      def restore_previous_state(piece, current_pos:)
-        piece.curr_pos = current_pos
-        turn_data[current_pos] = piece
-        update_board_state
       end
 
       # == Endgame Logics ==
