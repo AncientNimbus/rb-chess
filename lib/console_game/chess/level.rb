@@ -22,7 +22,7 @@ module ConsoleGame
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move,
-                    :game_ended
+                    :game_ended, :event_msgs
       attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states,
                   :threats_map, :usable_pieces
 
@@ -119,6 +119,12 @@ module ConsoleGame
         board.print_chessboard if print_board
       end
 
+      # Board state refresher
+      # Generate all possible move and send it to board analysis
+      def update_board_state
+        @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
+      end
+
       private
 
       # Initialise the chessboard
@@ -127,19 +133,20 @@ module ConsoleGame
         @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
           :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
         )
-        @threats_map, @usable_pieces, = Array.new(2) { BW_HASH[:new_arr].call }
+        @threats_map, @usable_pieces = Array.new(2) { BW_HASH[:new_arr].call }
+        @event_msgs = []
         set_current_player
         load_en_passant_state
-        refresh(print_board: true)
+        refresh(print_board: false)
       end
 
       # Main Game Loop
       def play_chess
         # Pre turn
-        # system("clear")
         save_turn
         set_current_player
-        refresh
+        refresh(print_board: false)
+        board.print_turn(event_msgs)
         return if game_ended
 
         # Play turn
@@ -147,12 +154,6 @@ module ConsoleGame
 
         # Post turn
         self.white_turn = !white_turn
-      end
-
-      # Board state refresher
-      # Generate all possible move and send it to board analysis
-      def update_board_state
-        @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
       end
 
       # Set player side
