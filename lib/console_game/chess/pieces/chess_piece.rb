@@ -143,21 +143,20 @@ module ConsoleGame
 
       # Handle events when the opposite active piece can capture self in the upcoming turn
       # Switch color when under threat
-      def threat_response = self.color = under_threat_by?([level.active_piece], self) ? highlight : std_color
+      def threat_response = self.color = under_threat_by?(level.active_piece) ? highlight : std_color
 
       # Determine if a piece is currently under threats
-      # @param piece [ChessPiece]
       # @return [Boolean]
       def under_threat? = level.threats_map[opposite_of(side)].include?(curr_pos)
 
       # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
-      # @param threat_side [Array<ChessPiece>]
+      # @param attacker [ChessPiece]
       # @param target [ChessPiece]
       # @return [Boolean]
-      def under_threat_by?(threat_side, target)
-        return false unless target.is_a?(ChessPiece) && !threat_side.compact.empty?
+      def under_threat_by?(attacker)
+        return false unless attacker.is_a?(ChessPiece) && attacker.side != side
 
-        threat_side.any? { |piece| piece.targets.value?(target.curr_pos) && piece.possible_moves.include?(curr_pos) }
+        attacker.targets.value?(curr_pos) || possible_moves.include?(curr_pos)
       end
 
       # Returns the path of an attacking chess piece based on the current position of self

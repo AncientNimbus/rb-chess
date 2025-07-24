@@ -48,10 +48,7 @@ module ConsoleGame
 
         simulate_next_move(possible_moves)
         allies = level.fetch_all(side).select { |ally| ally unless ally.is_a?(King) }
-        checked_status[:attackers].each do |attacker|
-          return false if under_threat_by?(allies, attacker)
-          return false if any_saviours?(allies, attacker)
-        end
+        checked_status[:attackers].each { |attacker| return false if any_saviours?(allies, attacker) }
         crown_has_fallen?
       end
 
