@@ -2,6 +2,87 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2025-07-24
+
+### 🚀 Features
+
+- Add support for input hot swapping
+- Add support to count fullmove and store turn
+- *(tf)* Add chess help text to textfile
+- *(tf)* Add new game strings to textfile
+- Add safe exit when yaml file is corrupted
+- *(tf)* Add new game level strings to textfile
+- Replace string in menu with textfile strings
+- Replace texts in GameManager with TF data
+- *(UX)* Swap board setting strings with TF data
+- *(UX)* Improve intro flow sequence
+- *(UX)* Add new command string to chess input
+- Ability to load another session mid-game
+- *(UX)* Replace hardcoded game messages
+- Add #print_turn to Board class
+- *(UX)* Replace hardcoded strings in Level
+
+### 🐛 Bug Fixes
+
+- Address a regexp pattern issue in #pick_from
+- Resolve a bug when validating checkmate
+- Address a visual bug in preview mode
+- Address a visual bug when using preview mode
+
+### 💼 Other
+
+- Check detection by simulating next move
+
+### 🚜 Refactor
+
+- Optimise #write_to_disk
+- Add an option to not print the board
+- Optimise Level initialization flow
+- Optimise various methods in Level class
+- Optimise various methods in Chess
+- Restore methods for clarity
+- Optimise FenExport
+- Simplify method definitions
+- Optimise #add_pos_to_blunder_tracker
+- Optimise #add_pos_to_blunder_tracker pt2
+- Optimise Level refresh call from 4 to 2
+- Update methods scope settings
+- Optimise nimbus_file_utils module
+- Optimise chess Level fetch methods
+- Change #print_msg behavior to return nil
+- Update scope for #update_board_state
+- Move simulations out from King class
+- Move simulation logic to piece_analysis
+- Migrate lookup logics to PieceLookup
+
+### 📚 Documentation
+
+- Update CHANGELOG
+- Add Action badge to README
+
+### 🧪 Testing
+
+- Integration test via EndgameLogic module
+- Migrate file_utils tests from past project
+- Update dummy_user.json with new data format
+- Add test suite for Display module
+- Add test suite for ChessInput class
+- Add more test cases for ChessInput class
+- Add integration test suite for Level class
+- En passant and promotion integration test
+- Kingside/Queenside castling integration tests
+- ComputerPlayer & commands integration test
+- Add automated test script to Actions
+- Update test case for nimbus_file_utils_spec
+- Update rspec_full_track.yml
+
+### ⚙️ Miscellaneous Tasks
+
+- Move various logic modules to logics folder
+- Cleanup unused gem dependency from project
+- Add debug assets for automated test cases
+- Update rspec_full_track.yml
+
 ## [0.6.0] - 2025-07-19
 
 ### 🚀 Features
