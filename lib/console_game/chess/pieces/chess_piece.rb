@@ -46,11 +46,7 @@ module ConsoleGame
       def move(new_alg_pos)
         old_pos = curr_pos
         new_pos = new_alg_pos.is_a?(Integer) ? new_alg_pos : alg_map[new_alg_pos.to_sym]
-        # return puts "This is not a valid move!" unless possible_moves.include?(new_pos)
-        unless possible_moves.include?(new_pos)
-          puts "This is not a valid move!" # @todo: better feedback
-          return self.moved = false
-        end
+        return self.moved = false unless possible_moves.include?(new_pos)
 
         process_movement(level.turn_data, old_pos, new_pos)
         self.moved = true

@@ -323,6 +323,7 @@ en:
         err:
           select: "%{input} is not a valid selection, please try again."
           move: "%{input} is not a valid move, please try again."
+          notation: "This is not a valid notation, please try again."
       end:
         home: "Welcome back to the lobby! Hope you have fun playing chess."
       pieces:

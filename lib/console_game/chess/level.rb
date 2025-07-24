@@ -62,7 +62,7 @@ module ConsoleGame
       # @param warn_msg [String] User warning during bad input
       # @return [ChessPiece]
       def fetch_piece(query, choices: usable_pieces[player.side], t_data: turn_data, alg_dict: method(:to_1d_pos),
-                      bypass: false, warn_msg: "#{query} is not a valid notation!") = super # @todo: TF
+                      bypass: false, warn_msg: board.s("level.err.notation")) = super
 
       # Override: Fetch a group of pieces notation from turn_data based on algebraic notation
       # @param query [Array<String>]
