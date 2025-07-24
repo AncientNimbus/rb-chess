@@ -48,12 +48,9 @@ module ConsoleGame
         new_pos = new_alg_pos.is_a?(Integer) ? new_alg_pos : alg_map[new_alg_pos.to_sym]
         # return puts "This is not a valid move!" unless possible_moves.include?(new_pos)
         unless possible_moves.include?(new_pos)
-          puts "This is not a valid move!"
+          puts "This is not a valid move!" # @todo: better feedback
           return self.moved = false
         end
-
-        # print user message
-        # p "Moving to #{new_alg_pos}" # @todo: better feedback
 
         process_movement(level.turn_data, old_pos, new_pos)
         self.moved = true
@@ -97,8 +94,7 @@ module ConsoleGame
       def movements_trackers(movements, range)
         @movements = movement_range(movements, range: range)
         @targets = movement_range(movements, range: nil)
-        @sights = []
-        @captured = []
+        @sights, @captured = Array.new(2) { [] }
         @moved = false
       end
 
@@ -169,7 +165,9 @@ module ConsoleGame
       # @return [Array<Integer>]
       def find_attacker_path(attacker)
         atk_direction = attacker.targets.key(curr_pos)
-        pathfinder(attacker.curr_pos, atk_direction, length: attacker.movements[atk_direction])
+        opt = %i[n s].include?(atk_direction) ? 0 : 1
+        length = (to_coord(attacker.curr_pos)[opt] - to_coord(curr_pos)[opt]).abs
+        pathfinder(attacker.curr_pos, atk_direction, length:)
       end
 
       # == Pathfinder related ==
