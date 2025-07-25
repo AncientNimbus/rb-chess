@@ -30,10 +30,9 @@ module ConsoleGame
       def initialize(game_manager = nil, title = "Chess")
         super(game_manager, title, ChessInput.new(game_manager, self))
         @ver = "0.7.0"
-        Player.player_count(0)
-        @p1 = ChessPlayer.new(user.profile[:username], controller)
-        @p2 = nil
-        @side = { white: nil, black: nil }
+        # @p1 = ChessPlayer.new(user.profile[:username], controller)
+        # @p2 = nil
+        @side = PRESET[:nil_hash].call
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
       end
@@ -41,6 +40,7 @@ module ConsoleGame
       # Setup sequence
       # new game or load game
       def setup_game
+        Player.player_count(1)
         opt = game_selection
         id = opt == 1 ? new_game : load_game
         fen = sessions.dig(id, :fens, -1)
@@ -74,7 +74,7 @@ module ConsoleGame
       # Handle new game sequence
       # @param err [Boolean] is use when there is a load err
       def new_game(err: false)
-        print_msg("Sessions not found, entering new game creation mode...") if err
+        print_msg(s("new.err")) if err
         print_msg(s("new.f1"))
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
         @p1, @p2 = setup_players
@@ -88,6 +88,16 @@ module ConsoleGame
         @p1, @p2 = build_players(session)
         assign_sides(p1, p2)
         user_opt
+      end
+
+      # Helper to get session selection from user
+      def select_session
+        new_game(err: true) if sessions.empty?
+        print_sessions_to_load
+        user_opt = controller.pick_from(sessions.keys)
+        session = sessions[user_opt]
+        @mode = session[:mode]
+        [user_opt, session]
       end
 
       # Create player classes based on load mode
@@ -119,25 +129,13 @@ module ConsoleGame
         filter = sessions_list.transform_values do |session|
           session.merge(date: Time.new(session[:date]).strftime("%m/%d/%Y %I:%M %p"))
         end
-        puts build_table(data: filter, head: "Load from the following sessions")
-      end
-
-      # Helper to get session selection from user
-      def select_session
-        new_game(err: true) if sessions.empty?
-        print_sessions_to_load
-        user_opt = controller.pick_from(sessions.keys)
-        session = sessions[user_opt]
-        @mode = session[:mode]
-        [user_opt, session]
+        print_msg(*build_table(data: filter, head: s("load.f2a")))
       end
 
       # == Utilities ==
 
       # Setup players
-      def setup_players
-        [p1, p2].map { |player| player_profile(player) }
-      end
+      def setup_players = [p1, p2].map { |player| player_profile(player) }
 
       # Set up player profile
       # @param player [ConsoleGame::ChessPlayer, nil]

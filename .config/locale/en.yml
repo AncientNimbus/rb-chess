@@ -260,7 +260,7 @@ en:
           *   • [2] Load Game
         f1a: "Please select a load mode: "
         f1a_err: "Invalid input, please choose between 1 or 2"
-        f2a: "Please enter a number to indicate the session you wish to load"
+        f2a: "Please enter a number to indicate the session you wish to load:"
         f2b: "Select a game session to resume:"
         f2b_err: "Invalid input, please choose between 1 to %{max}"
       new:
@@ -271,6 +271,7 @@ en:
         f1a: "Please select a game mode: "
         f1a_err: "Invalid input, please choose between 1 or 2"
         f2: "Please name Player %{count} (Default: %{name})"
+        err: "Sessions not found, entering new game creation mode..."
       order:
         f1: |
           * You can choose to play as White or Black, or let the game decide randomly.

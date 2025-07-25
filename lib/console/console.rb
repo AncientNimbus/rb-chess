@@ -55,6 +55,7 @@ module Console
   # Build table
   # @param data [Hash<String>] data
   # @param head [String] the title of the table
+  # @return [Array<String>]
   def build_table(data: {}, head: "Console Table")
     data_values = data.values.map(&:values)
     return "Non-string elements found, ops cancelled." unless data_values.all? { |_, v| v.is_a?(String) }

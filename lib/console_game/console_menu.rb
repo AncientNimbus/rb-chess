@@ -30,8 +30,8 @@ module ConsoleGame
     def play(args = [])
       return print_msg(s("cli.play.gm_err")) unless game_manager
 
-      app_name = args[0]
-      game_manager.apps.key?(app_name) ? game_manager.apps[app_name].call : print_msg(s("cli.play.run_err"), pre: "! ")
+      app = args[0]
+      game_manager.apps.key?(app) ? game_manager.launch(app) : print_msg(s("cli.play.run_err"), pre: "! ")
     end
 
     # Display user info | command pattern: `self`
