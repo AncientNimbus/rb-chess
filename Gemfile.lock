@@ -60,6 +60,8 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    whirly (0.3.0)
+      unicode-display_width (>= 1.1)
     yard (0.9.37)
 
 PLATFORMS
@@ -73,6 +75,7 @@ DEPENDENCIES
   rubocop-performance (~> 1.25)
   rubocop-rspec (~> 3.6)
   simplecov
+  whirly (~> 0.3.0)
   yard (~> 0.9.37)
 
 BUNDLED WITH

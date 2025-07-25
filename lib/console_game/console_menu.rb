@@ -5,51 +5,37 @@ require_relative "input"
 module ConsoleGame
   # Input controller for console menu
   class ConsoleMenu < Input
-    private
-
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`, `ttfn`
-    def quit(_arg = [])
+    def quit(_args = [])
       print_msg(s("cli.lobby.exit"))
       super
     end
 
     # Display help string | command pattern: `help`
-    def help(_arr = [])
-      print_msg(s("cli.help"))
-    end
+    def help(_args = []) = print_msg(s("cli.help"))
 
     # Display system info | command pattern: `info`
-    def info(_arr = [])
-      print_msg(s("cli.menu"))
-    end
+    def info(_args = []) = print_msg(s("cli.menu"))
 
     # Save user profile to disk | command pattern: `save`
-    def save(_arr = [])
-      game_manager.save_user_profile
-    end
+    def save(_args = []) = game_manager.save_user_profile
 
     # Load user profile from disk | command pattern: `load`
-    def load(_arr = [])
-      game_manager.switch_user_profile
-    end
+    def load(_args = []) = game_manager.switch_user_profile
 
     # Launch a game | command pattern: `play <launch code>`
-    # @param arr [Array<String>] optional arguments
-    def play(arr = [])
+    # @param args [Array<String>] optional arguments
+    def play(args = [])
       return print_msg(s("cli.play.gm_err")) unless game_manager
 
-      app_name = arr[0]
-      if game_manager.apps.key?(app_name)
-        game_manager.apps[app_name].call
-      else
-        print_msg(s("cli.play.run_err"))
-      end
+      app_name = args[0]
+      game_manager.apps.key?(app_name) ? game_manager.apps[app_name].call : print_msg(s("cli.play.run_err"), pre: "! ")
     end
 
     # Display user info | command pattern: `self`
-    def self(_arr = [])
+    def self(_args = [])
       profile = game_manager.user.profile
       user_color = :yellow
       # p "Debug: #{profile}"
@@ -60,12 +46,23 @@ module ConsoleGame
                     visit: [profile[:stats][:launch_count], user_color] }))
     end
 
+    private
+
+    # Easter egg | command pattern: `lol`
+    def lol(_args = [])
+      Whirly.start spinner: "random_dots", status: s("cli.lol.title").sample do
+        sleep 3
+        Whirly.status = s("cli.lol.sub").sample
+        sleep 3
+        msgs = s("cli.lol.msgs")
+        print_msg(msgs[command_usage[:lol] % msgs.size], pre: "* ")
+      end
+    end
+
     # == Unities ==
 
     # Setup input commands
-    def setup_commands
-      super.merge({ "save" => method(:save), "load" => method(:load),
-                    "play" => method(:play), "self" => method(:self) })
-    end
+    def setup_commands = super.merge({ "save" => method(:save), "load" => method(:load), "play" => method(:play),
+                                       "self" => method(:self), "lol" => method(:lol) })
   end
 end

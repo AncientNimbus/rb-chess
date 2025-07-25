@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "whirly"
+require "paint"
 require_relative "../nimbus_file_utils/nimbus_file_utils"
 require_relative "../console/console"
 
@@ -9,13 +11,14 @@ module ConsoleGame
     include Console
     include ::NimbusFileUtils
 
-    attr_reader :game_manager, :commands, :cmd_pattern
+    attr_reader :game_manager, :commands, :cmd_pattern, :command_usage
 
     # @param game_manager [ConsoleGame::GameManager]
     def initialize(game_manager = nil)
       @game_manager = game_manager
       @commands = setup_commands
       @cmd_pattern = regexp_capturing_gp(commands.keys, pre: "--", suf: '(\s.*)?')
+      @command_usage = Hash.new { |h, k| h[k] = 0 }
     end
 
     # == Core methods ==
@@ -51,18 +54,18 @@ module ConsoleGame
       options[opt]
     end
 
-    private
-
     # == Console Commands ==
 
     # Exit sequences | command patterns: `exit`
-    def quit(_arg = []) = game_manager.exit_arcade
+    def quit(_args = []) = game_manager.nil? ? exit : game_manager.exit_arcade
 
     # Display help string | command pattern: `help`
-    def help(_arr = []) = print_msg(s("cli.std_help"))
+    def help(_args = []) = print_msg(s("cli.std_help"))
 
     # Display system info | command pattern: `info`
-    def info(_arr = []) = print_msg(s("cli.ver"))
+    def info(_args = []) = print_msg(s("cli.ver"))
+
+    private
 
     # == Unities ==
 
@@ -76,6 +79,9 @@ module ConsoleGame
     # @param cmds [Array]
     # @param is_valid [Boolean]
     # @param cmd_err [String] custom error message
-    def handle_command(cmd, opt_arg, cmds, is_valid, cmd_err: s("cli.cmd_err")) = super
+    def handle_command(cmd, opt_arg, cmds, is_valid, cmd_err: s("cli.cmd_err"))
+      command_usage[cmd.to_sym] += 1 if cmds.key?(cmd)
+      super
+    end
   end
 end

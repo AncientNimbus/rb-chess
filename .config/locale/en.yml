@@ -104,6 +104,23 @@ en:
       test: "Launching %{app}... %{msg}"
       run_err: "Invalid launch code, please try again."
       gm_err: "No game manager available"
+    lol:
+      title:
+        - "Wow! You've found the secret command!"
+        - "Wait, that worked??"
+        - "Entering the super special menu... Just kidding XD"
+      sub:
+        - "Loading... still loading..."
+        - "Almost ready..."
+      msgs:
+        - "You have found me."
+        - "Fact of the day: The first commit of this project was pushed on June 17, 2025."
+        - "Tip of the day: GitHub projects is a helpful tool to stay organised."
+        - "Shout out to The Odin Project for creating excellent open source learning material."
+        - "Quote of the day: Our greatest glory is not in never falling, but in rising every time we fall."
+        - "Quote of the day: It does not matter how slowly you go as long as you do not stop."
+        - "Tip of the day: The best error message is the one that never shows up."
+        - "Quote of the day: Programs must be written for people to read, and only incidentally for machines to execute."
   app:
     chess:
       boot: |

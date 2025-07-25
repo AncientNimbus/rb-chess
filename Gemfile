@@ -17,3 +17,5 @@ gem "yard", "~> 0.9.37", require: false
 gem "simplecov", require: false, group: :test
 
 gem "paint", "~> 2.3"
+
+gem "whirly", "~> 0.3.0"

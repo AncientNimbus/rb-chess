@@ -165,9 +165,11 @@ module NimbusFileUtils
   # @param subs [Hash] `{ demo: ["some text", :red] }`
   # @param paint_str [Array<Symbol, String, nil>]
   # @param extname [String]
-  # @return [String] the translated and interpolated string
+  # @return [String, Array<String>] the translated and interpolated string
   def s(key_path, subs = {}, paint_str: %i[default default], extname: ".yml")
     str = NimbusFileUtils.get_string(key_path, extname: extname)
+    return str if str.is_a?(Array)
+
     output = Paint % [str, *paint_str, subs]
     paint_str.uniq.all?(:default) && subs.values.flatten[1..].nil? ? Paint.unpaint(output) : output
   end
