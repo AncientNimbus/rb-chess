@@ -9,7 +9,8 @@ Welcome to the Chess project repo, it is my implementation of a terminal based C
 ---
 
 # Setup
-> [!WARNING] Notice for early testers
+> [!WARNING]
+> **Notice for early testers**
 > Main branch version: `v0.8.0`
 >
 > This version includes all the core features and is fully playable. 

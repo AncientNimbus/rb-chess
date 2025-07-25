@@ -160,7 +160,7 @@ module ConsoleGame
 
     # Get username from prompt
     # @return [String] username
-    def grab_username = base_input.ask(s("cli.new.msg3"), reg: F::FILENAME_REG, input_type: :custom, empty: true)
+    def grab_username = base_input.ask(s("cli.new.msg3"), reg: COMMON_REG[:filename], input_type: :custom, empty: true)
 
     # Simple usage stats counting
     def launch_counter

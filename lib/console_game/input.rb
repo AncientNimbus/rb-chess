@@ -48,7 +48,7 @@ module ConsoleGame
     # @param err_msg [String] second print
     # @return [Any] a valid element within the given array
     def pick_from(options, msg: "Pick from the following options: ", err_msg: "Not a valid option, try again.")
-      until options.fetch(opt = ask(msg, reg: /\A\d+\z/, input_type: :custom, err_msg: err_msg).to_i - 1, nil)
+      until options.fetch(opt = ask(msg, reg: COMMON_REG[:digits], input_type: :custom, err_msg: err_msg).to_i - 1, nil)
         print_msg(err_msg, pre: Paint["! ", :red])
       end
       options[opt]

@@ -8,8 +8,11 @@ require "paint"
 # @author Ancient Nimbus
 # @version 0.6.0
 module NimbusFileUtils
-  # Valid filename pattern
-  FILENAME_REG = '[\sa-zA-Z0-9._-]+'
+  # Common reg pattern
+  # - :filename [String] Valid filename pattern
+  # - :digits [Regexp] Any digits
+  COMMON_REG = { filename: '[\sa-zA-Z0-9._-]+', digits: /\A\d+\z/, yesno: "(?<yes>yes|y)|(?<no>no|n)" }.freeze
+
   class << self
     attr_accessor :locale, :locale_filename
 

@@ -39,8 +39,8 @@ module ConsoleGame
       end
 
       # Setup sequence
+      # new game or load game
       def setup_game
-        # new game or load game
         opt = game_selection
         id = opt == 1 ? new_game : load_game
         fen = sessions.dig(id, :fens, -1)
@@ -61,7 +61,8 @@ module ConsoleGame
 
       # Endgame handling
       def end_game
-        puts "Game session complete, \nShould return to game.rb"
+        opt = controller.ask(s("session.restart"), reg: COMMON_REG[:yesno], input_type: :custom)
+        setup_game if opt.downcase.include?("y")
       end
 
       # Prompt player for new game or load game
@@ -147,7 +148,7 @@ module ConsoleGame
 
         # flow 2: name players
         f2 = s("new.f2", { count: [Player.total_player], name: [player.name] })
-        player.edit_name(controller.ask(f2, reg: FILENAME_REG, empty: true, input_type: :custom))
+        player.edit_name(controller.ask(f2, reg: COMMON_REG[:filename], empty: true, input_type: :custom))
         puts "Player is renamed to: #{player.name}"
 
         player
