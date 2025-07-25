@@ -6,18 +6,15 @@ module ConsoleGame
   module Chess
     # A wrapper to launch the game Chess
     # @author Ancient Nimbus
-    module ChessLauncher
+    module Launcher
       # Load chess to app list
       # @return [Hash]
       def load_chess = { "chess" => method(:chess) }
 
       # Run game: Chess
+      # @param game_manager [GameManager] expects ConsoleGame::GameManager object
       # @return [Game]
-      def chess = Chess::Game.new(self)
-
-      # End game message
-      # @return [String] textfile key
-      def shut_down_msg = "app.chess.end.home"
+      def chess(game_manager) = Chess::Game.new(game_manager)
     end
   end
 end

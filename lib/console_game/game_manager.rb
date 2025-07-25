@@ -7,7 +7,7 @@ require_relative "console_menu"
 require_relative "user_profile"
 require_relative "player"
 require_relative "base_game"
-require_relative "chess/chess_launcher"
+require_relative "chess/launcher"
 
 # Console Game System v2.0.0
 # @author Ancient Nimbus
@@ -17,7 +17,7 @@ module ConsoleGame
   class GameManager
     include Console
     include ::NimbusFileUtils
-    include Chess::ChessLauncher
+    include Chess::Launcher
 
     # Alias for NimbusFileUtils
     F = NimbusFileUtils
@@ -45,9 +45,9 @@ module ConsoleGame
     # Run a game
     # @param app [String]
     def launch(app)
-      self.active_game = apps[app].call
+      self.active_game = apps[app].call(self)
       active_game.start
-      print_msg(s(shut_down_msg))
+      print_msg(s(shut_down_msg(app)))
       self.active_game = nil
     end
 
@@ -93,6 +93,11 @@ module ConsoleGame
 
     # Define the app list
     def load_app_list = {}.merge(load_chess)
+
+    # End game message
+    # @param app [String] expects app name
+    # @return [String] textfile key
+    def shut_down_msg(app) = "app.#{app}.end.home"
 
     # Setup user profile
     def assign_user_profile
