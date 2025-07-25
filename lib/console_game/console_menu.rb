@@ -53,7 +53,7 @@ module ConsoleGame
       Whirly.start spinner: "random_dots", status: s("cli.lol.title").sample do
         sleep 3
         Whirly.status = s("cli.lol.sub").sample
-        sleep 3
+        sleep 1.5
         msgs = s("cli.lol.msgs")
         print_msg(msgs[command_usage[:lol] % msgs.size], pre: "* ")
       end
