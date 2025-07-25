@@ -71,7 +71,6 @@ module ConsoleGame
           key, dir = set
           castle_dirs.delete(dir) if level.castling_states[key] == false
         end
-        # p castle_dirs
         true
       end
 
@@ -81,14 +80,16 @@ module ConsoleGame
         distance = curr_pos - old_pos
         return unless distance.abs == 2
 
-        alg_pos = distance.positive? ? "h#{rank}" : "a#{rank}"
+        rook_pos = file == "g" ? curr_pos - 1 : curr_pos + 1
+        summon_the_rook(distance.positive? ? "h#{rank}" : "a#{rank}", rook_pos)
 
-        rook_query, rook_pos = file == "g" ? [alg_pos, curr_pos - 1] : [alg_pos, curr_pos + 1]
-        rook = level.fetch_piece(rook_query)
-        rook.move(rook_pos)
-
-        puts "King is castling" # @todo: TF replace
+        level.board.print_after_cb("level.castle", { info: info })
       end
+
+      # Search the rook
+      # @param alg_pos [String] expects algebraic notation
+      # @param rook_pos [Integer] expects grid position of the target rook
+      def summon_the_rook(rook_to_summon, rook_pos) = level.fetch_piece(rook_to_summon).move(rook_pos)
 
       # disable castling
       def disable_castling
@@ -174,7 +175,8 @@ module ConsoleGame
       # Process the checked event
       def checked_event
         find_checking_pieces
-        puts "#{side} #{name} is checked by #{checked_status[:attackers].map(&:info).join(', ')}."
+        sub = { type: checked_status[:attackers].map(&:name).join(", "), king_side: side.capitalize }
+        level.event_msgs << level.board.s("level.check", sub)
       end
 
       # Find the pieces that is checking the King

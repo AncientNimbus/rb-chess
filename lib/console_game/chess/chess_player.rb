@@ -12,7 +12,7 @@ module ConsoleGame
       attr_accessor :side, :piece_at_hand
       # @!attribute [r] controller
       #   @return [ChessInput]
-      attr_reader :level, :controller, :moves_history
+      attr_reader :level, :controller, :moves_history, :session_id
 
       # @param name [String]
       # @param controller [ChessInput]
@@ -42,15 +42,16 @@ module ConsoleGame
       # @param date [Time] time of the event
       def register_session(id, p2_name, mode, _event: "Casual", site: "Ruby Arcade by Ancient Nimbus",
                            date: Time.new.ceil)
+        @session_id = id
         players = [name, p2_name].map { |name| Paint.unpaint(name) }
         white, black = side == :white ? players : players.reverse
         # @todo: to refactor
-        write_metadata(id, :mode, mode)
-        write_metadata(id, :white, white)
-        write_metadata(id, :black, black)
-        write_metadata(id, :event, "#{white} vs #{black}")
-        write_metadata(id, :site, site)
-        write_metadata(id, :date, date)
+        write_metadata(:mode, mode)
+        write_metadata(:white, white)
+        write_metadata(:black, black)
+        write_metadata(:event, "#{white} vs #{black}")
+        write_metadata(:site, site)
+        write_metadata(:date, date)
         data[id]
       end
 
@@ -90,7 +91,7 @@ module ConsoleGame
         piece_at_hand.move(new_alg_pos)
         return false unless piece_at_hand.moved
 
-        sub = { name: piece_at_hand.name, info: piece_at_hand.info }
+        sub = { player: name, name: piece_at_hand.name, info: piece_at_hand.info }
         level.event_msgs << controller.s("level.move", sub)
 
         turn_end
@@ -192,9 +193,7 @@ module ConsoleGame
       end
 
       # Access player session keys
-      def write_metadata(id, key, value)
-        data[id][key] = value
-      end
+      def write_metadata(key, value, id: session_id) = data[id][key] = value
     end
   end
 end

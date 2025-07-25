@@ -64,12 +64,13 @@ module ConsoleGame
       # Perform pawn promotion
       # @param notation [Symbol]
       def promote_to(notation = :q)
-        return puts "Invalid option for promotion!" unless %i[q r b n].include?(notation)
+        return unless %i[q r b n].include?(notation)
 
-        class_name = FEN[notation][:class]
+        class_name = FEN.dig(notation, :class)
         new_unit = Chess.const_get(class_name).new(curr_pos, side, level: level)
         level.turn_data[curr_pos] = new_unit
-        puts "Promoting Pawn to #{new_unit.name}." # @todo Proper feedback
+
+        level.board.print_after_cb("level.promo", { new_name: new_unit.name, info: info })
       end
 
       # Check if the pawn is at the other end of the board
