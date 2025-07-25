@@ -10,11 +10,11 @@ module ConsoleGame
       # @param choices [Array<String>] usable pieces available to the current player
       # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @param alg_dict [#call] expects a method to convert query to board position
+      # @param warn_msg [#call] User warning during bad input
       # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
-      # @param warn_msg [String] User warning during bad input
       # @return [ChessPiece]
-      def fetch_piece(query, choices:, t_data:, alg_dict:, bypass: false, warn_msg: "#{query} is invalid!")
-        return puts warn_msg unless choices.include?(query) || bypass
+      def fetch_piece(query, choices:, t_data:, alg_dict:, warn_msg:, bypass: false)
+        return warn_msg.call("level.err.notation") unless choices.include?(query) || bypass
 
         t_data[alg_dict.call(query)]
       end

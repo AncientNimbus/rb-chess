@@ -48,8 +48,9 @@ module ConsoleGame
       # Process flow when there is an issue during FEN parsing
       # @param level [Chess::Level] Chess level object
       # @param fen_str [String] expects a string in FEN format
-      def fen_error(level, fen_str)
-        puts "FEN error, FEN: '#{fen_str}' is not a valid sequence. Loading a new game..." # @todo: Replace with TF
+      # @param err_msg [String] error message during FEN error
+      def fen_error(level, fen_str, err_msg: "FEN error, '#{fen_str}' is not a valid sequence. Starting a new game...")
+        puts err_msg
         parse_fen(level)
       end
 

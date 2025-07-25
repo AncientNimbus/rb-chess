@@ -37,8 +37,8 @@ module ConsoleGame
       # @param paint_str [Array<Symbol, String, nil>]
       # @param extname [String]
       # @return [String] the translated and interpolated string
-      def s(key_path, subs = {}, paint_str: [nil, nil], extname: ".yml")
-        super("app.chess.#{key_path}", subs, paint_str: paint_str, extname: extname)
+      def s(key_path, subs = {}, paint_str: %i[default default], extname: ".yml")
+        super("app.chess.#{key_path}", subs, paint_str:, extname:)
       end
 
       private

@@ -2,7 +2,7 @@
 
 module ConsoleGame
   module Chess
-    # FenImport is a helper module to perform FEN data export operations.
+    # FenExport is a helper module to perform FEN data export operations.
     # It is compatible with most online chess site, and machine readable.
     # @author Ancient Nimbus
     # @version v1.0.0

@@ -58,11 +58,11 @@ module ConsoleGame
       # @param choices [Array<String>] usable pieces available to the current player
       # @param t_data [Array<ChessPiece, String>] expects level turn_data array
       # @param alg_dict [#call] expects a method to convert query to board position
+      # @param warn_msg [#call] User warning during bad input
       # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
-      # @param warn_msg [String] User warning during bad input
       # @return [ChessPiece]
       def fetch_piece(query, choices: usable_pieces[player.side], t_data: turn_data, alg_dict: method(:to_1d_pos),
-                      bypass: false, warn_msg: board.s("level.err.notation")) = super
+                      warn_msg: board.method(:print_after_cb), bypass: false) = super
 
       # Override: Fetch a group of pieces notation from turn_data based on algebraic notation
       # @param query [Array<String>]
@@ -151,9 +151,7 @@ module ConsoleGame
         refresh
         return if game_ended
 
-        # Play turn
         player.play_turn
-
         # Post turn
         self.white_turn = !white_turn
       end
@@ -162,9 +160,15 @@ module ConsoleGame
       # @return [ChessPlayer, ChessComputer]
       def set_current_player = @player = white_turn ? w_player : b_player
 
-      # Check for end game condition
-      # @return [Boolean]
-      def game_end_check = @game_ended = draw? || any_checkmate?(kings) ? true : false
+      # Restore En passant status based on FEN data
+      def load_en_passant_state
+        return if en_passant.nil?
+
+        en_passant[0] = fetch_piece(en_passant[0], bypass: true)
+        en_passant[1] = alg_map[en_passant[1].to_sym]
+      end
+
+      # == Data Handling ==
 
       # Save turn handling
       def save_turn
@@ -193,15 +197,17 @@ module ConsoleGame
       # @return [Array<Array<String>>]
       def all_moves = [w_player, b_player].map(&:moves_history)
 
-      # Restore En passant status based on FEN data
-      def load_en_passant_state
-        return if en_passant.nil?
-
-        en_passant[0] = fetch_piece(en_passant[0], bypass: true)
-        en_passant[1] = alg_map[en_passant[1].to_sym]
-      end
+      # Override: Process flow when there is an issue during FEN parsing
+      # @param level [Chess::Level] Chess level object
+      # @param fen_str [String] expects a string in FEN format
+      # @param err_msg [String] error message during FEN error
+      def fen_error(level, fen_str, err_msg: board.s("fen.err")) = super
 
       # == Endgame Logics ==
+
+      # Check for end game condition
+      # @return [Boolean]
+      def game_end_check = @game_ended = draw? || any_checkmate?(kings) ? true : false
 
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true

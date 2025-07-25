@@ -19,6 +19,18 @@ module ConsoleGame
         display_configs
       end
 
+      # Print before the chessboard
+      # @param keypath [String] TF keypath
+      # @param subs [Hash] `{ demo: ["some text", :red] }`
+      # def print_before_cb(keypath, sub)
+      #   board.print_msg(board.s(keypath, sub))
+      # end
+
+      # Print after the chessboard
+      # @param keypath [String] TF keypath
+      # @param subs [Hash] `{ demo: ["some text", :red] }`
+      def print_after_cb(keypath, sub = {}) = print_msg(s(keypath, sub))
+
       # Print turn
       # @param event_msgs [Array<String>]
       def print_turn(event_msgs)
