@@ -15,7 +15,15 @@ GEM
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
+    mini_portile2 (2.8.9)
+    nokogiri (1.18.9)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.18.9-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.9-x64-mingw-ucrt)
+      racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-gnu)
       racc (~> 1.4)
     observer (0.1.2)
     ostruct (0.6.3)
@@ -109,6 +117,10 @@ GEM
 
 PLATFORMS
   arm64-darwin-24
+  x64-mingw-ucrt
+  x64-mingw32
+  x86-mingw32
+  x86_64-linux
 
 DEPENDENCIES
   paint (~> 2.3)
