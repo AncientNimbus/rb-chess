@@ -20,14 +20,14 @@ module ConsoleGame
       include Logic
       include Display
 
-      attr_reader :mode, :p1, :p2, :sides, :sessions
+      attr_reader :mode, :p1, :p2, :sides, :sessions, :level
 
       # @param game_manager [GameManager]
       # @param title [String]
       def initialize(game_manager = nil, title = "Chess")
         super(game_manager, title, ChessInput.new(game_manager, self), ver: "0.8.0")
         setup_p1
-        @sides = PRESET[:nil_hash].call
+        @sides = {}
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
       end

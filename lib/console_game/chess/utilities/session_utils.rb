@@ -19,7 +19,7 @@ module ConsoleGame
       # Assign players to a sides hash
       # @param players [ChessPlayer, ChessComputer] expects two ChessPlayer objects
       # @return [Hash<ChessPlayer, ChessComputer>]
-      def assign_sides(*players, sides: Hash.new { |h, k| h[k] = nil })
+      def assign_sides(*players, sides: {})
         sides[white_sym], sides[black_sym] = players
         sides[white_sym], sides[black_sym] = sides[black_sym], sides[white_sym] if players[0].side == black_sym
         sides
