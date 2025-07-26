@@ -10,12 +10,14 @@ module ConsoleGame
     include ::NimbusFileUtils
 
     attr_reader :game_manager, :controller, :title, :user
-    attr_accessor :state, :game_result
+    attr_accessor :ver, :state, :game_result
 
     # @param game_manager [GameManager]
     # @param title [String]
     # @param input [Input]
-    def initialize(game_manager = nil, title = "Base Game", input = nil)
+    # @param ver [String] game version
+    def initialize(game_manager = nil, title = "Base Game", input = nil, ver:)
+      @ver = ver
       @game_manager = game_manager
       @controller = input
       @title = title

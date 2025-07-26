@@ -105,6 +105,7 @@ module ConsoleGame
       def load(_args = [])
         return cmd_disabled if level.nil?
 
+        # save(mute: true)
         print_msg(s("cmd.load"), pre: "* ")
         chess_manager.setup_game
       end

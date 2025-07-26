@@ -11,22 +11,20 @@ require_relative "logics/display"
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
   # @author Ancient Nimbus
-  # @version 0.7.0
+  # @version 0.8.0
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
       include Logic
       include Display
 
-      attr_reader :ver, :mode, :p1, :p2, :side, :sessions
+      attr_reader :mode, :p1, :p2, :side, :sessions
 
       # @param game_manager [GameManager]
       # @param title [String]
       def initialize(game_manager = nil, title = "Chess")
-        super(game_manager, title, ChessInput.new(game_manager, self))
-        @ver = "0.7.0"
-        @p1 = ChessPlayer.new(user.profile[:username], controller)
-        @p2 = nil
+        super(game_manager, title, ChessInput.new(game_manager, self), ver: "0.8.0")
+        setup_p1
         @side = PRESET[:nil_hash].call
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
@@ -70,6 +68,7 @@ module ConsoleGame
       # Handle new game sequence
       # @param err [Boolean] is use when there is a load err
       def new_game(err: false)
+        @p2 = nil
         print_msg(s("new.err")) if err
         print_msg(s("new.f1"))
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
@@ -123,7 +122,8 @@ module ConsoleGame
       def print_sessions_to_load
         sessions_list = sessions.transform_values { |session| session.select { |k, _| %i[event date].include?(k) } }
         filter = sessions_list.transform_values do |session|
-          session.merge(date: Time.new(session[:date]).strftime("%m/%d/%Y %I:%M %p"))
+          date_field = session[:date].is_a?(Time) ? session[:date] : Time.new(session[:date])
+          session.merge(date: date_field.strftime("%m/%d/%Y %I:%M %p"))
         end
         print_msg(*build_table(data: filter, head: s("load.f2a")))
       end
@@ -132,6 +132,9 @@ module ConsoleGame
 
       # Setup players
       def setup_players = [p1, p2].map { |player| player_profile(player) }
+
+      # Setup player 1
+      def setup_p1 = @p1 = ChessPlayer.new(user.profile[:username], controller)
 
       # Set up player profile
       # @param player [ConsoleGame::ChessPlayer, nil]
