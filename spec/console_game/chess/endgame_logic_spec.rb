@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-# require_relative "../../../lib/console_game/chess/logics/endgame_logic"
+require_relative "../../../lib/nimbus_file_utils/nimbus_file_utils"
 require_relative "../../../lib/console_game/chess/level"
 
 describe ConsoleGame::Chess::EndgameLogic do
+  NimbusFileUtils.set_locale("en")
   let(:controller) { ConsoleGame::Chess::ChessInput.new }
   let(:session) { { event: "Integration test", site: "Level and Endgame logic", date: nil, round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: [] } }
   let(:sides) { { white: ConsoleGame::Chess::ChessPlayer.new("Ancient", controller, :white), black: ConsoleGame::Chess::ChessPlayer.new("Nimbus", controller, :black) } }

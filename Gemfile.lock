@@ -7,6 +7,7 @@ GEM
     json (2.12.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
+    logger (1.7.0)
     paint (2.3.0)
     parallel (1.27.0)
     parser (3.3.8.0)
@@ -15,6 +16,8 @@ GEM
     prism (1.4.0)
     racc (1.8.1)
     rainbow (3.1.1)
+    rbs (3.9.4)
+      logger
     regexp_parser (2.10.0)
     rspec (3.13.1)
       rspec-core (~> 3.13.0)
@@ -50,6 +53,12 @@ GEM
     rubocop-rspec (3.6.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
+    ruby-lsp (0.25.0)
+      language_server-protocol (~> 3.17.0)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 5)
+    ruby-lsp-rspec (0.1.26)
+      ruby-lsp (~> 0.25.0)
     ruby-progressbar (1.13.0)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -74,6 +83,7 @@ DEPENDENCIES
   rubocop (~> 1.76)
   rubocop-performance (~> 1.25)
   rubocop-rspec (~> 3.6)
+  ruby-lsp-rspec
   simplecov
   whirly (~> 0.3.0)
   yard (~> 0.9.37)

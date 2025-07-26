@@ -7,13 +7,6 @@ require_relative "level"
 require_relative "input/chess_input"
 require_relative "logics/logic"
 require_relative "logics/display"
-require_relative "pieces/chess_piece"
-require_relative "pieces/king"
-require_relative "pieces/queen"
-require_relative "pieces/bishop"
-require_relative "pieces/knight"
-require_relative "pieces/rook"
-require_relative "pieces/pawn"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
@@ -30,8 +23,8 @@ module ConsoleGame
       def initialize(game_manager = nil, title = "Chess")
         super(game_manager, title, ChessInput.new(game_manager, self))
         @ver = "0.7.0"
-        # @p1 = ChessPlayer.new(user.profile[:username], controller)
-        # @p2 = nil
+        @p1 = ChessPlayer.new(user.profile[:username], controller)
+        @p2 = nil
         @side = PRESET[:nil_hash].call
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
