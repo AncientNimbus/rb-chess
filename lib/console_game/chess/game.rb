@@ -20,6 +20,8 @@ module ConsoleGame
 
       attr_reader :ver, :mode, :p1, :p2, :side, :sessions
 
+      # @param game_manager [GameManager]
+      # @param title [String]
       def initialize(game_manager = nil, title = "Chess")
         super(game_manager, title, ChessInput.new(game_manager, self))
         @ver = "0.7.0"
@@ -43,6 +45,7 @@ module ConsoleGame
 
       private
 
+      # Game intro
       def boot
         tf_fetcher("", *%w[boot how_to help]).each do |msg|
           print_msg(msg)

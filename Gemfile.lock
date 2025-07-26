@@ -2,12 +2,23 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
+    backport (1.2.0)
+    benchmark (0.4.1)
     diff-lcs (1.6.2)
     docile (1.4.1)
+    jaro_winkler (1.6.1)
     json (2.12.2)
+    kramdown (2.5.1)
+      rexml (>= 3.3.9)
+    kramdown-parser-gfm (1.1.0)
+      kramdown (~> 2.0)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
+    nokogiri (1.18.9-arm64-darwin)
+      racc (~> 1.4)
+    observer (0.1.2)
+    ostruct (0.6.3)
     paint (2.3.0)
     parallel (1.27.0)
     parser (3.3.8.0)
@@ -19,6 +30,9 @@ GEM
     rbs (3.9.4)
       logger
     regexp_parser (2.10.0)
+    reverse_markdown (3.0.0)
+      nokogiri
+    rexml (3.4.1)
     rspec (3.13.1)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -53,12 +67,6 @@ GEM
     rubocop-rspec (3.6.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    ruby-lsp (0.25.0)
-      language_server-protocol (~> 3.17.0)
-      prism (>= 1.2, < 2.0)
-      rbs (>= 3, < 5)
-    ruby-lsp-rspec (0.1.26)
-      ruby-lsp (~> 0.25.0)
     ruby-progressbar (1.13.0)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -66,16 +74,41 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
+    solargraph (0.56.0)
+      backport (~> 1.2)
+      benchmark (~> 0.4)
+      bundler (~> 2.0)
+      diff-lcs (~> 1.4)
+      jaro_winkler (~> 1.6, >= 1.6.1)
+      kramdown (~> 2.3)
+      kramdown-parser-gfm (~> 1.1)
+      logger (~> 1.6)
+      observer (~> 0.1)
+      ostruct (~> 0.6)
+      parser (~> 3.0)
+      prism (~> 1.4)
+      rbs (~> 3.3)
+      reverse_markdown (~> 3.0)
+      rubocop (~> 1.38)
+      thor (~> 1.0)
+      tilt (~> 2.0)
+      yard (~> 0.9, >= 0.9.24)
+      yard-solargraph (~> 0.1)
+    solargraph-rspec (0.5.2)
+      solargraph (~> 0.52, >= 0.52.0)
+    thor (1.4.0)
+    tilt (2.6.1)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
     whirly (0.3.0)
       unicode-display_width (>= 1.1)
     yard (0.9.37)
+    yard-solargraph (0.1.0)
+      yard (~> 0.9)
 
 PLATFORMS
   arm64-darwin-24
-  ruby
 
 DEPENDENCIES
   paint (~> 2.3)
@@ -83,8 +116,9 @@ DEPENDENCIES
   rubocop (~> 1.76)
   rubocop-performance (~> 1.25)
   rubocop-rspec (~> 3.6)
-  ruby-lsp-rspec
   simplecov
+  solargraph
+  solargraph-rspec
   whirly (~> 0.3.0)
   yard (~> 0.9.37)
 

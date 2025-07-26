@@ -9,8 +9,9 @@ group :development, :test do
   gem "rubocop", "~> 1.76", require: false
   gem "rubocop-performance", "~> 1.25", require: false
   gem "rubocop-rspec", "~> 3.6", require: false
-  gem "ruby-lsp-rspec", require: false
   gem "simplecov", require: false
+  gem "solargraph", require: false
+  gem "solargraph-rspec", require: false
   gem "yard", "~> 0.9.37", require: false
 end
 
