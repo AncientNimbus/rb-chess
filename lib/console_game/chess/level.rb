@@ -56,39 +56,39 @@ module ConsoleGame
       # Override: Fetch a single chess piece
       # @param query [String] algebraic notation `"e4"`
       # @param choices [Array<String>] usable pieces available to the current player
-      # @param t_data [Array<ChessPiece, String>] expects level turn_data array
+      # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
       # @param alg_dict [#call] expects a method to convert query to board position
       # @param warn_msg [#call] User warning during bad input
       # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
       # @return [ChessPiece]
-      def fetch_piece(query, choices: usable_pieces[player.side], t_data: turn_data, alg_dict: method(:to_1d_pos),
-                      warn_msg: board.method(:print_after_cb), bypass: false) = super
+      def fetch_piece(query, choices: usable_pieces[player.side], turn_data: self.turn_data,
+                      alg_dict: method(:to_1d_pos), warn_msg: board.method(:print_after_cb), bypass: false) = super
 
       # Override: Fetch a group of pieces notation from turn_data based on algebraic notation
       # @param query [Array<String>]
       # @param pieces [Array<ChessPiece>]
       # @param choices [Array<String>] usable pieces available to the current player
-      # @param t_data [Array<ChessPiece, String>] expects level turn_data array
+      # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
       # @return [Array<Array<ChessPiece>, Array<String>>]
-      def group_fetch(query, pieces: [], choices: usable_pieces[player.side], t_data: turn_data) = super
+      def group_fetch(query, pieces: [], choices: usable_pieces[player.side], turn_data: self.turn_data) = super
 
       # Override: Grab all pieces, only whites or only blacks
       # @param side [Symbol] expects :all, :white or :black
       # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
-      # @param t_data [Array<ChessPiece, String>] expects level turn_data array
+      # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
       # @return [Array<ChessPiece>] a list of chess pieces
-      def fetch_all(side = :all, type: ChessPiece, t_data: turn_data) = super
+      def fetch_all(side = :all, type: ChessPiece, turn_data: self.turn_data) = super
 
       # Override: Lookup a piece based on its possible move position
       # @param side [Symbol] :black or :white
       # @param type [Symbol] expects a notation
       # @param target [String] expects a algebraic notation
       # @param file_rank [String] expects a file rank data
-      # @param available_pieces [Hash] expects a usable_pieces hash from chess level
+      # @param usable_pieces [Hash] expects a usable_pieces hash from chess level
       # @param piece_lib [Hash] expects a FEN reference hash
       # @param alg_dict [#call] expects a method to convert query to board position
       # @return [ChessPiece, nil]
-      def reverse_lookup(side, type, target, file_rank = nil, available_pieces: usable_pieces, piece_lib: FEN,
+      def reverse_lookup(side, type, target, file_rank = nil, usable_pieces: self.usable_pieces, piece_lib: FEN,
                          alg_dict: method(:to_1d_pos)) = super
 
       # == Board Logic ==
@@ -110,11 +110,12 @@ module ConsoleGame
 
       # Override: Simulate next move - Find good moves
       # @param piece [ChessPiece] expects a ChessPiece object
-      # @param t_data [Array<ChessPiece, String>] expects turn_data from Level
+      # @param turn_data [Array<ChessPiece, String>] expects turn_data from Level
       # @param update_state [#call] expects #update_board_state method from Level
       # @param good_pos [Array<Integer>]
       # @return [Array<Integer>] good moves
-      def simulate_next_moves(piece, t_data: turn_data, update_state: method(:update_board_state), good_pos: []) = super
+      def simulate_next_moves(piece, turn_data: self.turn_data, update_state: method(:update_board_state),
+                              good_pos: []) = super
 
       # == Game Logic ==
 
@@ -181,6 +182,7 @@ module ConsoleGame
       end
 
       # Helper: Convert en passant data before export
+      # @return [nil, Array<nil, String>]
       def format_en_passant = en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
 
       # Helper: Process move history and full move counter
@@ -209,16 +211,18 @@ module ConsoleGame
       # @return [Boolean]
       def game_end_check = @game_ended = draw? || any_checkmate?(kings) ? true : false
 
-      # End game if is it a draw
+      # Override: End game if is it a draw
+      # @param side [Symbol] current player side
+      # @param usable_pieces [Hash] expects a usable_pieces hash from chess level
+      # @param threats_map [Hash] expects a threat_map hash from chess level
+      # @param last_four [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
+      # @param half_move [Integer] half move clock
+      # @param session [Array<String>] fen history
       # @return [Boolean] the game is a draw when true
-      def draw?
+      def draw?(side: player.side, usable_pieces: self.usable_pieces, threats_map: self.threats_map,
+                last_four: self.last_four, half_move: self.half_move, session: self.session[:fens])
         update_board_state
-        [
-          stalemate?(player.side, usable_pieces, threats_map),
-          insufficient_material?(*last_four),
-          half_move_overflow?(half_move),
-          threefold_repetition?(session[:fens])
-        ].any?
+        super
       end
 
       # Determine the minimum qualifying requirement to enter the #insufficient_material? flow

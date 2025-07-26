@@ -16,6 +16,21 @@ module ConsoleGame
 
       # == Rules for Draw ==
 
+      # End game if is it a draw
+      # @param side [Symbol] current player side
+      # @param usable_pieces [Hash] expects a usable_pieces hash from chess level
+      # @param threats_map [Hash] expects a threat_map hash from chess level
+      # @param last_four [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
+      # @param half_move [Integer] half move clock
+      # @param session [Array<String>] fen history
+      # @return [Boolean] the game is a draw when true
+      def draw?(side:, usable_pieces:, threats_map:, last_four:, half_move:, session:)
+        [
+          stalemate?(side, usable_pieces, threats_map), insufficient_material?(*last_four),
+          half_move_overflow?(half_move), threefold_repetition?(session)
+        ].any?
+      end
+
       # Game is a stalemate
       # @param side [Symbol] expects player side, :black or :white
       # @param usable_pieces [Hash<Array<String>>]
