@@ -20,12 +20,12 @@ describe ConsoleGame::Chess::Game do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
         allow(game_manager).to receive(:save_user_profile)
-        allow(game_manager).to receive(:exit_arcade).and_raise("exit_called")
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end
 
       it "opens level and exit successfully" do
         allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "--help", "--help alg", "--help smith", "--exit")
-        expect { chess_manager.start }.to raise_error("exit_called")
+        expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
 
@@ -34,12 +34,12 @@ describe ConsoleGame::Chess::Game do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
         allow(game_manager).to receive(:save_user_profile)
-        allow(game_manager).to receive(:exit_arcade).and_raise("exit_called")
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end
 
       it "opens level and exit successfully" do
         allow(Readline).to receive(:readline).and_return("", "", "", "1", "2", "", "2", "--exit")
-        expect { chess_manager.start }.to raise_error("exit_called")
+        expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
   end
@@ -50,12 +50,12 @@ describe ConsoleGame::Chess::Game do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
         allow(game_manager).to receive(:save_user_profile)
-        allow(game_manager).to receive(:exit_arcade).and_raise("exit_called")
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end
 
       it "opens level and exit successfully" do
         allow(Readline).to receive(:readline).and_return("", "", "", "2", "1", "--exit")
-        expect { chess_manager.start }.to raise_error("exit_called")
+        expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
 
@@ -66,12 +66,12 @@ describe ConsoleGame::Chess::Game do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
         allow(game_manager).to receive(:save_user_profile)
-        allow(game_manager).to receive(:exit_arcade).and_raise("exit_called")
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end
 
       it "opens level and exit successfully" do
         allow(Readline).to receive(:readline).and_return("", "", "", "2", "1", "--exit")
-        expect { chess_manager.start }.to raise_error("exit_called")
+        expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
 
@@ -82,12 +82,12 @@ describe ConsoleGame::Chess::Game do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
         allow(game_manager).to receive(:save_user_profile)
-        allow(game_manager).to receive(:exit_arcade).and_raise("exit_called")
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end
 
       it "opens level and exit successfully" do
         allow(Readline).to receive(:readline).and_return("", "", "", "2", "1", "y", "--exit")
-        expect { chess_manager.start }.to raise_error("exit_called")
+        expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
   end

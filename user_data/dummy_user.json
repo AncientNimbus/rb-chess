@@ -1,7 +1,7 @@
 {
   "uuid": "9e39f092-534e-4dbb-ac3c-64846b78d727",
   "username": "Dummy User",
-  "saved_date": "2025-07-20 17:51:34 +0100",
+  "saved_date": "2025-07-26 21:13:23 +0100",
   "appdata": {
     "chess": {
       "1": {
@@ -43,6 +43,6 @@
     }
   },
   "stats": {
-    "launch_count": 6
+    "launch_count": 28
   }
 }

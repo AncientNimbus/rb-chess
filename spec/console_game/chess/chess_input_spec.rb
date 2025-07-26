@@ -174,8 +174,11 @@ describe ConsoleGame::Chess::ChessInput do
 
   describe "#quit" do
     context "when the method is called" do
-      it "exits the program" do
+      before do
         allow(game_manager).to receive(:exit_arcade).and_return(SystemExit)
+      end
+
+      it "exits the program" do
         expect(chess_input_test.quit).to be SystemExit
       end
     end
