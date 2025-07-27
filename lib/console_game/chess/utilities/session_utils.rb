@@ -17,11 +17,16 @@ module ConsoleGame
       private
 
       # Assign players to a sides hash
-      # @param players [ChessPlayer, ChessComputer] expects two ChessPlayer objects
+      # @param player1 [ChessPlayer] expects a ChessPlayer objects
+      # @param player2 [ChessPlayer, ChessComputer] expects a ChessPlayer objects
+      # @param opt [Integer] expects 1 or 2, where 1 will set p1 as white and p2 as black, and 2 in reverse
       # @return [Hash<ChessPlayer, ChessComputer>]
-      def assign_sides(*players, sides: {})
-        sides[white_sym], sides[black_sym] = players
-        sides[white_sym], sides[black_sym] = sides[black_sym], sides[white_sym] if players[0].side == black_sym
+      def assign_sides(player1, player2, opt: 1, sides: {})
+        p1_side = player1.side
+        opt = p1_side == white_sym ? 1 : 2 unless p1_side.nil?
+        sides[white_sym] = player1
+        sides[black_sym] = player2
+        sides[white_sym], sides[black_sym] = sides[black_sym], sides[white_sym] if opt == 2
         sides
       end
 
@@ -39,15 +44,22 @@ module ConsoleGame
 
       # Create players based on load mode
       # @param session [Hash] game session to load
+      # @param controller [ChessInput] expects a ChessInput class object
+      # @param player [ChessPlayer] expects ChessPlayer class object
+      # @param ai_player [ChessComputer] expects ChessComputer class object
       # @return [Array<ChessPlayer, ChessComputer>]
-      def build_players(session)
-        if mode == 1
-          SIDES_SYM.map { |side| create_player(session[side], side, type: :human) }
-        else
+      def build_players(session, controller:, player:, ai_player:)
+        case session[:mode]
+        when 1
+          SIDES_SYM.map { |side| create_player(session[side], side, controller:, player:, ai_player:, type: :human) }
+        when 2
           computer_side = session.key("Computer")
+          raise KeyError if computer_side.nil?
+
           player_side = computer_side == white_sym ? black_sym : white_sym
-          [create_player(session[player_side], player_side, type: :human),
-           create_player(session[computer_side], computer_side, type: :ai)]
+          [create_player(session[player_side], player_side, controller:, player:, ai_player:, type: :human),
+           create_player(session[computer_side], computer_side, controller:, player:, ai_player:, type: :ai)]
+        else raise KeyError
         end
       end
 

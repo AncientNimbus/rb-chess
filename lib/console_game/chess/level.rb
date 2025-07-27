@@ -73,11 +73,11 @@ module ConsoleGame
 
       # Override: Fetch a group of pieces notation from turn_data based on algebraic notation
       # @param query [Array<String>]
-      # @param pieces [Array<ChessPiece>]
       # @param choices [Array<String>] usable pieces available to the current player
       # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
+      # @param pieces [Array<ChessPiece>]
       # @return [Array<Array<ChessPiece>, Array<String>>]
-      def group_fetch(query, pieces: [], choices: usable_pieces[player.side], turn_data: self.turn_data) = super
+      def group_fetch(query, choices: usable_pieces[player.side], turn_data: self.turn_data, pieces: []) = super
 
       # Override: Grab all pieces, only whites or only blacks
       # @param side [Symbol] expects :all, :white or :black

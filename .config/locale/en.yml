@@ -263,6 +263,7 @@ en:
         f2a: "Please enter a number to indicate the session you wish to load:"
         f2b: "Select a game session to resume:"
         f2b_err: "Invalid input, please choose between 1 to %{max}"
+        err: "The session you wish to load appears to be corrupted, exiting load game menu."
       new:
         f1: |
           * Select a game mode:
@@ -271,6 +272,7 @@ en:
         f1a: "Please select a game mode: "
         f1a_err: "Invalid input, please choose between 1 or 2"
         f2: "Please name Player %{count} (Default: %{name})"
+        f2a: "Name has been updated to '%{name}'."
         err: "Sessions not found, entering new game creation mode..."
       order:
         f1: |

@@ -26,8 +26,6 @@ module ConsoleGame
       # @param title [String]
       def initialize(game_manager = nil, title = "Chess")
         super(game_manager, title, ChessInput.new(game_manager, self), ver: "0.8.0")
-        setup_p1
-        @sides = {}
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
       end
@@ -35,7 +33,7 @@ module ConsoleGame
       # Setup sequence
       # new game or load game
       def setup_game
-        Player.player_count(1)
+        reset_state
         opt = game_selection
         id = opt == 1 ? new_game : load_game
         fen = sessions.dig(id, :fens, -1)
@@ -64,7 +62,6 @@ module ConsoleGame
       # Handle new game sequence
       # @param err [Boolean] is use when there is a load err
       def new_game(err: false)
-        @p2 = nil
         print_msg(s("new.err")) if err
         print_msg(s("new.f1"))
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
@@ -76,7 +73,12 @@ module ConsoleGame
       # Handle load game sequence
       def load_game
         user_opt, session = select_session
-        @p1, @p2 = build_players(session)
+        begin
+          @p1, @p2 = build_players(session)
+        rescue KeyError
+          print_msg(s("load.err"))
+          new_game(err: true)
+        end
         @sides = assign_sides(p1, p2)
         user_opt
       end
@@ -103,11 +105,19 @@ module ConsoleGame
 
       # == Utilities ==
 
-      # Setup players
-      def setup_players = [p1, p2].map { |player| player_profile(player) }
+      # Reset state
+      def reset_state
+        Player.player_count(0)
+        @sides = {}
+        setup_p1
+        @p2 = nil
+      end
 
       # Setup player 1
       def setup_p1 = @p1 = create_player(user.profile[:username])
+
+      # Setup players
+      def setup_players = [p1, p2].map { |player| player_profile(player) }
 
       # Set up player profile
       # @param player [ConsoleGame::ChessPlayer, nil]
@@ -119,7 +129,7 @@ module ConsoleGame
         # flow 2: name players
         f2 = s("new.f2", { count: [Player.total_player], name: [player.name] })
         player.edit_name(controller.ask(f2, reg: COMMON_REG[:filename], empty: true, input_type: :custom))
-        puts "Player is renamed to: #{player.name}"
+        print_msg(s("new.f2a", { name: player.name }))
 
         player
       end
@@ -130,8 +140,7 @@ module ConsoleGame
         print_msg(f1)
         opt = controller.ask(f1a, err_msg: f1a_err, reg: [1, 3], input_type: :range).to_i
         opt = rand(1..2) if opt == 3
-        players = [p1, p2]
-        sides[:white], sides[:black] = opt == 1 ? players : players.reverse
+        @sides = assign_sides(p1, p2, opt:)
       end
 
       # Create session data
@@ -139,11 +148,18 @@ module ConsoleGame
       # @param mode [Integer] game mode
       # @return [Integer] current session id
       def create_session(id, game_mode = mode)
-        sides_keys = sides.keys
-        p1.side, p2.side = sides[:white] == p1 ? sides_keys : sides_keys.reverse
+        sides.map { |side, player| player.side = side }
         sessions[id] = p1.register_session(id, p2.name, game_mode)
         id
       end
+
+      # Override: Create players based on load mode
+      # @param session [Hash] game session to load
+      # @param controller [ChessInput] expects a ChessInput class object
+      # @param player [ChessPlayer] expects ChessPlayer class object
+      # @param ai_player [ChessComputer] expects ChessComputer class object
+      # @return [Array<ChessPlayer, ChessComputer>]
+      def build_players(session, controller: self.controller, player: ChessPlayer, ai_player: ChessComputer) = super
 
       # Override: Create a player
       # @param name [String] expects a name
