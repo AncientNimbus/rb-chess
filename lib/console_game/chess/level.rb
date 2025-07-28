@@ -59,21 +59,25 @@ module ConsoleGame
 
       # == Utilities ==
 
+      # Create new piece lookup service
+      # @return [PieceLookup]
+      def piece_lookup = @piece_lookup ||= PieceLookup.new(self)
+
       # Fetch a single chess piece
       # @see PieceLookup #fetch_piece
-      def fetch_piece(...) = PieceLookup.new(self).fetch_piece(...)
+      def fetch_piece(...) = piece_lookup.fetch_piece(...)
 
       # Fetch a group of pieces notation from turn_data based on algebraic notation
       # @see PieceLookup #group_fetch
-      def group_fetch(...) = PieceLookup.new(self).group_fetch(...)
+      def group_fetch(...) = piece_lookup.group_fetch(...)
 
       # Grab all pieces, only whites or only blacks
       # @see PieceLookup #fetch_all
-      def fetch_all(...) = PieceLookup.new(self).fetch_all(...)
+      def fetch_all(...) = piece_lookup.fetch_all(...)
 
       # Lookup a piece based on its possible move position
       # @see PieceLookup #reverse_lookup
-      def reverse_lookup(...) = PieceLookup.new(self).reverse_lookup(...)
+      def reverse_lookup(...) = piece_lookup.reverse_lookup(...)
 
       # == Board Logic ==
 
@@ -81,6 +85,7 @@ module ConsoleGame
       # @param print_turn [Boolean] print board if is it set to true
       # @return [Boolean] true if the operation is a success
       def refresh(print_turn: true)
+        @piece_lookup = nil
         update_board_state
         game_end_check
         board.print_turn(event_msgs) if print_turn
