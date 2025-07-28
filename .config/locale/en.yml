@@ -1,9 +1,9 @@
 # Textfile for Chess
 en:
   cli:
-    ver: "|<<-───────────────|⟡ Ruby Arcade ⟡ v0.7.0 by Ancient Nimbus|───────────────->>|"
+    ver: "|<<-───────────────|⟡ Ruby Arcade ⟡ v%{ver} by Ancient Nimbus|───────────────->>|"
     guideline: |
-      ___________________ ⟡ Ruby Arcade ⟡ v0.7.0 by Ancient Nimbus ___________________
+      ___________________ ⟡ Ruby Arcade ⟡ v0.0.0 by Ancient Nimbus ___________________
       |<<-|For best experience, adjust the terminal to fit this in a single line |->>|
     boot: |
       * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
@@ -138,7 +138,7 @@ en:
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
         * │                                   Chess                                    │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
-        * │             A Command Line Game by Ancient Nimbus | ver: 0.7.0             │
+        * │             A Command Line Game by Ancient Nimbus | ver: 0.0.0             │
         * +──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────+
       intro: |
         * **How to start**

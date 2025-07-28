@@ -48,7 +48,7 @@ module ConsoleGame
       # Game intro
       def boot
         tf_fetcher("", *%w[boot how_to help]).each do |msg|
-          print_msg(msg)
+          print_msg(msg.sub("0.0.0", ver))
           controller.ask(s("blanks.enter"), empty: true)
         end
       end
@@ -99,6 +99,7 @@ module ConsoleGame
 
       # Endgame handling
       def end_game
+        self.state = :ended
         opt = controller.ask(s("session.restart"), reg: COMMON_REG[:yesno], input_type: :custom)
         setup_game if opt.downcase.include?("y")
       end

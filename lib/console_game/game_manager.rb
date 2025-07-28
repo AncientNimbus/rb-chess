@@ -22,11 +22,12 @@ module ConsoleGame
     # Alias for NimbusFileUtils
     F = NimbusFileUtils
 
-    attr_reader :base_input, :cli, :apps, :user
+    attr_reader :base_input, :cli, :apps, :user, :ver
     attr_accessor :running, :active_game
 
     def initialize(lang: "en")
       F.set_locale(lang)
+      @ver = "2.0.0"
       @running = true
       @base_input = Input.new(self)
       @cli = ConsoleMenu.new(self)
@@ -80,7 +81,7 @@ module ConsoleGame
     # Greet user
     def greet
       tf_fetcher("", *%w[.guideline .boot], root: "cli").each do |msg|
-        print_msg(msg)
+        print_msg(msg.sub("0.0.0", ver))
         base_input.ask(s("cli.std_blank"), empty: true)
       end
     end

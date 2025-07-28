@@ -9,8 +9,8 @@ module ConsoleGame
     include Console
     include ::NimbusFileUtils
 
-    attr_reader :game_manager, :controller, :title, :user
-    attr_accessor :ver, :state, :game_result
+    attr_reader :game_manager, :controller, :title, :user, :ver
+    attr_accessor :state, :game_result
 
     # @param game_manager [GameManager]
     # @param title [String]

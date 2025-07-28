@@ -63,7 +63,7 @@ module ConsoleGame
     def help(_args = []) = print_msg(s("cli.std_help"))
 
     # Display system info | command pattern: `info`
-    def info(_args = []) = print_msg(s("cli.ver"))
+    def info(_args = []) = print_msg(s("cli.ver", { ver: game_manager.ver }))
 
     private
 
