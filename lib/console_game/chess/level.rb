@@ -92,6 +92,7 @@ module ConsoleGame
 
       # Board state refresher
       # Generate all possible move and send it to board analysis
+      # @see PieceAnalysis #board_analysis
       def update_board_state
         @threats_map, @usable_pieces = PieceAnalysis.board_analysis(fetch_all.each(&:query_moves))
       end
@@ -99,6 +100,7 @@ module ConsoleGame
       # Simulate next move - Find good moves
       # @param piece [ChessPiece] expects a ChessPiece object
       # @return [Array<Integer>] good moves
+      # @see MovesSimulation #simulate_next_moves
       def simulate_next_moves(piece) = MovesSimulation.simulate_next_moves(self, piece)
 
       # == Game Logic ==
@@ -193,6 +195,7 @@ module ConsoleGame
 
       # Check for end game condition
       # @return [Boolean]
+      # @see EndgameLogic #game_end_check
       def game_end_check = @game_ended = EndgameLogic.new(self).game_end_check
     end
   end

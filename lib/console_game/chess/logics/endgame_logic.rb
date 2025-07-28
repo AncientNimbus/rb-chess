@@ -1,41 +1,41 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 module ConsoleGame
   module Chess
     # The EndgameLogic class defines the various logics to determine whether the game is a draw or checkmates
     # @author Ancient Nimbus
     class EndgameLogic
-      # @!attribute [r] player
-      #   @return [ChessPlayer, ChessComputer] player of the current turn
+      extend Forwardable
       # @!attribute [r] side
       #   @return [Symbol] side of the current player
+      # @!attribute [r] fen_records
+      #   @return [Hash<String>] fen session history
+      attr_reader :side, :fen_records
+
+      # @!attribute [w] player
+      #   @return [ChessPlayer, ChessComputer] player of the current turn
       # @!attribute [r] usable_pieces
       #   @return [Hash] all usable pieces from both sides
       # @!attribute [r] threats_map
       #   @return [Hash] all threats affecting both sides
-      # @!attribute [r] half_move
+      # @!attribute [w] half_move
       #   @return [Integer] half move clock value
-      # @!attribute [r] fen_records
-      #   @return [Hash<String>] fen session history
-      # @!attribute [r] kings
+      # @!attribute [w] kings
       #   @return [Hash<King>] all kings as hash
-      # @!attribute [r] update_state
-      #   @return [Method] refresh level state
-      attr_reader :level, :player, :side, :usable_pieces, :threats_map, :half_move, :fen_records, :kings, :update_state,
-                  :group_fetch
+      # @!method update_board_state
+      #   refresh level state
+      # @!method group_fetch
+      #   @return [Array<Array<ChessPiece>, Array<String>>]
+      def_delegators :@level, :player, :usable_pieces, :threats_map, :half_move, :kings, :session, :update_board_state,
+                     :group_fetch
 
       # @param level [Level] expects a Chess::Level class object
       def initialize(level)
         @level = level
-        @player = level.player
         @side = player.side
-        @usable_pieces = level.usable_pieces
-        @threats_map = level.threats_map
-        @half_move = level.half_move
-        @fen_records = level.session[:fens]
-        @kings = level.kings
-        @update_state = level.update_board_state
-        @group_fetch = level.method(:group_fetch)
+        @fen_records = session[:fens]
       end
 
       # Check for end game condition
@@ -55,14 +55,11 @@ module ConsoleGame
       # End game if is it a draw
       # @return [Boolean] the game is a draw when true
       def draw?
-        update_state
+        update_board_state
         [stalemate?, insufficient_material?(*last_four), half_move_overflow?, threefold_repetition?].any?
       end
 
       # Game is a stalemate
-      # @param side [Symbol] expects player side, :black or :white
-      # @param usable_pieces [Hash<Array<String>>]
-      # @param threats_map [Hash<Set<Integer>>]
       # @return [Boolean] the game is a draw when true
       def stalemate? = usable_pieces[side].empty? && threats_map[side].empty?
 
@@ -98,7 +95,7 @@ module ConsoleGame
       # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
       def last_four
         pieces = usable_pieces.values
-        pieces.sum(&:size) > 4 ? [nil, nil] : group_fetch.call(pieces)
+        pieces.sum(&:size) > 4 ? [nil, nil] : group_fetch(pieces)
       end
 
       # Game is a draw due to Fifty-move rule
