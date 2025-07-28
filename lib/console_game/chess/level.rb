@@ -23,7 +23,6 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Level
       include Logic
-      include EndgameLogic
       include FenImport
       include FenExport
 
@@ -194,26 +193,7 @@ module ConsoleGame
 
       # Check for end game condition
       # @return [Boolean]
-      def game_end_check = @game_ended = draw? || any_checkmate?(kings) ? true : false
-
-      # Override: End game if is it a draw
-      # @param side [Symbol] current player side
-      # @param usable_pieces [Hash] expects a usable_pieces hash from chess level
-      # @param threats_map [Hash] expects a threat_map hash from chess level
-      # @param last_four [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
-      # @param half_move [Integer] half move clock
-      # @param session [Array<String>] fen history
-      # @return [Boolean] the game is a draw when true
-      def draw?(side: player.side, usable_pieces: self.usable_pieces, threats_map: self.threats_map,
-                last_four: self.last_four, half_move: self.half_move, session: self.session[:fens])
-        update_board_state
-        super
-      end
-
-      # Determine the minimum qualifying requirement to enter the #insufficient_material? flow
-      # @param pieces_pos [Array<Array<String>>] a combined array of all usable pieces from both colors
-      # @return [Array<nil>, Array<Array<ChessPiece>, Array<String>>]
-      def last_four(pieces = usable_pieces.values) = pieces.sum(&:size) > 4 ? [nil, nil] : group_fetch(pieces)
+      def game_end_check = @game_ended = EndgameLogic.new(self).game_end_check
     end
   end
 end

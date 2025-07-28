@@ -13,7 +13,7 @@ module ConsoleGame
       #   @return [Array<String>] usable pieces available to the current player
       # @!attribute [r] board
       #   @return [Board] game renderer
-      attr_reader :level, :turn_data, :usable_pieces, :player, :choices, :alg_dict, :piece_lib
+      attr_reader :turn_data, :usable_pieces, :player, :choices, :alg_dict, :piece_lib
 
       # @param level [Level] expects a Chess::Level class object
       def initialize(level)

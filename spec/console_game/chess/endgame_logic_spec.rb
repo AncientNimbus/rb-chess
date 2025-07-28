@@ -18,7 +18,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if black is checkmated" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.send(:any_checkmate?, level.kings)
+        result = level.send(:game_end_check)
         expect(result).to be true
       end
     end
@@ -31,7 +31,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if white is checkmated" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.send(:any_checkmate?, level.kings)
+        result = level.send(:game_end_check)
         expect(result).to be true
       end
     end
@@ -44,7 +44,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if white is checkmated" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.send(:any_checkmate?, level.kings)
+        result = level.send(:game_end_check)
         expect(result).to be true
       end
     end
@@ -59,7 +59,7 @@ describe ConsoleGame::Chess::EndgameLogic do
         allow(level.controller).to receive(:save)
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.send(:any_checkmate?, level.kings)
+        result = level.send(:game_end_check)
         expect(result).to be false
       end
     end
@@ -74,7 +74,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if the game is a draw" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        result = level.send(:stalemate?, level.player.side, level.usable_pieces, level.threats_map)
+        result = level.send(:game_end_check)
         expect(result).to be true
       end
     end
@@ -89,8 +89,7 @@ describe ConsoleGame::Chess::EndgameLogic do
       it "returns true if the game is a draw" do
         allow($stdout).to receive(:puts)
         level.send(:init_level)
-        remaining_pieces, remaining_notations = level.send(:last_four, level.usable_pieces.values)
-        result = level.send(:insufficient_material?, remaining_pieces, remaining_notations)
+        result = level.send(:game_end_check)
         expect(result).to be true
       end
     end
@@ -125,7 +124,7 @@ describe ConsoleGame::Chess::EndgameLogic do
         allow($stdout).to receive(:puts)
         session[:fens] = fens
         level.send(:init_level)
-        result = level.send(:threefold_repetition?, session[:fens])
+        result = level.send(:game_end_check)
         expect(result).to be true
       end
     end
