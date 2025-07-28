@@ -24,7 +24,6 @@ module ConsoleGame
     class Level
       include Logic
       include EndgameLogic
-      include PieceAnalysis
       include FenImport
       include FenExport
 
@@ -95,7 +94,7 @@ module ConsoleGame
       # Board state refresher
       # Generate all possible move and send it to board analysis
       def update_board_state
-        @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
+        @threats_map, @usable_pieces = PieceAnalysis.board_analysis(fetch_all.each(&:query_moves))
       end
 
       # Simulate next move - Find good moves
@@ -119,11 +118,11 @@ module ConsoleGame
 
       # Initialise the chessboard
       def init_level
-        @kings = BW_HASH[:new_nil].call
+        @kings = PieceAnalysis.bw_nil_hash
         @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
           :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
         )
-        @threats_map, @usable_pieces = Array.new(2) { BW_HASH[:new_arr].call }
+        @threats_map, @usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         @event_msgs = []
         set_current_player
         load_en_passant_state
