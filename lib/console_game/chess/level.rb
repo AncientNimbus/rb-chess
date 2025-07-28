@@ -5,6 +5,7 @@ require_relative "logics/logic"
 require_relative "logics/piece_analysis"
 require_relative "logics/piece_lookup"
 require_relative "logics/endgame_logic"
+require_relative "logics/moves_simulation"
 require_relative "board"
 require_relative "pieces/chess_piece"
 require_relative "pieces/king"
@@ -97,14 +98,10 @@ module ConsoleGame
         @threats_map, @usable_pieces = board_analysis(fetch_all.each(&:query_moves))
       end
 
-      # Override: Simulate next move - Find good moves
+      # Simulate next move - Find good moves
       # @param piece [ChessPiece] expects a ChessPiece object
-      # @param turn_data [Array<ChessPiece, String>] expects turn_data from Level
-      # @param update_state [#call] expects #update_board_state method from Level
-      # @param good_pos [Array<Integer>]
       # @return [Array<Integer>] good moves
-      def simulate_next_moves(piece, turn_data: self.turn_data, update_state: method(:update_board_state),
-                              good_pos: []) = super
+      def simulate_next_moves(piece) = MovesSimulation.simulate_next_moves(self, piece)
 
       # == Game Logic ==
 

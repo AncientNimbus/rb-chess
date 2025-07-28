@@ -2,7 +2,7 @@
 
 module ConsoleGame
   module Chess
-    # The Piece Analysis module handles the overall stats of the chessboard
+    # The Piece Analysis module calculates the overall state of the chessboard
     # @author Ancient Nimbus
     module PieceAnalysis
       # Default hash pattern
@@ -11,46 +11,7 @@ module ConsoleGame
         new_arr: -> { Hash.new { |h, k| h[k] = [] }.merge({ white: [], black: [] }) }
       }.freeze
 
-      # Simulate next move - Find good moves
-      # @param piece [ChessPiece] expects a ChessPiece object
-      # @param turn_data [Array<ChessPiece, String>] expects turn_data from Level
-      # @param update_state [#call] expects #update_board_state method from Level
-      # @param good_pos [Array<Integer>]
-      # @return [Array<Integer>] good moves
-      def simulate_next_moves(piece, turn_data:, update_state:, good_pos: [])
-        current_pos = piece.curr_pos
-        turn_data[current_pos] = ""
-        piece.possible_moves.each { |new_pos| good_pos << simulate_move(piece, new_pos, turn_data:, update_state:) }
-        restore_previous_state(piece, current_pos:, turn_data:, update_state:)
-        good_pos
-      end
-
       private
-
-      # Simulation helper: find a good move
-      # @param piece [ChessPiece]
-      # @param new_pos [Integer]
-      # @param turn_data [Array<ChessPiece, String>] expects turn_data from Level
-      # @param update_state [#call] expects #update_board_state method from Level
-      # @return [Integer]
-      def simulate_move(piece, new_pos, turn_data:, update_state:)
-        tile = turn_data[new_pos]
-        piece.curr_pos = new_pos
-        update_state.call
-        turn_data[new_pos] = tile
-        new_pos unless piece.under_threat?
-      end
-
-      # Simulation helper: restore pre simulation state
-      # @param piece [ChessPiece]
-      # @param current_pos [Integer]
-      # @param turn_data [Array<ChessPiece, String>] expects turn_data from Level
-      # @param update_state [#call] expects #update_board_state method from Level
-      def restore_previous_state(piece, current_pos:, turn_data:, update_state:)
-        piece.curr_pos = current_pos
-        turn_data[current_pos] = piece
-        update_state.call
-      end
 
       # Analyse the board
       # usable_pieces: usable pieces of the given turn
