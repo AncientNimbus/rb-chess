@@ -156,8 +156,8 @@ module ConsoleGame
       # @return [ChessPiece]
       def assign_piece(alg_pos)
         put_piece_down
-        piece = level.fetch_piece(alg_pos)
-        return nil if piece.nil?
+        piece = level.fetch_piece(alg_pos, bypass: false)
+        return level.board.print_after_cb("level.err.notation") if piece.nil?
 
         store_active_piece(piece)
       end

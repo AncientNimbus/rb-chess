@@ -24,7 +24,6 @@ module ConsoleGame
       include Logic
       include EndgameLogic
       include PieceAnalysis
-      include PieceLookup
       include FenImport
       include FenExport
 
@@ -60,43 +59,21 @@ module ConsoleGame
 
       # == Utilities ==
 
-      # Override: Fetch a single chess piece
-      # @param query [String] algebraic notation `"e4"`
-      # @param choices [Array<String>] usable pieces available to the current player
-      # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
-      # @param alg_dict [#call] expects a method to convert query to board position
-      # @param warn_msg [#call] User warning during bad input
-      # @param bypass [Boolean] for internal use only, use this to bypass user-end validation
-      # @return [ChessPiece]
-      def fetch_piece(query, choices: usable_pieces[player.side], turn_data: self.turn_data,
-                      alg_dict: method(:to_1d_pos), warn_msg: board.method(:print_after_cb), bypass: false) = super
+      # Fetch a single chess piece
+      # @see PieceLookup #fetch_piece
+      def fetch_piece(...) = PieceLookup.new(self).fetch_piece(...)
 
-      # Override: Fetch a group of pieces notation from turn_data based on algebraic notation
-      # @param query [Array<String>]
-      # @param choices [Array<String>] usable pieces available to the current player
-      # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
-      # @param pieces [Array<ChessPiece>]
-      # @return [Array<Array<ChessPiece>, Array<String>>]
-      def group_fetch(query, choices: usable_pieces[player.side], turn_data: self.turn_data, pieces: []) = super
+      # Fetch a group of pieces notation from turn_data based on algebraic notation
+      # @see PieceLookup #group_fetch
+      def group_fetch(...) = PieceLookup.new(self).group_fetch(...)
 
-      # Override: Grab all pieces, only whites or only blacks
-      # @param side [Symbol] expects :all, :white or :black
-      # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
-      # @param turn_data [Array<ChessPiece, String>] expects level turn_data array
-      # @return [Array<ChessPiece>] a list of chess pieces
-      def fetch_all(side = :all, type: ChessPiece, turn_data: self.turn_data) = super
+      # Grab all pieces, only whites or only blacks
+      # @see PieceLookup #fetch_all
+      def fetch_all(...) = PieceLookup.new(self).fetch_all(...)
 
-      # Override: Lookup a piece based on its possible move position
-      # @param side [Symbol] :black or :white
-      # @param type [Symbol] expects a notation
-      # @param target [String] expects a algebraic notation
-      # @param file_rank [String] expects a file rank data
-      # @param usable_pieces [Hash] expects a usable_pieces hash from chess level
-      # @param piece_lib [Hash] expects a FEN reference hash
-      # @param alg_dict [#call] expects a method to convert query to board position
-      # @return [ChessPiece, nil]
-      def reverse_lookup(side, type, target, file_rank = nil, usable_pieces: self.usable_pieces, piece_lib: FEN,
-                         alg_dict: method(:to_1d_pos)) = super
+      # Lookup a piece based on its possible move position
+      # @see PieceLookup #reverse_lookup
+      def reverse_lookup(...) = PieceLookup.new(self).reverse_lookup(...)
 
       # == Board Logic ==
 
