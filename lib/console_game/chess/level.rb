@@ -170,8 +170,11 @@ module ConsoleGame
       # Handle checkmate and draw event
       # @param type [String] grounds of draw
       # @param side [Symbol, nil] player side
+      # @return [Boolean]
       def handle_result(type:, side: nil)
-        # p "#{type}, #{side}"
+        winner = session[opposite_of(side)]
+        board.print_chessboard
+        board.print_after_cb("level.endgame.#{type}", { win_player: winner })
         @game_ended = true
       end
 
@@ -198,8 +201,7 @@ module ConsoleGame
 
       # Process move history and full move counter
       def update_full_move_and_pgn_pair
-        w_moves, b_moves = all_moves
-        move_pair = extract_move_pair(w_moves, b_moves)
+        move_pair = extract_move_pair(*all_moves)
         @full_move = calculate_full_move
         update_session_moves(move_pair) if white_turn && !move_pair.nil?
       end

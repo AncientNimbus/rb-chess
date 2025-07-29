@@ -10,7 +10,7 @@ module ConsoleGame
       include Console
       include Display
 
-      attr_accessor :board_size, :board_side, :board_padding, :flip_board, :highlight
+      attr_accessor :board_size, :board_side, :board_padding, :flip_board, :highlight, :live_board
       attr_reader :level
 
       # @param level [Level] chess Level object
@@ -33,15 +33,19 @@ module ConsoleGame
 
       # Print turn
       # @param event_msgs [Array<String>]
-      def print_turn(event_msgs)
+      def print_turn(event_msgs = [""])
         system("clear")
         print_msg(*event_msgs, pre: "* ") unless event_msgs.empty?
         print_chessboard
         level.event_msgs.clear
+        self.live_board = 0
       end
 
       # Print the chessboard
-      def print_chessboard = print_msg(*build_chessboard, pre: "".ljust(board_padding), clear: false)
+      def print_chessboard
+        print_msg(*build_chessboard, pre: "".ljust(board_padding), clear: false) unless live_board >= 1
+        self.live_board += 1
+      end
 
       # Enable & disable board flipping
       def flip_setting
@@ -67,6 +71,7 @@ module ConsoleGame
         @flip_board = true
         @board_side = :white
         @highlight = THEME[:classic].slice(:icon, :highlight)
+        @live_board = 0
       end
 
       # Pre-process turn data before sending it to display module
