@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "game"
-require_relative "logics/logic"
+require_relative "board"
 require_relative "logics/piece_analysis"
 require_relative "logics/piece_lookup"
 require_relative "logics/endgame_logic"
 require_relative "logics/moves_simulation"
-require_relative "board"
-require_relative "pieces/chess_piece"
 require_relative "pieces/king"
 require_relative "pieces/queen"
 require_relative "pieces/bishop"
@@ -24,7 +21,6 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Level
       include ChessUtils
-      include Logic
       include FenImport
 
       # @!attribute [w] player

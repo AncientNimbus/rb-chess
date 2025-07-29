@@ -25,6 +25,17 @@ module ConsoleGame
       # @param alg_pos [String, Symbol] expects notation e.g., `"e4"` or `:e4`
       # @return [Integer] 1D board positional value
       def to_1d_pos(alg_pos) = alg_map.fetch((alg_pos.is_a?(Symbol) ? alg_pos : alg_pos.to_sym))
+
+      # == Board logics ==
+
+      # Flip-flop, return :black if it is :white
+      # @param side [Symbol] expects argument to be :black or :white
+      # @return [Symbol, nil] :black or :white
+      def opposite_of(side = :white)
+        return nil unless %i[black white].include?(side)
+
+        side == :white ? :black : :white
+      end
     end
   end
 end

@@ -110,41 +110,6 @@ describe ConsoleGame::Chess::Logic do
     end
   end
 
-  describe "#opposite_of" do
-    context "when side is :white" do
-      let(:side) { :white }
-
-      it "returns :black" do
-        result = logic_test.send(:opposite_of, side)
-        expect(result).to eq(:black)
-      end
-    end
-
-    context "when side is :black" do
-      let(:side) { :black }
-
-      it "returns :black" do
-        result = logic_test.send(:opposite_of, side)
-        expect(result).to eq(:white)
-      end
-    end
-
-    context "when side is invalid" do
-      let(:invalid_symbol) { :something_else }
-      let(:not_a_symbol) { ":white" }
-
-      it "returns nil if symbol is :something_else" do
-        result = logic_test.send(:opposite_of, invalid_symbol)
-        expect(result).to be_nil
-      end
-
-      it "returns nil" do
-        result = logic_test.send(:opposite_of, not_a_symbol)
-        expect(result).to be_nil
-      end
-    end
-  end
-
   describe "#pathfinder" do
     context "when starting value is 0, and bound is a 8 x 8 grid, requesting an array with 8 elements" do
       start_value = 0

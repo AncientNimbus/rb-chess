@@ -110,15 +110,6 @@ module ConsoleGame
         pos.divmod(grid_width)
       end
 
-      # Flip-flop, return :black if it is :white
-      # @param side [Symbol] expects argument to be :black or :white
-      # @return [Symbol] :black or :white
-      def opposite_of(side = :white)
-        return nil unless %i[black white].include?(side)
-
-        side == :white ? :black : :white
-      end
-
       # == Pathfinder ==
 
       # Helper method to check for out of bound cases for top and bottom borders
