@@ -5,6 +5,11 @@ module ConsoleGame
     # The EndgameLogic class defines the various logics to determine whether the game is a draw or checkmates
     # @author Ancient Nimbus
     class EndgameLogic
+      # Check for end game condition
+      # @param [Level] expects a Chess::Level class object
+      # @return [Boolean]
+      def self.game_end_check(...) = new(...).game_end_check
+
       # @!attribute [r] player
       #   @return [ChessPlayer, ChessComputer] player of the current turn
       # @!attribute [r] side

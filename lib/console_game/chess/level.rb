@@ -206,7 +206,7 @@ module ConsoleGame
       # Check for end game condition
       # @return [Boolean]
       # @see EndgameLogic #game_end_check
-      def game_end_check = @game_ended = EndgameLogic.new(self).game_end_check
+      def game_end_check = @game_ended = EndgameLogic.game_end_check(self)
     end
   end
 end
