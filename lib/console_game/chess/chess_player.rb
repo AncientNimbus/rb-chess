@@ -55,18 +55,18 @@ module ConsoleGame
         data[id]
       end
 
+      # Store active level
+      # @param active_level [Level]
+      def link_level(active_level)
+        return if level == active_level
+
+        @level = active_level
+      end
+
       # == Game Logic ==
 
       # Play a turn in chess as a human player
-      def play_turn
-        link_level
-        level.board.print_msg(level.board.s("level.turn", { player: name }), pre: "* ")
-
-        player_action
-
-        level.reset_en_passant
-        put_piece_down
-      end
+      def play_turn; end
 
       # Preview a move, display the moves indictor
       # Prompt player to enter move value when preview mode is used
@@ -147,10 +147,6 @@ module ConsoleGame
 
       private
 
-      # Process player action
-      # Prompt player to enter notation value
-      def player_action = controller.turn_action(self)
-
       # Handling piece assignment
       # @param alg_pos [String] algebraic notation
       # @return [ChessPiece]
@@ -178,17 +174,13 @@ module ConsoleGame
         piece_at_hand
       end
 
-      # Store active level
-      def link_level
-        return if level == controller.level
-
-        @level = controller.level
-      end
-
-      # Helper: Explicitly state that player action has ended
+      # States that player action has ended
+      # @return [Boolean]
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
         moves_history << piece_at_hand.last_move
+        level.reset_en_passant
+        put_piece_down
         true
       end
 

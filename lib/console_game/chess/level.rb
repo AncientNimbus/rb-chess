@@ -53,28 +53,6 @@ module ConsoleGame
         play_chess until game_ended
       end
 
-      # == Utilities ==
-
-      # Create new piece lookup service
-      # @return [PieceLookup]
-      def piece_lookup = @piece_lookup ||= PieceLookup.new(self)
-
-      # Fetch a single chess piece
-      # @see PieceLookup #fetch_piece
-      def fetch_piece(...) = piece_lookup.fetch_piece(...)
-
-      # Fetch a group of pieces notation from turn_data based on algebraic notation
-      # @see PieceLookup #group_fetch
-      def group_fetch(...) = piece_lookup.group_fetch(...)
-
-      # Grab all pieces, only whites or only blacks
-      # @see PieceLookup #fetch_all
-      def fetch_all(...) = piece_lookup.fetch_all(...)
-
-      # Lookup a piece based on its possible move position
-      # @see PieceLookup #reverse_lookup
-      def reverse_lookup(...) = piece_lookup.reverse_lookup(...)
-
       # == Board Logic ==
 
       # Actions to perform when player input is valid
@@ -112,6 +90,28 @@ module ConsoleGame
         self.en_passant = nil if active_piece.curr_pos != en_passant[1]
       end
 
+      # == Utilities ==
+
+      # Create new piece lookup service
+      # @return [PieceLookup]
+      def piece_lookup = @piece_lookup ||= PieceLookup.new(self)
+
+      # Fetch a single chess piece
+      # @see PieceLookup #fetch_piece
+      def fetch_piece(...) = piece_lookup.fetch_piece(...)
+
+      # Fetch a group of pieces notation from turn_data based on algebraic notation
+      # @see PieceLookup #group_fetch
+      def group_fetch(...) = piece_lookup.group_fetch(...)
+
+      # Grab all pieces, only whites or only blacks
+      # @see PieceLookup #fetch_all
+      def fetch_all(...) = piece_lookup.fetch_all(...)
+
+      # Lookup a piece based on its possible move position
+      # @see PieceLookup #reverse_lookup
+      def reverse_lookup(...) = piece_lookup.reverse_lookup(...)
+
       private
 
       # Initialise the chessboard
@@ -127,15 +127,23 @@ module ConsoleGame
         refresh(print_turn: false)
       end
 
-      # Main Game Loop
-      def play_chess
-        # Pre turn
+      # Pre-turn flow
+      def pre_turn
         save_turn
         set_current_player
+        player.link_level(self)
         refresh
+      end
+
+      # Main Game Loop
+      def play_chess
+        pre_turn
         return if game_ended
 
-        player.play_turn
+        # player.play_turn
+        board.print_msg(board.s("level.turn", { player: player.name }), pre: "* ")
+        controller.turn_action(player)
+
         # Post turn
         self.white_turn = !white_turn
       end

@@ -10,11 +10,9 @@ module ConsoleGame
         super
       end
 
-      private
-
       # Process player action
       # Computer player's move
-      def player_action
+      def play_turn
         selection = level.usable_pieces[side].sample
 
         assign_piece(selection)
