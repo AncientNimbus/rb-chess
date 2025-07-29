@@ -123,7 +123,6 @@ module ConsoleGame
         @threats_map, @usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         @event_msgs = []
         set_current_player
-        load_en_passant_state
         refresh(print_turn: false)
       end
 
@@ -155,14 +154,6 @@ module ConsoleGame
       # Set player side
       # @return [ChessPlayer, ChessComputer]
       def set_current_player = @player = white_turn ? w_player : b_player
-
-      # Restore En passant status based on FEN data
-      def load_en_passant_state
-        return if en_passant.nil?
-
-        en_passant[0] = fetch_piece(en_passant[0], bypass: true)
-        en_passant[1] = alg_map[en_passant[1].to_sym]
-      end
 
       # == Data Handling ==
 

@@ -26,8 +26,8 @@ module ConsoleGame
       attr_reader :level, :fen_str
 
       # @param level [Level] expects chess Level object
-      # @param fen_import [String] expects a complete FEN string
-      def initialize(level, fen_import = FEN[:w_start])
+      # @param fen_import [String, nil] expects a complete FEN string
+      def initialize(level, fen_import = nil)
         @level = level
         @fen_str = fen_import.nil? ? FEN[:w_start] : fen_import
       end
@@ -81,7 +81,7 @@ module ConsoleGame
             pos_value += 1
           end
         end
-        { turn_data: turn_data.flatten }
+        @board_data = { turn_data: turn_data.flatten }
       end
 
       # Process the active colour field
@@ -114,8 +114,16 @@ module ConsoleGame
         ep_pawn_rank = ep_state.include?("6") ? "5" : "4"
         ep_pawn = "#{ep_state[0]}#{ep_pawn_rank}"
 
-        { en_passant: ep_state == "-" ? nil : [ep_pawn, ep_state] }
+        { en_passant: ep_state == "-" ? nil : [fetch_ep_pawn(ep_pawn), ep_ghost_pos(ep_state)] }
       end
+
+      # En-passant helper: convert en passant pawn location to real pawn object
+      # @param alg_pos [String] expects algebraic notation
+      def fetch_ep_pawn(alg_pos) = @board_data[:turn_data].fetch(to_1d_pos(alg_pos))
+
+      # En-passant helper: convert ghost position to positional value
+      # @param alg_pos [String] expects algebraic notation
+      def ep_ghost_pos(alg_pos) = to_1d_pos(alg_pos)
 
       # Process FEN Half-move clock or Full-move field
       # @param num [String] expects a string with either half-move or full-move data

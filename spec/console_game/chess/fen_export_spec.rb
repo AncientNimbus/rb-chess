@@ -22,8 +22,7 @@ describe ConsoleGame::Chess::FenExport do
         turn_data, white_turn, castling_states, en_passant, half_move, full_move =
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         allow(level_double).to receive_messages(
-          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:,
-          to_alg_pos: chess_tool.method(:to_alg_pos)
+          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:
         )
       end
 
@@ -39,11 +38,12 @@ describe ConsoleGame::Chess::FenExport do
       let(:session_data) { fen_import.parse_fen(level_double, fen_data) }
 
       before do
+        mock_pawn = ConsoleGame::Chess::Pawn.new(:e5, level: level_double)
+        allow(level_double).to receive(:fetch_piece).and_return(mock_pawn)
         turn_data, white_turn, castling_states, en_passant, half_move, full_move =
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         allow(level_double).to receive_messages(
-          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:,
-          to_alg_pos: chess_tool.method(:to_alg_pos)
+          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:
         )
       end
 

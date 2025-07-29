@@ -205,21 +205,31 @@ describe ConsoleGame::Chess::FenImport do
   end
 
   describe "#parse_en_passant" do
-    context "when value is a3" do
-      let(:ep_state) { "a3" }
+    context "when en passant status is a3" do
+      let(:en_passant_a3) { "rnbqkbnr/p1pppppp/8/8/Pp6/3P4/1PP1PPPP/RNBQKBNR b KQkq a3 0 1" }
 
-      it "returns a hash where en_passant key contains the same value" do
-        result = fen_import_test.new(level_double).send(:parse_en_passant, ep_state)
-        expect(result).to eq({ en_passant: %w[a4 a3] })
+      it "returns en_passant hash where the first index is a Pawn class object" do
+        result = fen_import_test.parse_fen(level_double, en_passant_a3)
+        expect(result[:en_passant][0].class).to be ConsoleGame::Chess::Pawn
+      end
+
+      it "returns en_passant hash where the second index is a ghosht positon" do
+        result = fen_import_test.parse_fen(level_double, en_passant_a3)
+        expect(result[:en_passant][1]).to eq(16)
       end
     end
 
-    context "when value is h6" do
-      let(:ep_state) { "h6" }
+    context "when en passant status is h6" do
+      let(:en_passant_h6) { "rnbqkbnr/p1ppp1p1/5p2/6Pp/1p6/P2P4/1PP1PP1P/RNBQKBNR w KQkq h6 0 1" }
 
-      it "returns a hash where en_passant key contains the same value" do
-        result = fen_import_test.new(level_double).send(:parse_en_passant, ep_state)
-        expect(result).to eq({ en_passant: %w[h5 h6] })
+      it "returns en_passant hash where the first index is a Pawn class object" do
+        result = fen_import_test.parse_fen(level_double, en_passant_h6)
+        expect(result[:en_passant][0].class).to be ConsoleGame::Chess::Pawn
+      end
+
+      it "returns en_passant hash where the second index is a ghosht positon" do
+        result = fen_import_test.parse_fen(level_double, en_passant_h6)
+        expect(result[:en_passant][1]).to eq(47)
       end
     end
 
