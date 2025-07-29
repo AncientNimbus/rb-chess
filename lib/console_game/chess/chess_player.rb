@@ -65,7 +65,8 @@ module ConsoleGame
 
       # == Game Logic ==
 
-      # Play a turn in chess as a human player
+      # Play a turn in chess as a human player, input action is handled by ChessInput
+      # Placeholder method for ChessComputer
       def play_turn; end
 
       # Preview a move, display the moves indictor

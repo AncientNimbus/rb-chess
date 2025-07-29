@@ -140,12 +140,16 @@ module ConsoleGame
         pre_turn
         return if game_ended
 
-        # player.play_turn
-        board.print_msg(board.s("level.turn", { player: player.name }), pre: "* ")
-        controller.turn_action(player)
+        player_action
 
         # Post turn
         self.white_turn = !white_turn
+      end
+
+      # Player action flow
+      def player_action
+        board.print_msg(board.s("level.turn", { player: player.name }), pre: "* ")
+        player.is_a?(ChessComputer) ? player.play_turn : controller.turn_action(player)
       end
 
       # Set player side

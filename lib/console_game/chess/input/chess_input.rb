@@ -33,10 +33,8 @@ module ConsoleGame
       # == Core methods ==
 
       # Get user input and process them accordingly
-      # @param player [ChessPlayer, ChessComputer]
+      # @param player [ChessPlayer]
       def turn_action(player)
-        return player.play_turn if player.is_a?(ChessComputer)
-
         input = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom, empty: true)
         ops = case input_scheme
               when smith_reg then validate_smith(input)
