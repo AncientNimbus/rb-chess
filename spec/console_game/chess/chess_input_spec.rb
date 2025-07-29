@@ -13,12 +13,12 @@ describe ConsoleGame::Chess::ChessInput do
   let(:game_manager) { instance_double(ConsoleGame::GameManager) }
   let(:level) { instance_double(ConsoleGame::Chess::Level) }
 
+  before do
+    allow($stdout).to receive(:puts)
+  end
+
   describe "#turn_action" do
     let(:player) { instance_double(ConsoleGame::Chess::ChessPlayer) }
-
-    before do
-      allow($stdout).to receive(:puts)
-    end
 
     context "when input scheme is set to check for Smith notation" do
       it "calls the preview_move method in ChessPlayer class if value is h8" do
@@ -123,10 +123,6 @@ describe ConsoleGame::Chess::ChessInput do
   describe "#make_a_move" do
     let(:player) { instance_double(ConsoleGame::Chess::ChessPlayer) }
 
-    before do
-      allow($stdout).to receive(:puts)
-    end
-
     context "when input scheme is set to check for Smith notation" do
       it "calls the preview_move method in ChessPlayer class if value is h8" do
         allow(Readline).to receive(:readline).and_return("h8")
@@ -185,14 +181,6 @@ describe ConsoleGame::Chess::ChessInput do
   end
 
   describe "#save" do
-    context "when Chess Level object is present" do
-      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
-
-      it "calls the save_profile method from game manager" do
-        skip "todo"
-      end
-    end
-
     context "when Chess Level object is nil" do
       it "changes the input scheme to detect Smith notation" do
         result = chess_input_test.save
@@ -202,14 +190,6 @@ describe ConsoleGame::Chess::ChessInput do
   end
 
   describe "#load" do
-    context "when Chess Level object is present" do
-      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
-
-      it "calls the load method from game manager" do
-        skip "todo"
-      end
-    end
-
     context "when Chess Level object is nil" do
       it "returns nil" do
         result = chess_input_test.load
@@ -219,14 +199,6 @@ describe ConsoleGame::Chess::ChessInput do
   end
 
   describe "#export" do
-    context "when Chess Level object is present" do
-      let(:real_level) { ConsoleGame::Chess::Level.new(chess_input_test, {}, {}) }
-
-      it "calls the export method from game manager" do
-        skip "todo"
-      end
-    end
-
     context "when Chess Level object is nil" do
       it "returns nil" do
         result = chess_input_test.export
