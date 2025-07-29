@@ -12,6 +12,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      TERM: xterm
     strategy:
       matrix:
         ruby-version: ["3.4.2"]
