@@ -7,7 +7,7 @@ module ConsoleGame
     class EndgameLogic
       # Check for end game condition
       # @param [Level] expects a Chess::Level class object
-      # @return [Boolean]
+      # @return [Hash, nil]
       def self.game_end_check(...) = new(...).game_end_check
 
       # @!attribute [r] level
@@ -41,9 +41,15 @@ module ConsoleGame
       end
 
       # Check for end game condition
-      # @return [Boolean]
+      # @return [Hash, nil]
       def game_end_check
-        draw? || any_checkmate? ? true : false
+        condition = draw?
+        return condition unless condition.nil?
+
+        condition = any_checkmate?
+        return condition unless condition.nil?
+
+        nil
       end
 
       private
@@ -54,7 +60,7 @@ module ConsoleGame
       # @return [Hash, nil] return a message if either side is checkmate
       def any_checkmate?
         fallen_king = kings.values.select(&:checkmate?)
-        fallen_king.empty? ? nil : fallen_king
+        fallen_king.empty? ? nil : { checkmate: fallen_king.first.side }
       end
 
       # == Rules for Draw ==

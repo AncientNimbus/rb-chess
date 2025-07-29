@@ -157,10 +157,22 @@ module ConsoleGame
       # == Endgame Logics ==
 
       # Check for end game condition
-      # @return [Boolean]
+      # @return [Hash, nil] if it is hash message the game will end.
       # @see EndgameLogic #game_end_check
       def game_end_check
-        @game_ended = EndgameLogic.game_end_check(self)
+        case EndgameLogic.game_end_check(self)
+        in nil then self.game_ended = false
+        in { draw: type } then handle_result(type:)
+        in { checkmate: side } then handle_result(type: "checkmate", side:)
+        end
+      end
+
+      # Handle checkmate and draw event
+      # @param type [String] grounds of draw
+      # @param side [Symbol, nil] player side
+      def handle_result(type:, side: nil)
+        # p "#{type}, #{side}"
+        @game_ended = true
       end
 
       # == Data Handling ==
