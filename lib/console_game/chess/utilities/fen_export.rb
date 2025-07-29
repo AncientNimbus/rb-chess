@@ -4,10 +4,10 @@ require_relative "../logics/logic"
 
 module ConsoleGame
   module Chess
-    # FenExport is a class to perform FEN data export operations.
+    # FenExport is a class that performs FEN data export operations.
     # It is compatible with most online chess site, and machine readable.
     # @author Ancient Nimbus
-    # @version v1.0.0
+    # @version v1.1.0
     class FenExport
       # Simulates the next possible moves for a given chess position.
       # @return [Array<Integer>] good moves

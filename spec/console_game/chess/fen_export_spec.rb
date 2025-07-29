@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../../lib/console_game/chess/logics/logic"
+require_relative "../../../lib/console_game/chess/utilities/chess_utils"
 require_relative "../../../lib/console_game/chess/utilities/fen_import"
 require_relative "../../../lib/console_game/chess/utilities/fen_export"
 require_relative "../../../lib/console_game/chess/level"
@@ -11,7 +11,7 @@ describe ConsoleGame::Chess::FenExport do
   let(:dummy_class) do
     Class.new do
       include ConsoleGame::Chess::FenImport
-      include ConsoleGame::Chess::Logic
+      include ConsoleGame::Chess::ChessUtils
     end
   end
   let(:level_double) { instance_double(ConsoleGame::Chess::Level) }

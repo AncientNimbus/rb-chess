@@ -16,12 +16,14 @@ require_relative "pieces/rook"
 require_relative "pieces/pawn"
 require_relative "utilities/fen_import"
 require_relative "utilities/fen_export"
+require_relative "utilities/chess_utils"
 
 module ConsoleGame
   module Chess
     # The Level class handles the core game loop of the game Chess
     # @author Ancient Nimbus
     class Level
+      include ChessUtils
       include Logic
       include FenImport
 
@@ -169,17 +171,21 @@ module ConsoleGame
       # @see FenExport #to_fen
       def to_fen = FenExport.to_fen(self)
 
-      # Helper: Process move history and full move counter
+      # Process move history and full move counter
       def format_full_move
         w_moves, b_moves = all_moves
         move_pair = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
-        @full_move = curr_turn = session[:moves].size + 1
-        session[:moves][curr_turn] = move_pair if white_turn && !move_pair.nil?
+        @full_move = calculate_full_move
+        session[:moves][full_move] = move_pair if white_turn && !move_pair.nil?
       end
 
       # Fetch moves history from both player
       # @return [Array<Array<String>>]
       def all_moves = [w_player, b_player].map(&:moves_history)
+
+      # Calculate the full move
+      # @return [Integer]
+      def calculate_full_move = session[:moves].size + 1
 
       # # Override: Process flow when there is an issue during FEN parsing
       # # @param level [Chess::Level] Chess level object

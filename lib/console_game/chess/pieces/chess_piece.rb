@@ -3,12 +3,14 @@
 require_relative "../logics/logic"
 require_relative "../logics/display"
 require_relative "../utilities/fen_import"
+require_relative "../utilities/chess_utils"
 
 module ConsoleGame
   module Chess
     # Chess Piece is a parent class for the game Chess in Console Game
     # @author Ancient Nimbus
     class ChessPiece
+      include ChessUtils
       include Logic
       include Display
       include FenImport
