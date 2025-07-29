@@ -6,28 +6,24 @@ require_relative "../../../lib/console_game/chess/utilities/fen_export"
 require_relative "../../../lib/console_game/chess/level"
 
 describe ConsoleGame::Chess::FenExport do
-  subject(:fen_import) { dummy_class.new }
-
-  let(:dummy_class) do
-    Class.new do
-      include ConsoleGame::Chess::FenImport
-      include ConsoleGame::Chess::ChessUtils
-    end
-  end
+  let(:fen_import) { ConsoleGame::Chess::FenImport }
   let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
+
+  let(:chess_tool) { dummy_class.new }
+  let(:dummy_class) { Class.new { include ConsoleGame::Chess::ChessUtils } }
 
   describe "#to_fen" do
     subject(:fen_export) { described_class.new(level_double) }
 
     context "when a value is a valid internal array of a new chess session" do
-      let(:session_data) { fen_import.parse_fen(nil) }
+      let(:session_data) { fen_import.parse_fen(level_double) }
 
       before do
         turn_data, white_turn, castling_states, en_passant, half_move, full_move =
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         allow(level_double).to receive_messages(
           fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:,
-          to_alg_pos: fen_import.method(:to_alg_pos)
+          to_alg_pos: chess_tool.method(:to_alg_pos)
         )
       end
 
@@ -47,7 +43,7 @@ describe ConsoleGame::Chess::FenExport do
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         allow(level_double).to receive_messages(
           fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:,
-          to_alg_pos: fen_import.method(:to_alg_pos)
+          to_alg_pos: chess_tool.method(:to_alg_pos)
         )
       end
 

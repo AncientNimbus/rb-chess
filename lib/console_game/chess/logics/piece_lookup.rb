@@ -23,7 +23,7 @@ module ConsoleGame
         @player = level.player
         @choices = usable_pieces[player.side]
         @alg_dict = level.method(:to_1d_pos)
-        @piece_lib = level.class::FEN
+        @piece_lib = level.class::ALG_REF
       end
 
       # Fetch a single chess piece

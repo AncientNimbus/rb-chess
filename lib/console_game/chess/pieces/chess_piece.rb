@@ -13,7 +13,6 @@ module ConsoleGame
       include ChessUtils
       include Logic
       include Display
-      include FenImport
 
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze

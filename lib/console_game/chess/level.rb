@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "game"
 require_relative "board"
 require_relative "logics/piece_analysis"
 require_relative "logics/piece_lookup"
@@ -21,7 +22,6 @@ module ConsoleGame
     # @author Ancient Nimbus
     class Level
       include ChessUtils
-      include FenImport
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
@@ -35,14 +35,14 @@ module ConsoleGame
       #   @option sides [ChessPlayer, ChessComputer] :white Player who plays as White
       #   @option sides [ChessPlayer, ChessComputer] :black Player who plays as Black
       # @param session [hash] current session
-      # @param import_fen [String] expects a valid FEN string
-      def initialize(input, sides, session, import_fen = nil)
+      # @param fen_import [String] expects a valid FEN string
+      def initialize(input, sides, session, fen_import = nil)
         @controller = input
         @w_player, @b_player = sides.values
         @session = session
         @board = Board.new(self)
         controller.link_level(self)
-        @fen_data = import_fen.nil? ? parse_fen(self) : parse_fen(self, import_fen)
+        @fen_data = fen_import.nil? ? parse_fen : parse_fen(fen_import)
       end
 
       # == Flow ==
@@ -174,6 +174,12 @@ module ConsoleGame
         controller.save(mute: true)
       end
 
+      # Parse FEN string data and convert this to usable internal data hash
+      # @param fen_import [String, nil] expects a complete FEN string
+      # @return [Hash<Hash>] FEN data hash for internal use
+      # @see FenImport #parse_fen
+      def parse_fen(fen_import = nil) = FenImport.parse_fen(self, fen_import)
+
       # Convert internal data to FEN friendly string
       # @return [String] fen string
       # @see FenExport #to_fen
@@ -194,12 +200,6 @@ module ConsoleGame
       # Calculate the full move
       # @return [Integer]
       def calculate_full_move = session[:moves].size + 1
-
-      # # Override: Process flow when there is an issue during FEN parsing
-      # # @param level [Chess::Level] Chess level object
-      # # @param fen_str [String] expects a string in FEN format
-      # # @param err_msg [String] error message during FEN error
-      # def fen_error(level, fen_str, err_msg: board.s("fen.err")) = super
 
       # == Endgame Logics ==
 

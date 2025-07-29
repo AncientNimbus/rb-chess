@@ -10,6 +10,12 @@ module ConsoleGame
         [*"#{file}1".."#{file}8"].map.with_index { |alg, row| [alg.to_sym, row * 8 + col] }
       end.to_h.freeze
 
+      # Chess Piece notations reference
+      ALG_REF = {
+        k: { class: "King", notation: :k }, q: { class: "Queen", notation: :q }, r: { class: "Rook", notation: :r },
+        b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
+      }.freeze
+
       # == Algebraic natation ==
 
       # Call the algebraic chess notation to positional value reference hash

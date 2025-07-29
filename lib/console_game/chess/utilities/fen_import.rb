@@ -29,7 +29,7 @@ module ConsoleGame
       # @param fen_import [String] expects a complete FEN string
       def initialize(level, fen_import = FEN[:w_start])
         @level = level
-        @fen_str = fen_import
+        @fen_str = fen_import.nil? ? FEN[:w_start] : fen_import
       end
 
       # == FEN Import ==
@@ -37,8 +37,8 @@ module ConsoleGame
       # FEN Raw data parser (FEN import)
       # @return [Hash<Hash>] FEN data hash for internal use
       def parse_fen
-        fen = fen_str.split
-        return fen_error if fen.size != 6
+        fen = fen_str&.split
+        return fen_error if fen.nil? || fen.size != 6
 
         fen_data = process_fen_data(fen)
         return fen_error if fen_data.any?(&:nil?)
