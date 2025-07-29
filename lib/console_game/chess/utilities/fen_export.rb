@@ -1,36 +1,59 @@
 # frozen_string_literal: true
 
+require_relative "../logics/logic"
+
 module ConsoleGame
   module Chess
-    # FenExport is a helper module to perform FEN data export operations.
+    # FenExport is a class to perform FEN data export operations.
     # It is compatible with most online chess site, and machine readable.
     # @author Ancient Nimbus
     # @version v1.0.0
-    module FenExport
-      private
+    class FenExport
+      include Logic
+      # Simulates the next possible moves for a given chess position.
+      # @return [Array<Integer>] good moves
+      def self.to_fen(...) = new(...).to_fen
+
+      # @!attribute [r] turn_data
+      #   @return [Array<ChessPiece, String>] complete state of the current turn
+      # @!attribute [r] white_turn
+      #   @return [Boolean]
+      # @!attribute [r] castling_states
+      #   @return [Hash]
+      # @!attribute [r] en_passant
+      #   @return [Hash]
+      # @!attribute [r] half_move
+      #   @return [Integer]
+      # @!attribute [r] full_move
+      #   @return [Integer]
+      # @!method [r] to_alg_pos
+      attr_reader :turn_data, :white_turn, :castling_states, :en_passant, :half_move, :full_move
+
+      # @param level [Level] expects a Chess::Level class object
+      def initialize(level)
+        @level = level
+        @turn_data = level.turn_data
+        @white_turn = level.white_turn
+        @castling_states = level.castling_states
+        @en_passant = level.en_passant
+        @half_move = level.half_move
+        @full_move = level.full_move
+      end
 
       # == FEN Export ==
 
       # FEN core export method
-      # @return [String]
-      def fen_export(**session_data) = to_fen(session_data)
-
       # Transform internal turn data to FEN string
-      # @param turn_data [Array<ChessPiece, String>]
-      # @param session_data [Hash]
       # @return [String]
-      def to_fen(session_data)
-        turn_data, white_turn, castling_states, en_passant, half_move, full_move =
-          session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
-
-        [to_turn_data(turn_data), to_active_color(white_turn), to_castling_states(castling_states),
-         to_en_passant(en_passant), half_move.to_s, full_move.to_s].join(" ")
+      def to_fen
+        [to_turn_data, to_active_color, to_castling_states, to_en_passant, half_move.to_s, full_move.to_s].join(" ")
       end
 
+      private
+
       # Convert internal turn data to string
-      # @param turn_data [Array<ChessPiece, String>]
       # @return [String] FEN position placements as string
-      def to_turn_data(turn_data)
+      def to_turn_data
         str_arr = []
         turn_data.each_slice(8) do |row|
           compressed_row = compress_row_str(row_data_to_str(row))
@@ -70,22 +93,23 @@ module ConsoleGame
       end
 
       # Convert internal white_turn to FEN active colour field
-      # @param white_turn [Boolean]
       # @return [String]
-      def to_active_color(white_turn) = white_turn ? "w" : "b"
+      def to_active_color = white_turn ? "w" : "b"
 
       # Convert castling states to FEN castling status field
-      # @param castling_states [Hash]
       # @return [String]
-      def to_castling_states(castling_states)
+      def to_castling_states
         str = castling_states.reject { |_, v| v == false }.keys.map(&:to_s).join("")
         str.empty? ? "-" : str
       end
 
       # Convert en passant states to FEN en passant field
-      # @param [Hash]
       # @return [String]
-      def to_en_passant(en_passant) = en_passant.nil? ? "-" : en_passant.fetch(-1)
+      def to_en_passant
+        value = en_passant.nil? ? "-" : en_passant.fetch(-1)
+        value = to_alg_pos(value) if value.is_a?(Integer)
+        value
+      end
     end
   end
 end

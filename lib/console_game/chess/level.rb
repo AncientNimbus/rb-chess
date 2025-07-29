@@ -24,14 +24,13 @@ module ConsoleGame
     class Level
       include Logic
       include FenImport
-      include FenExport
 
       # @!attribute [w] player
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move,
                     :game_ended, :event_msgs
-      attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states,
-                  :threats_map, :usable_pieces
+      attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states, :threats_map,
+                  :usable_pieces
 
       # @param input [ChessInput]
       # @param sides [hash]
@@ -159,17 +158,15 @@ module ConsoleGame
 
       # Save turn handling
       def save_turn
-        fen_str = fen_export(
-          turn_data: turn_data, white_turn: white_turn, castling_states: castling_states,
-          en_passant: format_en_passant, half: half_move, full: format_full_move
-        )
+        format_full_move
+        fen_str = to_fen
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
         controller.save(mute: true)
       end
 
-      # Helper: Convert en passant data before export
-      # @return [nil, Array<nil, String>]
-      def format_en_passant = en_passant.nil? ? en_passant : [nil, to_alg_pos(en_passant[1])]
+      # Convert internal data to FEN friendly string
+      # @return [String] fen string
+      def to_fen = FenExport.to_fen(self)
 
       # Helper: Process move history and full move counter
       # @return [Integer]
@@ -178,18 +175,18 @@ module ConsoleGame
         move_pair = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
         curr_turn = session[:moves].size + 1
         session[:moves][curr_turn] = move_pair if white_turn && !move_pair.nil?
-        curr_turn
+        @full_move = curr_turn
       end
 
-      # Helper: Fetch moves history from both player
+      # Fetch moves history from both player
       # @return [Array<Array<String>>]
       def all_moves = [w_player, b_player].map(&:moves_history)
 
-      # Override: Process flow when there is an issue during FEN parsing
-      # @param level [Chess::Level] Chess level object
-      # @param fen_str [String] expects a string in FEN format
-      # @param err_msg [String] error message during FEN error
-      def fen_error(level, fen_str, err_msg: board.s("fen.err")) = super
+      # # Override: Process flow when there is an issue during FEN parsing
+      # # @param level [Chess::Level] Chess level object
+      # # @param fen_str [String] expects a string in FEN format
+      # # @param err_msg [String] error message during FEN error
+      # def fen_error(level, fen_str, err_msg: board.s("fen.err")) = super
 
       # == Endgame Logics ==
 

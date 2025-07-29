@@ -5,40 +5,27 @@ require_relative "../../../lib/console_game/chess/utilities/fen_export"
 require_relative "../../../lib/console_game/chess/level"
 
 describe ConsoleGame::Chess::FenExport do
-  subject(:fen_export_test) { dummy_class.new }
+  subject(:fen_import) { dummy_class.new }
 
-  let(:dummy_class) do
-    Class.new do
-      include ConsoleGame::Chess::FenImport
-      include ConsoleGame::Chess::FenExport
-    end
-  end
-
-  describe "#fen_export" do
-    let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
-
-    context "when a value is a valid internal array of a new chess session" do
-      let(:session_data) { fen_export_test.parse_fen(level_double) }
-
-      it "returns a position placements of a new game in FEN format" do
-        turn_data, white_turn, castling_states, en_passant, half_move, full_move =
-          session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
-
-        result = fen_export_test.send(:fen_export, turn_data: turn_data, white_turn: white_turn, castling_states: castling_states,
-                                                   en_passant: en_passant, half: half_move, full: full_move)
-        expect(result).to eq("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-      end
-    end
-  end
+  let(:dummy_class) { Class.new { include ConsoleGame::Chess::FenImport } }
+  let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
 
   describe "#to_fen" do
-    let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
+    subject(:fen_export) { described_class.new(level_double) }
 
     context "when a value is a valid internal array of a new chess session" do
-      let(:session_data) { fen_export_test.parse_fen(level_double) }
+      let(:session_data) { fen_import.parse_fen(nil) }
+
+      before do
+        turn_data, white_turn, castling_states, en_passant, half_move, full_move =
+          session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+        allow(level_double).to receive_messages(
+          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:
+        )
+      end
 
       it "returns a position placements of a new game in FEN format" do
-        result = fen_export_test.send(:to_fen, session_data)
+        result = fen_export.to_fen
         expect(result).to eq("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
       end
     end
@@ -46,46 +33,19 @@ describe ConsoleGame::Chess::FenExport do
     context "when a value is a valid internal array of an ongoing chess session" do
       subject(:fen_data) { "r1b1kbnr/pp4pp/3p1p2/n2Pp3/1Q6/6q1/PPP1PPPP/RNB1KBNR w KQkq e6 0 1" }
 
-      let(:session_data) { fen_export_test.parse_fen(level_double, fen_data) }
+      let(:session_data) { fen_import.parse_fen(level_double, fen_data) }
+
+      before do
+        turn_data, white_turn, castling_states, en_passant, half_move, full_move =
+          session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+        allow(level_double).to receive_messages(
+          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:
+        )
+      end
 
       it "returns a position placements of an ongoing game in FEN format" do
-        result = fen_export_test.send(:to_fen, session_data)
+        result = fen_export.to_fen
         expect(result).to eq("r1b1kbnr/pp4pp/3p1p2/n2Pp3/1Q6/6q1/PPP1PPPP/RNB1KBNR w KQkq e6 0 1")
-      end
-    end
-  end
-
-  describe "#to_turn_data" do
-    let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
-
-    context "when a value is a valid internal array of a new chess session" do
-      let(:turn_data) { fen_export_test.parse_fen(level_double)[:turn_data] }
-
-      it "returns a position placements of a new game in FEN format" do
-        result = fen_export_test.send(:to_turn_data, turn_data)
-        expect(result).to eq("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
-      end
-    end
-
-    context "when a value is a valid internal array of an ongoing chess session" do
-      subject(:fen_data) { "r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K b - - 0 18" }
-
-      let(:turn_data) { fen_export_test.parse_fen(level_double, fen_data)[:turn_data] }
-
-      it "returns a position placements of an ongoing game in FEN format" do
-        result = fen_export_test.send(:to_turn_data, turn_data)
-        expect(result).to eq("r5rk/ppp4p/3p4/2b2Q2/3pPP2/2P2n2/PP3P1R/RNB4K")
-      end
-    end
-
-    context "when a value is a valid internal array of an ongoing chess session where white king is in checked" do
-      subject(:fen_data) { "rn2k1nr/p1p1pppp/1b5b/3p3P/1p3P2/3BP1N1/PPP2qPQ/R3K1R1 w Qkq - 0 1" }
-
-      let(:turn_data) { fen_export_test.parse_fen(level_double, fen_data)[:turn_data] }
-
-      it "returns a position placements of an ongoing game in FEN format" do
-        result = fen_export_test.send(:to_turn_data, turn_data)
-        expect(result).to eq("rn2k1nr/p1p1pppp/1b5b/3p3P/1p3P2/3BP1N1/PPP2qPQ/R3K1R1")
       end
     end
   end

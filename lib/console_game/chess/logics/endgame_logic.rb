@@ -21,7 +21,7 @@ module ConsoleGame
       #   @return [Hash<King>] all kings as hash
       # @!attribute [r] update_state
       #   @return [Method] refresh level state
-      attr_reader :level, :player, :side, :usable_pieces, :threats_map, :half_move, :fen_records, :kings, :update_state,
+      attr_reader :player, :side, :usable_pieces, :threats_map, :half_move, :fen_records, :kings, :update_state,
                   :group_fetch
 
       # @param level [Level] expects a Chess::Level class object
@@ -60,9 +60,6 @@ module ConsoleGame
       end
 
       # Game is a stalemate
-      # @param side [Symbol] expects player side, :black or :white
-      # @param usable_pieces [Hash<Array<String>>]
-      # @param threats_map [Hash<Set<Integer>>]
       # @return [Boolean] the game is a draw when true
       def stalemate? = usable_pieces[side].empty? && threats_map[side].empty?
 
