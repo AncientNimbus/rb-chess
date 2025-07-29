@@ -159,7 +159,9 @@ module ConsoleGame
       # Check for end game condition
       # @return [Boolean]
       # @see EndgameLogic #game_end_check
-      def game_end_check = @game_ended = EndgameLogic.game_end_check(self)
+      def game_end_check
+        @game_ended = EndgameLogic.game_end_check(self)
+      end
 
       # == Data Handling ==
 
@@ -187,7 +189,7 @@ module ConsoleGame
         w_moves, b_moves = all_moves
         move_pair = extract_move_pair(w_moves, b_moves)
         @full_move = calculate_full_move
-        update_board_state(move_pair) if white_turn && !move_pair.nil?
+        update_session_moves(move_pair) if white_turn && !move_pair.nil?
       end
 
       # Fetch moves history from both player

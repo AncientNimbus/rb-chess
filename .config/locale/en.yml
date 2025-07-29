@@ -298,7 +298,7 @@ en:
           * Event: %{event}
           * White: %{w_player}
           * Black: %{b_player}
-          * ♞ Ruby Chess by Ancient Nimbusver: %{ver}
+          * ♞ Ruby Chess by Ancient Nimbus ver: %{ver}
         export: |
           Session has been exported as %{file_name}
           It can be found at the following directory: \n==> '%{dir}'
