@@ -117,11 +117,10 @@ module ConsoleGame
       # Initialise the chessboard
       def init_level
         @kings = PieceAnalysis.bw_nil_hash
-        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move = fen_data.values_at(
-          :turn_data, :white_turn, :castling_states, :en_passant, :half, :full
-        )
         @threats_map, @usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         @event_msgs = []
+        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
+          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         set_current_player
         refresh(print_turn: false)
       end
@@ -155,15 +154,14 @@ module ConsoleGame
       # @return [ChessPlayer, ChessComputer]
       def set_current_player = @player = white_turn ? w_player : b_player
 
-      # == Data Handling ==
+      # == Endgame Logics ==
 
-      # Save turn handling
-      def save_turn
-        format_full_move
-        fen_str = to_fen
-        session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
-        controller.save(mute: true)
-      end
+      # Check for end game condition
+      # @return [Boolean]
+      # @see EndgameLogic #game_end_check
+      def game_end_check = @game_ended = EndgameLogic.game_end_check(self)
+
+      # == Data Handling ==
 
       # Parse FEN string data and convert this to usable internal data hash
       # @param fen_import [String, nil] expects a complete FEN string
@@ -176,28 +174,36 @@ module ConsoleGame
       # @see FenExport #to_fen
       def to_fen = FenExport.to_fen(self)
 
+      # Save turn handling
+      def save_turn
+        update_full_move_and_pgn_pair
+        fen_str = to_fen
+        session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
+        controller.save(mute: true)
+      end
+
       # Process move history and full move counter
-      def format_full_move
+      def update_full_move_and_pgn_pair
         w_moves, b_moves = all_moves
-        move_pair = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
+        move_pair = extract_move_pair(w_moves, b_moves)
         @full_move = calculate_full_move
-        session[:moves][full_move] = move_pair if white_turn && !move_pair.nil?
+        update_board_state(move_pair) if white_turn && !move_pair.nil?
       end
 
       # Fetch moves history from both player
       # @return [Array<Array<String>>]
       def all_moves = [w_player, b_player].map(&:moves_history)
 
+      # Store last two moves from both sides
+      # @return [Array<String>] move_pair
+      def extract_move_pair(w_moves, b_moves) = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
+
       # Calculate the full move
       # @return [Integer]
       def calculate_full_move = session[:moves].size + 1
 
-      # == Endgame Logics ==
-
-      # Check for end game condition
-      # @return [Boolean]
-      # @see EndgameLogic #game_end_check
-      def game_end_check = @game_ended = EndgameLogic.game_end_check(self)
+      # Update session moves record
+      def update_session_moves(move_pair) = session[:moves][full_move] = move_pair
     end
   end
 end
