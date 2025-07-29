@@ -9,7 +9,6 @@ module ConsoleGame
     # @author Ancient Nimbus
     # @version v1.0.0
     class FenExport
-      include Logic
       # Simulates the next possible moves for a given chess position.
       # @return [Array<Integer>] good moves
       def self.to_fen(...) = new(...).to_fen
@@ -27,7 +26,7 @@ module ConsoleGame
       # @!attribute [r] full_move
       #   @return [Integer]
       # @!method [r] to_alg_pos
-      attr_reader :turn_data, :white_turn, :castling_states, :en_passant, :half_move, :full_move
+      attr_reader :turn_data, :white_turn, :castling_states, :en_passant, :half_move, :full_move, :to_alg_pos
 
       # @param level [Level] expects a Chess::Level class object
       def initialize(level)
@@ -38,6 +37,7 @@ module ConsoleGame
         @en_passant = level.en_passant
         @half_move = level.half_move
         @full_move = level.full_move
+        @to_alg_pos = level.method(:to_alg_pos)
       end
 
       # == FEN Export ==

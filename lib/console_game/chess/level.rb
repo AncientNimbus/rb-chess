@@ -166,16 +166,15 @@ module ConsoleGame
 
       # Convert internal data to FEN friendly string
       # @return [String] fen string
+      # @see FenExport #to_fen
       def to_fen = FenExport.to_fen(self)
 
       # Helper: Process move history and full move counter
-      # @return [Integer]
       def format_full_move
         w_moves, b_moves = all_moves
         move_pair = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
-        curr_turn = session[:moves].size + 1
+        @full_move = curr_turn = session[:moves].size + 1
         session[:moves][curr_turn] = move_pair if white_turn && !move_pair.nil?
-        @full_move = curr_turn
       end
 
       # Fetch moves history from both player

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../../../lib/console_game/chess/logics/logic"
 require_relative "../../../lib/console_game/chess/utilities/fen_import"
 require_relative "../../../lib/console_game/chess/utilities/fen_export"
 require_relative "../../../lib/console_game/chess/level"
@@ -7,7 +8,12 @@ require_relative "../../../lib/console_game/chess/level"
 describe ConsoleGame::Chess::FenExport do
   subject(:fen_import) { dummy_class.new }
 
-  let(:dummy_class) { Class.new { include ConsoleGame::Chess::FenImport } }
+  let(:dummy_class) do
+    Class.new do
+      include ConsoleGame::Chess::FenImport
+      include ConsoleGame::Chess::Logic
+    end
+  end
   let(:level_double) { instance_double(ConsoleGame::Chess::Level) }
 
   describe "#to_fen" do
@@ -20,7 +26,8 @@ describe ConsoleGame::Chess::FenExport do
         turn_data, white_turn, castling_states, en_passant, half_move, full_move =
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         allow(level_double).to receive_messages(
-          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:
+          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:,
+          to_alg_pos: fen_import.method(:to_alg_pos)
         )
       end
 
@@ -39,7 +46,8 @@ describe ConsoleGame::Chess::FenExport do
         turn_data, white_turn, castling_states, en_passant, half_move, full_move =
           session_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         allow(level_double).to receive_messages(
-          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:
+          fen_data: session_data, turn_data:, white_turn:, castling_states:, en_passant:, half_move:, full_move:,
+          to_alg_pos: fen_import.method(:to_alg_pos)
         )
       end
 
