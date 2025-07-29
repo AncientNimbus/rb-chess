@@ -1,31 +1,47 @@
 # frozen_string_literal: true
 
+require_relative "chess_utils"
+
 module ConsoleGame
   module Chess
-    # FenImport is a helper module to perform FEN data parsing operations.
+    # FenImport is a class that performs FEN data parsing operations.
     # It is compatible with most online chess site, and machine readable.
     # @author Ancient Nimbus
-    # @version v1.1.0
-    module FenImport
+    # @version v1.2.0
+    class FenImport
+      include ChessUtils
       # FEN default values
-      FEN = {
-        w_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-        k: { class: "King", notation: :k }, q: { class: "Queen", notation: :q }, r: { class: "Rook", notation: :r },
-        b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
-      }.freeze
+      FEN = { w_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }.merge(ALG_REF).freeze
+
+      # FEN Raw data parser (FEN import)
+      # @param level [Level] expects chess Level object
+      # @param fen_import [String] expects a complete FEN string
+      # @return [Hash<Hash>] FEN data hash for internal use
+      def self.parse_fen(...) = new(...).parse_fen
+
+      # @!attribute [r] level
+      #   @return [Level] chess Level object
+      # @!attribute [r] fen_str
+      #   @return [String] a complete FEN string
+      attr_reader :level, :fen_str
+
+      # @param level [Level] expects chess Level object
+      # @param fen_import [String] expects a complete FEN string
+      def initialize(level, fen_import = FEN[:w_start])
+        @level = level
+        @fen_str = fen_import
+      end
 
       # == FEN Import ==
 
       # FEN Raw data parser (FEN import)
-      # @param level [Chess::Level] Chess level object
-      # @param fen_str [String] expects a string in FEN format
       # @return [Hash<Hash>] FEN data hash for internal use
-      def parse_fen(level, fen_str = FEN[:w_start])
+      def parse_fen
         fen = fen_str.split
-        return fen_error(level, fen_str) if fen.size != 6
+        return fen_error if fen.size != 6
 
-        fen_data = process_fen_data(fen, level)
-        return fen_error(level, fen_str) if fen_data.any?(&:nil?)
+        fen_data = process_fen_data(fen)
+        return fen_error if fen_data.any?(&:nil?)
 
         board_data, active_player, castling, en_passant, h_move, f_move = fen_data
         { **board_data, **active_player, **castling, **en_passant, **h_move, **f_move }
@@ -35,37 +51,33 @@ module ConsoleGame
 
       # Helper: Batch process FEN parsing operations
       # @param fen_data [Array<String>] expects splitted FEN as an array
-      # @param level [Chess::Level] Chess level object
       # @return [Array<Hash, nil>]
-      def process_fen_data(fen_data, level)
+      def process_fen_data(fen_data)
         fen_board, active_color, c_state, ep_state, halfmove, fullmove = fen_data
         [
-          parse_piece_placement(fen_board, level), parse_active_color(active_color), parse_castling_str(c_state),
+          parse_piece_placement(fen_board), parse_active_color(active_color), parse_castling_str(c_state),
           parse_en_passant(ep_state), parse_move_num(halfmove, :half), parse_move_num(fullmove, :full)
         ]
       end
 
       # Process flow when there is an issue during FEN parsing
-      # @param level [Chess::Level] Chess level object
-      # @param fen_str [String] expects a string in FEN format
       # @param err_msg [String] error message during FEN error
-      def fen_error(level, fen_str, err_msg: "FEN error, '#{fen_str}' is not a valid sequence. Starting a new game...")
+      def fen_error(err_msg: "FEN error, '#{fen_str}' is not a valid sequence. Starting a new game...")
         puts err_msg
-        parse_fen(level)
+        self.class.parse_fen(level)
       end
 
       # Process FEN board data field
       # @param fen_board [String] expects an Array with FEN positions data
-      # @param level [Chess::Level] Chess level object
       # @return [Hash<Array<ChessPiece, String>>, nil] chess position data starts from a1..h8
-      def parse_piece_placement(fen_board, level)
+      def parse_piece_placement(fen_board)
         turn_data = Array.new(8) { [] }
         pos_value = 0
         fen_board.split("/").reverse.each_with_index do |rank, row|
           return nil unless rank.match?(/\A[kqrbnp1-8]+\z/i)
 
           normalise_fen_rank(rank).each_with_index do |unit, col|
-            turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit, level)
+            turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit)
             pos_value += 1
           end
         end
@@ -114,12 +126,11 @@ module ConsoleGame
       # Initialize chess piece via string value
       # @param pos [Integer] positional value
       # @param fen_notation [String] expects a single letter that follows the FEN standard
-      # @param level [Chess::Level] Chess level object
       # @return [Chess::King, Chess::Queen, Chess::Bishop, Chess::Rook, Chess::Knight, Chess::Pawn]
-      def piece_maker(pos, fen_notation, level)
+      def piece_maker(pos, fen_notation)
         side = fen_notation == fen_notation.capitalize ? :white : :black
         class_name = FEN[fen_notation.downcase.to_sym][:class]
-        Chess.const_get(class_name).new(pos, side, level: level)
+        Chess.const_get(class_name).new(pos, side, level:)
       end
 
       # Helper method to uncompress FEN empty cell values so that all arrays share the same size
