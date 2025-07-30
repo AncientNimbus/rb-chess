@@ -24,10 +24,15 @@ module ConsoleGame
                  p: { name: "Pawn", notation: "P", style1: "♟", style2: "♙" } }.freeze
 
       # Default theme
-      # Note: on other good options: bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF"
+      # Note on other good options: bg: %w[#ada493 #847b6a], black: "#A52A2A", white: "#F0FFFF"
       THEME = {
         classic: { bg: %w[#cdaa7d #8b5742], black: "#000000", white: "#f0ffff", icon: "◇", highlight: "#00ff7f" },
         navy: { bg: %w[#cdaa7d #8b5742], black: "#191970", white: "#f0ffff", icon: "◇", highlight: "#00ff7f" }
+      }.freeze
+
+      # Message Syntax highlight
+      MSG_HIGHLIGHT = {
+        std: { type: "cyan", alg_pos: "gold" }
       }.freeze
 
       # Override: s
