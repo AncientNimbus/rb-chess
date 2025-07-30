@@ -16,6 +16,9 @@ module ConsoleGame
         b: { class: "Bishop", notation: :b }, n: { class: "Knight", notation: :n }, p: { class: "Pawn", notation: :p }
       }.freeze
 
+      # Default symbol for white and black
+      SIDES_SYM = %i[white black].freeze
+
       # == Algebraic natation ==
 
       # Call the algebraic chess notation to positional value reference hash
@@ -34,13 +37,19 @@ module ConsoleGame
 
       # == Board logics ==
 
+      # Returns white as symbol
+      def w_sym = SIDES_SYM[0]
+
+      # Returns black as symbol
+      def b_sym = SIDES_SYM[1]
+
       # Flip-flop, return :black if it is :white
       # @param side [Symbol] expects argument to be :black or :white
       # @return [Symbol, nil] :black or :white
-      def opposite_of(side = :white)
-        return nil unless %i[black white].include?(side)
+      def opposite_of(side)
+        return nil unless SIDES_SYM.include?(side)
 
-        side == :white ? :black : :white
+        side == w_sym ? b_sym : w_sym
       end
     end
   end

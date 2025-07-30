@@ -5,9 +5,10 @@ require_relative "chess_player"
 require_relative "chess_computer"
 require_relative "level"
 require_relative "input/chess_input"
-require_relative "logics/logic"
 require_relative "logics/display"
 require_relative "utilities/session_utils"
+require_relative "utilities/chess_utils"
+require_relative "utilities/player_builder"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
@@ -16,8 +17,8 @@ module ConsoleGame
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
+      include ChessUtils
       include SessionUtils
-      include Logic
       include Display
 
       attr_reader :mode, :p1, :p2, :sides, :sessions, :level
@@ -85,9 +86,12 @@ module ConsoleGame
 
       # Helper to get session selection from user
       def select_session
-        new_game(err: true) if sessions.empty?
-        print_sessions_to_load(sessions)
-        user_opt = controller.pick_from(sessions.keys)
+        user_opt = if sessions.empty?
+                     new_game(err: true)
+                   else
+                     print_sessions_to_load(sessions)
+                     controller.pick_from(sessions.keys)
+                   end
         session = sessions[user_opt]
         @mode = session[:mode]
         [user_opt, session]
@@ -109,6 +113,7 @@ module ConsoleGame
       # Reset state
       def reset_state
         Player.player_count(0)
+        @player_builder = nil
         @sides = {}
         setup_p1
         @p2 = nil
@@ -149,31 +154,28 @@ module ConsoleGame
       # @return [Integer] current session id
       def create_session(id)
         sides.map { |side, player| player.side = side }
-        wp_name, bp_name = sides.values_at(white_sym, black_sym).map(&:name)
+        wp_name, bp_name = sides.values_at(w_sym, b_sym).map(&:name)
         sessions[id] = p1.register_session(
           id, mode:, white: wp_name, black: bp_name, event: "#{wp_name} vs #{bp_name}", site: s("misc.site")
         )
         id
       end
 
-      # Override: Create players based on load mode
-      # @param session [Hash] game session to load
-      # @param controller [ChessInput] expects a ChessInput class object
-      # @param player [ChessPlayer] expects ChessPlayer class object
-      # @param ai_player [ChessComputer] expects ChessComputer class object
-      # @return [Array<ChessPlayer, ChessComputer>]
-      def build_players(session, controller: self.controller, player: ChessPlayer, ai_player: ChessComputer) = super
+      # Create new player builder service
+      # @return [PlayerBuilder]
+      def player_builder = @player_builder ||= PlayerBuilder.new(self)
 
-      # Override: Create a player
+      # Create players based on load mode
+      # @param session [Hash] game session to load
+      # @return [Array<ChessPlayer, ChessComputer>]
+      def build_players(...) = player_builder.build_players(...)
+
+      # Create a player
       # @param name [String] expects a name
       # @param side [Symbol, nil] expects :black or :white
-      # @param controller [ChessInput] expects a ChessInput class object
-      # @param player [ChessPlayer] expects ChessPlayer class object
-      # @param ai_player [ChessComputer] expects ChessComputer class object
       # @param type [Symbol] expects :human or :ai
       # @return [ChessPlayer, ChessComputer]
-      def create_player(name = "", side = nil, controller: self.controller, player: ChessPlayer,
-                        ai_player: ChessComputer, type: :human) = super
+      def create_player(...) = player_builder.create_player(...)
     end
   end
 end
