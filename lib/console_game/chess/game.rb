@@ -6,9 +6,9 @@ require_relative "chess_computer"
 require_relative "level"
 require_relative "input/chess_input"
 require_relative "logics/display"
-require_relative "utilities/session_utils"
 require_relative "utilities/chess_utils"
 require_relative "utilities/player_builder"
+require_relative "utilities/load_manager"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
@@ -18,7 +18,6 @@ module ConsoleGame
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
       include ChessUtils
-      include SessionUtils
       include Display
 
       attr_reader :mode, :p1, :p2, :sides, :sessions, :level
@@ -73,33 +72,17 @@ module ConsoleGame
 
       # Handle load game sequence
       def load_game
-        user_opt, session = select_session
+        user_opt, session = LoadManager.select_session(self)
+        @mode = session[:mode]
         begin
           @p1, @p2 = build_players(session)
         rescue KeyError
           print_msg(s("load.err"))
           new_game(err: true)
         end
-        @sides = assign_sides(p1, p2)
+        assign_sides(p1, p2)
         user_opt
       end
-
-      # Helper to get session selection from user
-      def select_session
-        user_opt = if sessions.empty?
-                     new_game(err: true)
-                   else
-                     print_sessions_to_load(sessions)
-                     controller.pick_from(sessions.keys)
-                   end
-        session = sessions[user_opt]
-        @mode = session[:mode]
-        [user_opt, session]
-      end
-
-      # Helper to print list of sessions to load
-      # @param sessions [Hash] expects user sessions hash
-      def print_sessions_to_load(sessions) = print_msg(*build_table(data: sessions_list(sessions), head: s("load.f2a")))
 
       # Endgame handling
       def end_game
@@ -118,9 +101,6 @@ module ConsoleGame
         setup_p1
         @p2 = nil
       end
-
-      # Setup player 1
-      def setup_p1 = @p1 = create_player(user.profile[:username])
 
       # Setup players
       def setup_players = [p1, p2].map { |player| player_profile(player) }
@@ -146,7 +126,7 @@ module ConsoleGame
         print_msg(f1)
         opt = controller.ask(f1a, err_msg: f1a_err, reg: [1, 3], input_type: :range).to_i
         opt = rand(1..2) if opt == 3
-        @sides = assign_sides(p1, p2, opt:)
+        assign_sides(p1, p2, opt:)
       end
 
       # Create session data
@@ -161,20 +141,30 @@ module ConsoleGame
         id
       end
 
+      # Assign players to a sides hash
+      # @param player1 [ChessPlayer] expects a ChessPlayer objects
+      # @param player2 [ChessPlayer, ChessComputer] expects a ChessPlayer objects
+      # @param opt [Integer] expects 1 or 2, where 1 will set p1 as white and p2 as black, and 2 in reverse
+      # @return [Hash<ChessPlayer, ChessComputer>]
+      def assign_sides(player1, player2, opt: 1)
+        determine_opt = ->(player) { player.side == w_sym ? 1 : 2 }
+        validated_opt = player1.side ? determine_opt.call(player1) : opt
+        sides[w_sym], sides[b_sym] = validated_opt == 1 ? [player1, player2] : [player2, player1]
+      end
+
+      # Setup player 1
+      def setup_p1 = @p1 = create_player(user.profile[:username])
+
       # Create new player builder service
       # @return [PlayerBuilder]
       def player_builder = @player_builder ||= PlayerBuilder.new(self)
 
       # Create players based on load mode
-      # @param session [Hash] game session to load
-      # @return [Array<ChessPlayer, ChessComputer>]
+      # @see PlayerBuilder #build_player
       def build_players(...) = player_builder.build_players(...)
 
       # Create a player
-      # @param name [String] expects a name
-      # @param side [Symbol, nil] expects :black or :white
-      # @param type [Symbol] expects :human or :ai
-      # @return [ChessPlayer, ChessComputer]
+      # @see PlayerBuilder #create_player
       def create_player(...) = player_builder.create_player(...)
     end
   end

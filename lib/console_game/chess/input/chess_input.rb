@@ -2,6 +2,7 @@
 
 require_relative "../../input"
 require_relative "../logics/display"
+require_relative "../utilities/chess_utils"
 require_relative "smith_notation"
 require_relative "algebraic_notation"
 
@@ -9,6 +10,7 @@ module ConsoleGame
   module Chess
     # Input controller for the game Chess
     class ChessInput < Input
+      include ChessUtils
       include Display
       include SmithNotation
       include AlgebraicNotation
@@ -173,7 +175,7 @@ module ConsoleGame
       # @return [Hash]
       def build_info_data
         date, fens, event, white, black = level.session.values_at(:date, :fens, :event, :white, :black)
-        { date: Time.new(date).strftime("%m/%d/%Y %I:%M %p"), fen: fens.last,
+        { date: Time.new(date).strftime(STR_TIME), fen: fens.last,
           event: event, w_player: white, b_player: black, ver: chess_manager.ver }
       end
     end

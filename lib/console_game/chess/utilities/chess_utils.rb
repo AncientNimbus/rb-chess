@@ -19,6 +19,9 @@ module ConsoleGame
       # Default symbol for white and black
       SIDES_SYM = %i[white black].freeze
 
+      # Preferred time format
+      STR_TIME = "%m/%d/%Y %I:%M %p"
+
       # == Algebraic natation ==
 
       # Call the algebraic chess notation to positional value reference hash
