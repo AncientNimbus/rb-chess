@@ -14,7 +14,7 @@ module ConsoleGame
       attr_accessor :side, :piece_at_hand
       # @!attribute [r] controller
       #   @return [ChessInput]
-      attr_reader :level, :controller, :moves_history, :session_id
+      attr_reader :level, :board, :controller, :moves_history, :session_id
 
       # @param name [String]
       # @param controller [ChessInput]
@@ -22,6 +22,7 @@ module ConsoleGame
       def initialize(name = "", controller = nil, color = nil)
         super(name, controller)
         @side = color
+        # @type [ChessPiece, nil]
         @piece_at_hand = nil
         @moves_history = []
       end
@@ -38,11 +39,7 @@ module ConsoleGame
       # Register session data
       # @param id [Integer] session id
       # @param [Hash] metadata fields for PGN style data
-      # @option mode [Integer] game mode
-      # @option white [String] white player name
-      # @option black [String] black player name
-      # @option event [String] name of the event
-      # @option site [String] name of the site
+      # @see SessionBuilder #build_session
       # @return [Hash] session data
       def register_session(id, **metadata)
         @session_id = id
@@ -56,6 +53,7 @@ module ConsoleGame
         return if level == active_level
 
         @level = active_level
+        @board = active_level.board
       end
 
       # == Game Logic ==
@@ -71,9 +69,8 @@ module ConsoleGame
       def preview_move(curr_alg_pos)
         return false unless assign_piece(curr_alg_pos)
 
+        level.event_msgs << board.s("level.preview", move_msg_bundle)
         level.refresh
-        sub = { name: piece_at_hand.name, info: piece_at_hand.info }
-        controller.print_msg(controller.s("level.preview", sub), pre: "* ")
 
         # Second prompt to complete the turn
         controller.make_a_move(self)
@@ -87,8 +84,8 @@ module ConsoleGame
         piece_at_hand.move(new_alg_pos)
         return false unless piece_at_hand.moved
 
-        sub = { player: name, name: piece_at_hand.name, info: piece_at_hand.info }
-        level.event_msgs << controller.s("level.move", sub)
+        msg = piece_at_hand.last_move.include?("x") ? "capture" : "move"
+        level.event_msgs << board.s("level.#{msg}", move_msg_bundle.merge(atk_msg_bundle))
 
         turn_end
       end
@@ -117,6 +114,7 @@ module ConsoleGame
 
       # Pawn specific: Present a list of option when player can promote a pawn
       def indirect_promote
+        level.event_msgs << board.s("level.promo_opt")
         level.refresh
         controller.promote_a_pawn
       end
@@ -128,7 +126,10 @@ module ConsoleGame
       def fetch_and_move(side, type, target, file_rank = nil)
         piece = level.reverse_lookup(side, type, target, file_rank)
 
-        return false if piece.nil?
+        if piece.nil?
+          puts "Invalid selection!"
+          return false
+        end
 
         store_active_piece(piece)
         move_piece(target)
@@ -142,6 +143,16 @@ module ConsoleGame
       end
 
       private
+
+      # Move action message bundle for Paint
+      # @return [Hash]
+      def move_msg_bundle = { player: name, name: [piece_at_hand.name, board.type_hl],
+                              info: [piece_at_hand.info, board.alg_pos_hl] }
+
+      # Capture action message bundle for Paint
+      # @return [Hash]
+      def atk_msg_bundle = { side: opposite_of(side).capitalize,
+                             def: [piece_at_hand.captured.last&.name, board.type_hl] }
 
       # Handling piece assignment
       # @param alg_pos [String] algebraic notation
