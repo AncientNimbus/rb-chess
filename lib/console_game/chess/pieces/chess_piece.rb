@@ -148,7 +148,6 @@ module ConsoleGame
 
       # Determine if a piece might get attacked by multiple pieces, similar to #under_threat? but more specific
       # @param attacker [ChessPiece]
-      # @param target [ChessPiece]
       # @return [Boolean]
       def under_threat_by?(attacker)
         return false unless attacker.is_a?(ChessPiece) && attacker.side != side

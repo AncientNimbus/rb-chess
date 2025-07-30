@@ -14,8 +14,6 @@ module ConsoleGame
       FEN = { w_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }.merge(ALG_REF).freeze
 
       # FEN Raw data parser (FEN import)
-      # @param level [Level] expects chess Level object
-      # @param fen_import [String] expects a complete FEN string
       # @return [Hash<Hash>] FEN data hash for internal use
       def self.parse_fen(...) = new(...).parse_fen
 

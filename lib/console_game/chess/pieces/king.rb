@@ -87,7 +87,7 @@ module ConsoleGame
       end
 
       # Search the rook
-      # @param alg_pos [String] expects algebraic notation
+      # @param rook_to_summon [String] expects algebraic notation
       # @param rook_pos [Integer] expects grid position of the target rook
       def summon_the_rook(rook_to_summon, rook_pos) = level.fetch_piece(rook_to_summon, bypass: true).move(rook_pos)
 

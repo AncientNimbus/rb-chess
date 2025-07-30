@@ -146,7 +146,7 @@ module ConsoleGame
 
       # Create session data
       # @param id [Integer] session id
-      # @param mode [Integer] game mode
+      # @param game_mode [Integer] game mode
       # @return [Integer] current session id
       def create_session(id, game_mode = mode)
         sides.map { |side, player| player.side = side }

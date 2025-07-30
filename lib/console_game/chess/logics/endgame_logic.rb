@@ -6,7 +6,6 @@ module ConsoleGame
     # @author Ancient Nimbus
     class EndgameLogic
       # Check for end game condition
-      # @param [Level] expects a Chess::Level class object
       # @return [Hash, nil]
       def self.game_end_check(...) = new(...).game_end_check
 

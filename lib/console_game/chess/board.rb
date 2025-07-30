@@ -28,7 +28,7 @@ module ConsoleGame
 
       # Print after the chessboard
       # @param keypath [String] TF keypath
-      # @param subs [Hash] `{ demo: ["some text", :red] }`
+      # @param sub [Hash] `{ demo: ["some text", :red] }`
       def print_after_cb(keypath, sub = {}) = print_msg(s(keypath, sub))
 
       # Print turn

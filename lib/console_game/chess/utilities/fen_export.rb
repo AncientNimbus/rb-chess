@@ -77,7 +77,9 @@ module ConsoleGame
 
       # Helper: Compress empty tile
       # @param row_str_arr [Array<String>]
-      # @param [Array<String>]
+      # @param count [Integer]
+      # @param compressed_row [Array<String>]
+      # @return [Array<String>]
       def compress_row_str(row_str_arr, count: 0, compressed_row: [])
         row_str_arr.reverse_each do |elem|
           if elem == "0"
