@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "../base_game"
-require_relative "chess_player"
-require_relative "chess_computer"
+require_relative "player/chess_player"
+require_relative "player/chess_computer"
 require_relative "level"
 require_relative "input/chess_input"
 require_relative "logics/display"
@@ -67,7 +67,7 @@ module ConsoleGame
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
         @p1, @p2 = setup_players
         start_order
-        create_session(sessions.size + 1)
+        create_session
       end
 
       # Handle load game sequence
@@ -80,7 +80,7 @@ module ConsoleGame
           print_msg(s("load.err"))
           new_game(err: true)
         end
-        assign_sides(p1, p2)
+        assign_sides
         user_opt
       end
 
@@ -126,14 +126,26 @@ module ConsoleGame
         print_msg(f1)
         opt = controller.ask(f1a, err_msg: f1a_err, reg: [1, 3], input_type: :range).to_i
         opt = rand(1..2) if opt == 3
-        assign_sides(p1, p2, opt:)
+        assign_sides(opt:)
       end
 
+      # Assign players to a sides hash
+      # @param opt [Integer] expects 1 or 2, where 1 will set p1 as white and p2 as black, and 2 in reverse
+      # @return [Hash<ChessPlayer, ChessComputer>]
+      def assign_sides(opt: 1)
+        validated_opt = p1.side ? determine_opt : opt
+        sides[w_sym], sides[b_sym] = validated_opt == 1 ? [p1, p2] : [p2, p1]
+      end
+
+      # Helper: determine side assignment option, usable only when p1.side is not nil
+      # @return [Integer]
+      def determine_opt = p1.side == w_sym ? 1 : 2
+
       # Create session data
-      # @param id [Integer] session id
       # @return [Integer] current session id
-      def create_session(id)
-        sides.map { |side, player| player.side = side }
+      def create_session
+        id = sessions.size + 1
+        set_player_side
         wp_name, bp_name = sides.values_at(w_sym, b_sym).map(&:name)
         sessions[id] = p1.register_session(
           id, mode:, white: wp_name, black: bp_name, event: "#{wp_name} vs #{bp_name}", site: s("misc.site")
@@ -141,16 +153,10 @@ module ConsoleGame
         id
       end
 
-      # Assign players to a sides hash
-      # @param player1 [ChessPlayer] expects a ChessPlayer objects
-      # @param player2 [ChessPlayer, ChessComputer] expects a ChessPlayer objects
-      # @param opt [Integer] expects 1 or 2, where 1 will set p1 as white and p2 as black, and 2 in reverse
-      # @return [Hash<ChessPlayer, ChessComputer>]
-      def assign_sides(player1, player2, opt: 1)
-        determine_opt = ->(player) { player.side == w_sym ? 1 : 2 }
-        validated_opt = player1.side ? determine_opt.call(player1) : opt
-        sides[w_sym], sides[b_sym] = validated_opt == 1 ? [player1, player2] : [player2, player1]
-      end
+      # Set internal side value for new player object
+      def set_player_side = sides.map { |side, player| player.side = side }
+
+      # == Player object creation ==
 
       # Setup player 1
       def setup_p1 = @p1 = create_player(user.profile[:username])

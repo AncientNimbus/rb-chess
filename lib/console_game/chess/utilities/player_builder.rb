@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "chess_utils"
-require_relative "../chess_player"
-require_relative "../chess_computer"
+require_relative "../player/chess_player"
+require_relative "../player/chess_computer"
 
 module ConsoleGame
   module Chess

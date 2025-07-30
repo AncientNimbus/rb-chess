@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "chess_utils"
-require_relative "../../../console/console"
 
 module ConsoleGame
   module Chess

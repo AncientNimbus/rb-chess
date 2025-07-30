@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../../../lib/console_game/game_manager"
-require_relative "../../../lib/console_game/chess/chess_player"
+require_relative "../../../lib/console_game/chess/player/chess_player"
 require_relative "../../../lib/console_game/chess/level"
 require_relative "../../../lib/console_game/chess/input/chess_input"
 require_relative "../../../lib/nimbus_file_utils/nimbus_file_utils"
