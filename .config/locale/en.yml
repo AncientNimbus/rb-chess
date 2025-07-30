@@ -322,10 +322,14 @@ en:
         white: "White"
         Black: "Black"
         turn: "It is %{player}'s turn"
-        preview: "Previewing %{name} at %{info}"
+        action1: "Pick a piece to move: "
+        action2: "Make a move: "
+        preview: "Previewing %{name}'s move at %{info}"
         move: "%{player} has moved %{name} to %{info}"
-        capture: "%{atk} is capturing %{def} at %{def_info}"
+        capture: "%{player} has captured a %{side} %{def} at %{info}"
         promo: "Promoting to %{new_name} at %{info}"
+        promo_alert: "Your Pawn is ready for a promotion! "
+        promo_opt: "Stunning your Pawn has reached the other side!"
         castle: "King is castling to %{info}"
         en_passant: "%{name} is performing en passant maneuver at %{info}"
         check:
@@ -347,6 +351,7 @@ en:
           move: "%{input} is not a valid move, please try again."
           notation: "This is not a valid move, please try again."
           promo: "Invalid option for promotion!"
+          promo2: "Valid option: ♛: q, ♜: r, ♝: b, ♞: n"
       end:
         home: "Welcome back to the lobby! Hope you have fun playing chess."
       fen:

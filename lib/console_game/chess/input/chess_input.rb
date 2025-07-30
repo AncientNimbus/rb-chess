@@ -37,7 +37,7 @@ module ConsoleGame
       # Get user input and process them accordingly
       # @param player [ChessPlayer]
       def turn_action(player)
-        input = ask("Pick a piece and make a move: ", reg: input_scheme, input_type: :custom, empty: true)
+        input = ask(s("level.action1"), reg: input_scheme, input_type: :custom, empty: true)
         ops = case input_scheme
               when smith_reg then validate_smith(input)
               when alg_reg then validate_algebraic(input, player.side, input_scheme)
@@ -48,7 +48,7 @@ module ConsoleGame
       # Prompt user for the second time in the same turn if the first prompt was a preview move event
       # @param player [ChessPlayer]
       def make_a_move(player)
-        input = ask("Make a move: ", reg: SMITH_PATTERN[:gp1], input_type: :custom, empty: true)
+        input = ask(s("level.action2"), reg: SMITH_PATTERN[:gp1], input_type: :custom, empty: true)
         ops = case input.scan(input_parser)
               in [new_pos] then { type: :move_piece, args: [new_pos] }
               else { type: :invalid_input, args: [input] }
@@ -58,7 +58,7 @@ module ConsoleGame
 
       # Prompt user for Pawn promotion option when notation for promotion is not provided at the previous prompt
       def promote_a_pawn
-        ask("Your pawn is ready for a promotion ", reg: SMITH_PATTERN[:promotion], input_type: :custom)
+        ask(s("level.promo_alert"), err_msg: s("level.err.promo2"), reg: SMITH_PATTERN[:promotion], input_type: :custom)
       end
 
       # Chess Override: process user input
