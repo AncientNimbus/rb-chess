@@ -2,11 +2,13 @@
 
 require_relative "../player"
 require_relative "utilities/pgn_utils"
+require_relative "utilities/chess_utils"
 
 module ConsoleGame
   module Chess
     # ChessPlayer is the Player object for the game Chess and it is a subclass of Player.
     class ChessPlayer < Player
+      include ChessUtils
       # @!attribute [w] piece_at_hand
       #   @return [ChessPiece]
       attr_accessor :side, :piece_at_hand
@@ -35,23 +37,16 @@ module ConsoleGame
 
       # Register session data
       # @param id [Integer] session id
-      # @param p2_name [String] player 2's name
-      # @param mode [Integer] game mode
-      # @param _event [String] name of the event
-      # @param site [String] name of the site
-      # @param date [Time] time of the event
-      def register_session(id, p2_name, mode, _event: "Casual", site: "Ruby Arcade by Ancient Nimbus",
-                           date: Time.new.ceil)
+      # @param [Hash] metadata fields for PGN style data
+      # @option mode [Integer] game mode
+      # @option white [String] white player name
+      # @option black [String] black player name
+      # @option event [String] name of the event
+      # @option site [String] name of the site
+      # @return [Hash] session data
+      def register_session(id, **metadata)
         @session_id = id
-        players = [name, p2_name].map { |name| Paint.unpaint(name) }
-        white, black = side == :white ? players : players.reverse
-        # @todo: to refactor
-        write_metadata(:mode, mode)
-        write_metadata(:white, white)
-        write_metadata(:black, black)
-        write_metadata(:event, "#{white} vs #{black}")
-        write_metadata(:site, site)
-        write_metadata(:date, date)
+        metadata.merge({ date: Time.new.ceil }).each { |k, v| write_metadata(k, v) }
         data[id]
       end
 
@@ -186,7 +181,9 @@ module ConsoleGame
       end
 
       # Access player session keys
-      def write_metadata(key, value, id: session_id) = data[id][key] = value
+      def write_metadata(key, value)
+        data[session_id][key] = value.is_a?(String) ? Paint.unpaint(value) : value
+      end
     end
   end
 end

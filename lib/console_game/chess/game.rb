@@ -146,11 +146,13 @@ module ConsoleGame
 
       # Create session data
       # @param id [Integer] session id
-      # @param game_mode [Integer] game mode
       # @return [Integer] current session id
-      def create_session(id, game_mode = mode)
+      def create_session(id)
         sides.map { |side, player| player.side = side }
-        sessions[id] = p1.register_session(id, p2.name, game_mode)
+        wp_name, bp_name = sides.values_at(white_sym, black_sym).map(&:name)
+        sessions[id] = p1.register_session(
+          id, mode:, white: wp_name, black: bp_name, event: "#{wp_name} vs #{bp_name}", site: s("misc.site")
+        )
         id
       end
 

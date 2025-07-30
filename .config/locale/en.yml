@@ -351,6 +351,8 @@ en:
         home: "Welcome back to the lobby! Hope you have fun playing chess."
       fen:
         err: "FEN error, '%{fen_str}' is not a valid sequence. Starting a new game..."
+      misc:
+        site: "Ruby Arcade Terminal Chess by Ancient Nimbus"
       pieces:
         k:
           name: "King"
