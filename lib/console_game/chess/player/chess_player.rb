@@ -46,7 +46,7 @@ module ConsoleGame
       # @return [Hash] session data
       def register_session(id, **metadata)
         @session_id = id
-        metadata.merge({ date: Time.new.ceil }).each { |k, v| write_metadata(k, v) }
+        metadata.each { |k, v| write_metadata(k, v) }
         data[id]
       end
 

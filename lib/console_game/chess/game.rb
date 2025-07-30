@@ -8,6 +8,7 @@ require_relative "input/chess_input"
 require_relative "logics/display"
 require_relative "utilities/chess_utils"
 require_relative "utilities/player_builder"
+require_relative "utilities/session_builder"
 require_relative "utilities/load_manager"
 
 module ConsoleGame
@@ -72,7 +73,7 @@ module ConsoleGame
 
       # Handle load game sequence
       def load_game
-        user_opt, session = LoadManager.select_session(self)
+        user_opt, session = select_session
         @mode = session[:mode]
         begin
           @p1, @p2 = build_players(session)
@@ -101,6 +102,18 @@ module ConsoleGame
         setup_p1
         @p2 = nil
       end
+
+      # Create new session data
+      # @return [Integer] session id
+      def create_session
+        id, session_data = SessionBuilder.build_session(self)
+        sessions[id] = p1.register_session(id, **session_data)
+        id
+      end
+
+      # Select game session from list of sessions
+      # @see LoadManager #select_session
+      def select_session = LoadManager.select_session(self)
 
       # Setup players
       def setup_players = [p1, p2].map { |player| player_profile(player) }
@@ -140,21 +153,6 @@ module ConsoleGame
       # Helper: determine side assignment option, usable only when p1.side is not nil
       # @return [Integer]
       def determine_opt = p1.side == w_sym ? 1 : 2
-
-      # Create session data
-      # @return [Integer] current session id
-      def create_session
-        id = sessions.size + 1
-        set_player_side
-        wp_name, bp_name = sides.values_at(w_sym, b_sym).map(&:name)
-        sessions[id] = p1.register_session(
-          id, mode:, white: wp_name, black: bp_name, event: "#{wp_name} vs #{bp_name}", site: s("misc.site")
-        )
-        id
-      end
-
-      # Set internal side value for new player object
-      def set_player_side = sides.map { |side, player| player.side = side }
 
       # == Player object creation ==
 
