@@ -17,9 +17,9 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :at_start, :curr_pos, :targets, :sights, :color, :moved
+      attr_accessor :at_start, :curr_pos, :targets, :sights, :color, :moved, :last_move
       attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :captured, :possible_moves,
-                  :std_color, :highlight, :last_move
+                  :std_color, :highlight
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
@@ -113,22 +113,24 @@ module ConsoleGame
 
         turn_data[old_pos] = ""
         turn_data[new_pos] = self
-        @last_move = store_last_move(:move, old_pos)
+        @last_move = store_last_move(:move, old_pos:)
         return curr_pos if new_tile.is_a?(String)
 
         captured << new_tile
-        @last_move = store_last_move(:capture, old_pos)
+        @last_move = store_last_move(:capture, old_pos:)
         curr_pos
       end
 
       # Last move formatted as algebraic notation
+      # @param event [Symbol] expects the following key: :move, :capture
+      # @param old_pos [Integer] original position
       # @return [String]
-      def store_last_move(move_type = :move, file = nil)
+      def store_last_move(event = :move, old_pos:)
         alg_notation = notation.to_s.upcase
         move = "#{alg_notation}#{info}"
-        if move_type == :capture
+        if event == :capture
           move.insert(1, "x")
-          move.insert(1, alg_map.key(file)[0])
+          move.insert(1, to_alg_pos(old_pos, :f))
         end
         # move.insert(-1, "+") if possible_moves.include?(level.kings[opposite_of(side)].curr_pos)
         move

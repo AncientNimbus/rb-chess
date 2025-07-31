@@ -70,8 +70,13 @@ module ConsoleGame
         new_unit = Chess.const_get(class_name).new(curr_pos, side, level: level)
         level.turn_data[curr_pos] = new_unit
 
-        level.board.print_after_cb("level.promo", { new_name: new_unit.name, info: info })
+        last_move_is_promotion(notation)
+        print_promo_msg(new_unit)
       end
+
+      # Print Promotion message
+      # @param piece [ChessPiece]
+      def print_promo_msg(piece) = level.board.print_after_cb("level.promo", { new_name: piece.name, info: })
 
       # Check if the pawn is at the other end of the board
       def at_end? = @at_end = at_rank?(%i[a8 h8], %i[a1 h1])
@@ -91,7 +96,14 @@ module ConsoleGame
 
       # Override store_last_move
       # Last move formatted as algebraic notation
-      def store_last_move(move_type = :move, file = nil) = super.sub("P", "")
+      # @param event [Symbol] expects the following key: :move, :capture
+      # @param old_pos [Integer] original position
+      # @return [String]
+      def store_last_move(event = :move, old_pos:) = super.sub("P", "")
+
+      # Add promotion notation to last move
+      # @param notation [Symbol]
+      def last_move_is_promotion(notation) = self.last_move += "=#{notation.upcase}"
 
       # Override detect_occupied_tiles
       # Detect blocked tile based on the given positions

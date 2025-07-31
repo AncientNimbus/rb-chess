@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "chess_utils"
+require_relative "../input/algebraic_notation"
 
 module ConsoleGame
   module Chess
@@ -9,9 +10,7 @@ module ConsoleGame
     # @author Ancient Nimbus
     class MoveFormatter
       include ChessUtils
-
-      # @return [String]
-      def self.to_pgn_move(...) = new(...).to_pgn_move
+      include AlgebraicNotation
 
       # @!attribute [r] player
       #   @return [ChessPlayer, ChessComputer]
@@ -19,34 +18,35 @@ module ConsoleGame
       #   @return [ChessPiece]
       # @!attribute [r] last_move
       #   @return [String]
-      attr_reader :player, :piece, :last_move
+      attr_reader :player, :alg_reg, :piece, :last_move
 
       # @param player [ChessPlayer, ChessComputer]
       # @param active_piece [ChessPiece]
-      def initialize(player, active_piece)
+      def initialize(player)
         @player = player
-        @piece = active_piece
-        @last_move = active_piece.last_move
+        @alg_reg = regexp_algebraic
       end
 
       # Convert player move into pgn move
       # @return [String]
       def to_pgn_move
+        init_query
+        p alg_output_capture_gps(last_move)
         last_move
       end
 
       private
 
-      # # Convert internal turn data to string
-      # # @return [String] FEN position placements as string
-      # def to_turn_data
-      #   str_arr = []
-      #   turn_data.each_slice(8) do |row|
-      #     compressed_row = compress_row_str(row_data_to_str(row))
-      #     str_arr << compressed_row.join("")
-      #   end
-      #   str_arr.join("/").reverse
-      # end
+      # Init active piece
+      def init_query
+        @piece = player.piece_at_hand
+        @last_move = piece.last_move
+      end
+
+      # Override Helper: Process regexp and returns a named capture groups
+      # @param input [String] input value from prompt
+      # @return [Hash]
+      def alg_output_capture_gps(input) = super(input, alg_reg).merge({ input: })
     end
   end
 end

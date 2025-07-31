@@ -15,7 +15,7 @@ module ConsoleGame
       attr_accessor :side, :piece_at_hand
       # @!attribute [r] controller
       #   @return [ChessInput]
-      attr_reader :level, :board, :controller, :moves_history, :session_id
+      attr_reader :level, :board, :controller, :moves_history, :session_id, :move_formatter
 
       # @param name [String]
       # @param controller [ChessInput]
@@ -26,6 +26,7 @@ module ConsoleGame
         # @type [ChessPiece, nil]
         @piece_at_hand = nil
         @moves_history = []
+        @move_formatter = MoveFormatter.new(self)
       end
 
       # Override: Initialise player save data
@@ -187,7 +188,8 @@ module ConsoleGame
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
         # moves_history << piece_at_hand.last_move
-        moves_history << to_pgn_move(piece_at_hand)
+        # moves_history << to_pgn_move(piece_at_hand)
+        moves_history << move_formatter.to_pgn_move
         level.reset_en_passant
         put_piece_down
         true
