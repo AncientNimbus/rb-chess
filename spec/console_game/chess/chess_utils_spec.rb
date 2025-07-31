@@ -17,9 +17,35 @@ describe ConsoleGame::Chess::ChessUtils do
   end
 
   describe "#to_alg_pos" do
-    it "returns a1 when grid positional value is 0" do
-      result = chess_utils_test.to_alg_pos(0)
-      expect(result).to eq("a1")
+    context "when values is 0" do
+      subject(:pos_value) { 0 }
+
+      it "returns 'a1' with default filter setting" do
+        result = chess_utils_test.to_alg_pos(0)
+        expect(result).to eq("a1")
+      end
+
+      it "returns 'a' when filter set to :f" do
+        result = chess_utils_test.to_alg_pos(0, :f)
+        expect(result).to eq("a")
+      end
+
+      it "returns '1' when filter set to :r" do
+        result = chess_utils_test.to_alg_pos(0, :r)
+        expect(result).to eq("1")
+      end
+
+      it "returns 'a1' when filter setting is unknown" do
+        result = chess_utils_test.to_alg_pos(0, :test)
+        expect(result).to eq("a1")
+      end
+    end
+
+    context "when values is out of range" do
+      it "returns an empty string" do
+        result = chess_utils_test.to_alg_pos(99)
+        expect(result).to eq("")
+      end
     end
   end
 
@@ -36,6 +62,20 @@ describe ConsoleGame::Chess::ChessUtils do
         result = chess_utils_test.to_1d_pos("a1")
         expect(result).to eq(0)
       end
+    end
+  end
+
+  describe "#w_sym" do
+    it "returns :white" do
+      result = chess_utils_test.w_sym
+      expect(result).to eq(:white)
+    end
+  end
+
+  describe "#b_sym" do
+    it "returns :black" do
+      result = chess_utils_test.b_sym
+      expect(result).to eq(:black)
     end
   end
 

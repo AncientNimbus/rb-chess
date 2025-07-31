@@ -30,8 +30,16 @@ module ConsoleGame
 
       # Convert positional value to Algebraic notation string
       # @param pos [Integer]
+      # @param filter [Symbol] :f to return file value only and :r to return rank value only
       # @return [String]
-      def to_alg_pos(pos) = alg_map.key(pos).to_s
+      def to_alg_pos(pos, filter = :none)
+        alg_pos = alg_map.key(pos).to_s
+        case filter
+        when :f then alg_pos[0]
+        when :r then alg_pos[1]
+        else alg_pos
+        end
+      end
 
       # Fetch positional value from Algebraic notation string or symbol
       # @param alg_pos [String, Symbol] expects notation e.g., `"e4"` or `:e4`
