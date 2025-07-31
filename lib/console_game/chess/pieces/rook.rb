@@ -11,7 +11,7 @@ module ConsoleGame
       # @param side [Symbol] specify unit side :black or :white
       # @param level [Level] Chess::Level object
       def initialize(alg_pos = :a1, side = :white, level: nil)
-        super(alg_pos, side, :r, movements: %i[n e s w], range: :max, level: level)
+        super(alg_pos, side, :r, movements: %i[n e s w], range: :max, level:)
       end
 
       # Move the chess piece to a new valid location

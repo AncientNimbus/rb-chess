@@ -23,7 +23,9 @@ module ConsoleGame
     class Level
       include ChessUtils
 
-      # @!attribute [w] player
+      # @!attribute [r] w_player
+      #   @return [ChessPlayer, ChessComputer]
+      # @!attribute [r] b_player
       #   @return [ChessPlayer, ChessComputer]
       attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move,
                     :game_ended, :event_msgs

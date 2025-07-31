@@ -10,7 +10,7 @@ module ConsoleGame
       # @param alg_pos [Symbol] expects board position in Algebraic notation
       # @param side [Symbol] specify unit side :black or :white
       # @param level [Level] Chess::Level object
-      def initialize(alg_pos = :d1, side = :white, level: nil) = super(alg_pos, side, :q, range: :max, level: level)
+      def initialize(alg_pos = :d1, side = :white, level: nil) = super(alg_pos, side, :q, range: :max, level:)
     end
   end
 end

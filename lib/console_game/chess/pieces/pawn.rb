@@ -14,7 +14,7 @@ module ConsoleGame
       # @param level [Level] Chess::Level object
       def initialize(alg_pos = :a2, side = :white, level: nil)
         movements = side == :white ? %i[n ne nw] : %i[s se sw]
-        super(alg_pos, side, :p, movements: movements, range: 1, level: level)
+        super(alg_pos, side, :p, movements:, level:)
         self.at_start = at_rank?(%i[a2 h2], %i[a7 h7])
         at_end?
       end

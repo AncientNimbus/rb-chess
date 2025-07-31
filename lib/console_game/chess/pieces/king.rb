@@ -14,7 +14,7 @@ module ConsoleGame
       # @param side [Symbol] specify unit side :black or :white
       # @param level [Level] Chess::Level object
       def initialize(alg_pos = :e1, side = :white, level: nil)
-        super(alg_pos, side, :k, level: level)
+        super(alg_pos, side, :k, level:)
         @castle_dirs = %i[e w]
         @checked = false
         @checked_status = { checked: checked, attackers: [] }
