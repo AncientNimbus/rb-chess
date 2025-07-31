@@ -221,7 +221,7 @@ describe ConsoleGame::Chess::AlgebraicNotation do
     context "when the method is call" do
       it "returns an array with two regular expression patterns for algebraic notation as string" do
         result = algebraic_test.send(:regexp_algebraic)
-        expect(result).to eq(["(?<castle>O-O(?:-O)?)", "(?<piece>[KQRBN])?(?<file_rank>[a-h][1-8]|[a-h])?(?<capture>x)?(?<target>[a-h][1-8])(?:=(?<promote>[QRBN]))?(?<check>[+#])?"])
+        expect(result).to eq("((?<castle>O-O(?:-O)?)|(?<piece>[KQRBN])?(?<file_rank>[a-h][1-8]|[a-h])?(?<capture>x)?(?<target>[a-h][1-8])(?:=(?<promote>[QRBN]))?(?<check>[+#])?)")
       end
     end
   end

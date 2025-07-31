@@ -87,11 +87,11 @@ module ConsoleGame
       # == Utilities ==
 
       # Algebraic Regexp pattern builder
-      # @return [Array<String>]
+      # @return [String]
       def regexp_algebraic
         castling_gp = ALG_PATTERN.select { |k, _| k == :castling }.values.join
         regular_gp = ALG_PATTERN.reject { |k, _| k == :castling }.values.join
-        [castling_gp, regular_gp]
+        "(#{[castling_gp, regular_gp].join('|')})"
       end
 
       # Helper: Convert algebraic notation to internal symbol

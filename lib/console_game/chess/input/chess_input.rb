@@ -158,7 +158,7 @@ module ConsoleGame
 
       # Create regexp patterns for various input modes
       def notation_patterns_builder
-        @alg_reg = regexp_capturing_gp(regexp_algebraic)
+        @alg_reg = regexp_algebraic
         @smith_reg = regexp_smith
       end
 
