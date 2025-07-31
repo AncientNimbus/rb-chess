@@ -10,8 +10,9 @@ module ConsoleGame
     # @version v1.1.0
     class FenExport
       include ChessUtils
-      # Simulates the next possible moves for a given chess position.
-      # @return [Array<Integer>] good moves
+
+      # FEN Export method entry point
+      # @return [String]
       def self.to_fen(...) = new(...).to_fen
 
       # @!attribute [r] turn_data
@@ -66,12 +67,9 @@ module ConsoleGame
       # @return [Array<String>]
       def row_data_to_str(row)
         row.map do |tile|
-          if tile.is_a?(ChessPiece)
-            notation = tile.notation
-            tile.side == :white ? notation : notation.downcase
-          else
-            "0"
-          end
+          next "0" unless tile.is_a?(ChessPiece)
+
+          tile.side == w_sym ? tile.notation : tile.notation.downcase
         end
       end
 

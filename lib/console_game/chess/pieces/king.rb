@@ -180,7 +180,6 @@ module ConsoleGame
       end
 
       # Find the pieces that is checking the King
-      # @return [nil, ChessPiece, Array<ChessPiece>]
       def find_checking_pieces
         level.fetch_all(opposite_of(side)).select do |piece|
           checked_status[:attackers] << piece if piece.targets.value?(curr_pos)

@@ -3,6 +3,7 @@
 require_relative "../../player"
 require_relative "../utilities/pgn_utils"
 require_relative "../utilities/chess_utils"
+require_relative "../utilities/move_formatter"
 
 module ConsoleGame
   module Chess
@@ -185,11 +186,18 @@ module ConsoleGame
       # @return [Boolean]
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
-        moves_history << piece_at_hand.last_move
+        # moves_history << piece_at_hand.last_move
+        moves_history << to_pgn_move(piece_at_hand)
         level.reset_en_passant
         put_piece_down
         true
       end
+
+      # Convert player's action to pgn friendly data
+      # @param piece_at_hand [ChessPiece]
+      # @return [String] pgn move data string
+      # @see MoveFormatter #to_pgn_move
+      def to_pgn_move(piece_at_hand) = MoveFormatter.to_pgn_move(self, piece_at_hand)
 
       # Access player session keys
       def write_metadata(key, value)

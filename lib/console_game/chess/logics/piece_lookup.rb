@@ -34,7 +34,7 @@ module ConsoleGame
       def fetch_piece(query, bypass: true)
         return nil unless bypass || choices.include?(query)
 
-        turn_data[level.to_1d_pos(query)]
+        turn_data[to_1d_pos(query)]
       end
 
       # Fetch a group of pieces notation from turn_data based on algebraic notation
@@ -54,7 +54,7 @@ module ConsoleGame
       # @param type [ChessPiece, King, Queen, Rook, Bishop, Knight, Pawn] limit selection
       # @return [Array<ChessPiece>] a list of chess pieces
       def fetch_all(side = :all, type: ChessPiece)
-        turn_data.select { |tile| tile.is_a?(type) && (%i[black white].include?(side) ? tile.side == side : true) }
+        turn_data.select { |tile| tile.is_a?(type) && (SIDES_SYM.include?(side) ? tile.side == side : true) }
       end
 
       # Lookup a piece based on its possible move position
@@ -65,7 +65,7 @@ module ConsoleGame
       # @return [ChessPiece, nil]
       def reverse_lookup(side, type, target, file_rank = nil)
         type = Chess.const_get(ALG_REF.dig(type, :class))
-        result = refined_lookup(fetch_all(side, type:), side, level.to_1d_pos(target), file_rank)
+        result = refined_lookup(fetch_all(side, type:), side, to_1d_pos(target), file_rank)
         result.size > 1 ? nil : result[0]
       end
 
