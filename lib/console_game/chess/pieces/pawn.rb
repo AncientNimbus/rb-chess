@@ -67,7 +67,7 @@ module ConsoleGame
         return unless %i[q r b n].include?(notation)
 
         class_name = ALG_REF.dig(notation, :class)
-        new_unit = Chess.const_get(class_name).new(curr_pos, side, level: level)
+        new_unit = Chess.const_get(class_name).new(curr_pos, side, level:)
         level.turn_data[curr_pos] = new_unit
 
         last_move_is_promotion(notation)

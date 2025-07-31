@@ -132,7 +132,6 @@ module ConsoleGame
           move.insert(1, "x")
           move.insert(1, to_alg_pos(old_pos, :f))
         end
-        # move.insert(-1, "+") if possible_moves.include?(level.kings[opposite_of(side)].curr_pos)
         move
       end
 

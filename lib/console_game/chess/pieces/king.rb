@@ -17,7 +17,7 @@ module ConsoleGame
         super(alg_pos, side, :k, level:)
         @castle_dirs = %i[e w]
         @checked = false
-        @checked_status = { checked: checked, attackers: [] }
+        @checked_status = { checked:, attackers: [] }
       end
 
       # Override move
@@ -80,11 +80,18 @@ module ConsoleGame
         distance = curr_pos - old_pos
         return unless distance.abs == 2
 
-        rook_pos = file == "g" ? curr_pos - 1 : curr_pos + 1
+        rook_pos, @last_move = castling_config
         summon_the_rook(distance.positive? ? "h#{rank}" : "a#{rank}", rook_pos)
 
-        level.board.print_after_cb("level.castle", { info: info })
+        print_castling_msg
       end
+
+      # Castling config assignment
+      # @return [Array<Integer, String>] returns rook target position and algebraic move
+      def castling_config = file == "g" ? [curr_pos - 1, "O-O"] : [curr_pos + 1, "O-O-O"]
+
+      # Print castling message
+      def print_castling_msg = level.board.print_after_cb("level.castle", { info: })
 
       # Search the rook
       # @param rook_to_summon [String] expects algebraic notation
