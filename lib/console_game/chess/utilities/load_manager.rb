@@ -45,13 +45,7 @@ module ConsoleGame
       # Build list of sessions to load
       # This method select the event and date field within sessions, format the Date field and returns a list.
       # @return [Hash] list of sessions
-      def sessions_list
-        list = sessions.transform_values { |session| session.select { |k, _| %i[event date].include?(k) } }
-        list.transform_values do |session|
-          date_field = session[:date].is_a?(Time) ? session[:date] : Time.new(session[:date])
-          session.merge(date: date_field.strftime(STR_TIME))
-        end
-      end
+      def sessions_list = sessions.transform_values { |session| session.select { |k, _| %i[event date].include?(k) } }
     end
   end
 end

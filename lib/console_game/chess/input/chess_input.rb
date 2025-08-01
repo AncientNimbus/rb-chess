@@ -91,6 +91,7 @@ module ConsoleGame
 
       # Display system info | command pattern: `info`
       def info(_args = [])
+        p level.session
         str = level.nil? ? s("cmd.info", { ver: chess_manager.ver }) : s("cmd.info2", build_info_data)
         print_msg(str)
       end
@@ -175,8 +176,7 @@ module ConsoleGame
       # @return [Hash]
       def build_info_data
         date, fens, event, white, black = level.session.values_at(:date, :fens, :event, :white, :black)
-        { date: Time.new(date).strftime(STR_TIME), fen: fens.last,
-          event: event, w_player: white, b_player: black, ver: chess_manager.ver }
+        { date:, fen: fens.last, event:, w_player: white, b_player: black, ver: chess_manager.ver }
       end
     end
   end

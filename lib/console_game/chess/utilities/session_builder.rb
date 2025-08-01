@@ -34,7 +34,7 @@ module ConsoleGame
                     black: bp_name,
                     event: "#{wp_name} vs #{bp_name}",
                     site: site_text,
-                    date: Time.new.ceil }
+                    date: Time.new.ceil.strftime(STR_TIME) }
         [id, session]
       end
 
