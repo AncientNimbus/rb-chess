@@ -27,10 +27,12 @@ module ConsoleGame
       #   @return [ChessPlayer, ChessComputer]
       # @!attribute [r] b_player
       #   @return [ChessPlayer, ChessComputer]
+      # @!attribute [r] kings
+      #   @return [Hash{Symbol => King}]
       attr_accessor :fen_data, :white_turn, :turn_data, :active_piece, :en_passant, :player, :half_move, :full_move,
                     :game_ended, :event_msgs
       attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states, :threats_map,
-                  :usable_pieces
+                  :usable_pieces, :opponent
 
       # @param input [ChessInput]
       # @param sides [Hash]
@@ -64,6 +66,7 @@ module ConsoleGame
         @piece_lookup = nil
         update_board_state
         game_end_check
+        add_check_marker
         board.print_turn(event_msgs) if print_turn
       end
 
@@ -162,7 +165,9 @@ module ConsoleGame
 
       # Set player side
       # @return [ChessPlayer, ChessComputer]
-      def set_current_player = @player = white_turn ? w_player : b_player
+      def set_current_player
+        @player, @opponent = white_turn ? [w_player, b_player] : [b_player, w_player]
+      end
 
       # == Endgame Logics ==
 
@@ -186,6 +191,18 @@ module ConsoleGame
         board.print_chessboard
         board.print_after_cb("level.endgame.#{type}", { win_player: winner })
         @game_ended = true
+      end
+
+      # Add checked or checkmate marker to opponent's last move
+      def add_check_marker
+        side = player.side
+        return unless kings[side].checked
+
+        last_move = opponent.moves_history[-1]
+        return if last_move.nil? || last_move.match?(/\A[a-zA-Z1-8]*[+#]\z/)
+
+        marker = game_ended ? "#" : "+"
+        opponent.moves_history[-1] = last_move + marker
       end
 
       # == Data Handling ==
