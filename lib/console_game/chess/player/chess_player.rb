@@ -20,12 +20,13 @@ module ConsoleGame
       # @param name [String]
       # @param controller [ChessInput]
       # @param color [Symbol] :black or :white
-      def initialize(name = "", controller = nil, color = nil)
+      # @param m_history [Array<String>]
+      def initialize(name = "", controller = nil, color = nil, m_history: [])
         super(name, controller)
         @side = color
         # @type [ChessPiece, nil]
         @piece_at_hand = nil
-        @moves_history = []
+        @moves_history = m_history
         @move_formatter = MoveFormatter.new(self)
       end
 
@@ -34,7 +35,7 @@ module ConsoleGame
         @data = Hash.new do |hash, key|
           hash[key] =
             { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, mode: nil, moves: {},
-              fens: [] }
+              fens: [], white_moves: [], black_moves: [] }
         end
       end
 
@@ -194,12 +195,6 @@ module ConsoleGame
         put_piece_down
         true
       end
-
-      # Convert player's action to pgn friendly data
-      # @param piece_at_hand [ChessPiece]
-      # @return [String] pgn move data string
-      # @see MoveFormatter #to_pgn_move
-      def to_pgn_move(piece_at_hand) = MoveFormatter.to_pgn_move(self, piece_at_hand)
 
       # Access player session keys
       def write_metadata(key, value)

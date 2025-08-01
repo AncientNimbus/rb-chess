@@ -6,7 +6,7 @@ module ConsoleGame
   module Chess
     # Chess computer player class
     class ChessComputer < ChessPlayer
-      def initialize(name = "", controller = nil, color = nil)
+      def initialize(name = "", controller = nil, color = nil, m_history: [])
         super
       end
 

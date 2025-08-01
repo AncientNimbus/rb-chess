@@ -33,10 +33,10 @@ module ConsoleGame
                   :usable_pieces
 
       # @param input [ChessInput]
-      # @param sides [hash]
+      # @param sides [Hash]
       #   @option sides [ChessPlayer, ChessComputer] :white Player who plays as White
       #   @option sides [ChessPlayer, ChessComputer] :black Player who plays as Black
-      # @param session [hash] current session
+      # @param session [Hash] current session
       # @param fen_import [String] expects a valid FEN string
       def initialize(input, sides, session, fen_import = nil)
         @controller = input
@@ -195,6 +195,7 @@ module ConsoleGame
 
       # Save turn handling
       def save_turn
+        save_player_move
         update_full_move_and_pgn_pair
         fen_str = to_fen
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
@@ -203,25 +204,35 @@ module ConsoleGame
 
       # Process move history and full move counter
       def update_full_move_and_pgn_pair
-        move_pair = extract_move_pair(*all_moves)
         @full_move = calculate_full_move
-        update_session_moves(move_pair) if white_turn && !move_pair.nil?
+        update_session_moves
+      end
+
+      # Save player move to session
+      def save_player_move
+        key = player.side == w_sym ? :white_moves : :black_moves
+        last_move = player.moves_history.last
+        session[key] << last_move unless last_move.nil? || session[key].last == last_move
+      end
+
+      # Calculate the full move
+      # @return [Integer]
+      def calculate_full_move = session[:white_moves].size + 1
+
+      # Update session moves record
+      def update_session_moves
+        move_pairs = build_move_pairs(*all_moves)
+        session[:moves].clear if session[:moves].size != move_pairs.size
+        move_pairs.each_with_index { |pair, i| session[:moves][i + 1] = pair }
       end
 
       # Fetch moves history from both player
       # @return [Array<Array<String>>]
       def all_moves = [w_player, b_player].map(&:moves_history)
 
-      # Store last two moves from both sides
-      # @return [Array<String>] move_pair
-      def extract_move_pair(w_moves, b_moves) = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }.last
-
-      # Calculate the full move
-      # @return [Integer]
-      def calculate_full_move = session[:moves].size + 1
-
-      # Update session moves record
-      def update_session_moves(move_pair) = session[:moves][full_move] = move_pair
+      # Build a nested array of move pairs
+      # @return [Array<Array<String>>] move_pair
+      def build_move_pairs(w_moves, b_moves) = w_moves.zip(b_moves).reject { |turn| turn.include?(nil) }
     end
   end
 end

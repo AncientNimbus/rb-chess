@@ -6,7 +6,7 @@ require_relative "../../../lib/nimbus_file_utils/nimbus_file_utils"
 describe ConsoleGame::Chess::Level do
   NimbusFileUtils.set_locale("en")
   let(:controller) { ConsoleGame::Chess::ChessInput.new }
-  let(:session) { { event: "Level Integration test", site: "Level and Movement logic", date: nil, round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: [] } }
+  let(:session) { { event: "Level Integration test", site: "Level and Movement logic", date: nil, round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: [], white_moves: [], black_moves: [] } }
   let(:sides) { { white: ConsoleGame::Chess::ChessPlayer.new("Ancient", controller, :white), black: ConsoleGame::Chess::ChessPlayer.new("Nimbus", controller, :black) } }
 
   describe "Test Pawn opening move" do

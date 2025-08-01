@@ -1,48 +1,28 @@
 {
   "uuid": "9e39f092-534e-4dbb-ac3c-64846b78d727",
   "username": "Dummy User",
-  "saved_date": "2025-07-26 21:13:23 +0100",
+  "saved_date": "2025-08-01 08:17:18 +0100",
   "appdata": {
     "chess": {
       "1": {
-        "event": "Dummy User vs Nimbus",
-        "site": "Ruby Arcade by Ancient Nimbus",
-        "date": "2025-07-20 17:48:02 +0100",
+        "event": "Dummy User vs Data",
+        "site": "Ruby Arcade Terminal Chess by Ancient Nimbus",
+        "date": "2025-08-01 08:00:46 +0100",
         "round": null,
         "white": "Dummy User",
-        "black": "Nimbus",
+        "black": "Data",
         "result": null,
         "mode": 1,
-        "moves": {
-          "1": ["e4", "d5"],
-          "2": ["exd5", "Nc6"],
-          "3": ["c4", "e5"],
-          "4": ["e6", "Bcxe6"],
-          "5": ["Bd3", "Qd6"],
-          "6": ["Nf3", "Kc8"],
-          "7": ["Kg1", "b6"]
-        },
+        "moves": {},
         "fens": [
-          "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-          "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1",
-          "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
-          "r1bqkbnr/ppp1pppp/2n5/3P4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 2",
-          "r1bqkbnr/ppp1pppp/2n5/3P4/2P5/8/PP1P1PPP/RNBQKBNR b KQkq - 0 3",
-          "r1bqkbnr/ppp2ppp/2n5/3Pp3/2P5/8/PP1P1PPP/RNBQKBNR w KQkq e6 0 3",
-          "r1bqkbnr/ppp2ppp/2n1P3/8/2P5/8/PP1P1PPP/RNBQKBNR b KQkq - 0 4",
-          "r2qkbnr/ppp2ppp/2n1b3/8/2P5/8/PP1P1PPP/RNBQKBNR w KQkq - 1 4",
-          "r2qkbnr/ppp2ppp/2n1b3/8/2P5/3B4/PP1P1PPP/RNBQK1NR b KQkq - 2 5",
-          "r3kbnr/ppp2ppp/2nqb3/8/2P5/3B4/PP1P1PPP/RNBQK1NR w KQkq - 3 5",
-          "r3kbnr/ppp2ppp/2nqb3/8/2P5/3B1N2/PP1P1PPP/RNBQK2R b KQkq - 4 6",
-          "2kr1bnr/ppp2ppp/2nqb3/8/2P5/3B1N2/PP1P1PPP/RNBQK2R w KQ - 5 6",
-          "2kr1bnr/ppp2ppp/2nqb3/8/2P5/3B1N2/PP1P1PPP/RNBQ1RK1 b - - 6 7",
-          "2kr1bnr/p1p2ppp/1pnqb3/8/2P5/3B1N2/PP1P1PPP/RNBQ1RK1 w - - 0 7"
-        ]
+          "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        ],
+        "white_moves": [],
+        "black_moves": []
       }
     }
   },
   "stats": {
-    "launch_count": 28
+    "launch_count": 59
   }
 }
