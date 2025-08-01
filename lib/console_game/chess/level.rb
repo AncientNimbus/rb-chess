@@ -114,6 +114,14 @@ module ConsoleGame
       # @see PieceLookup #reverse_lookup
       def reverse_lookup(...) = piece_lookup.reverse_lookup(...)
 
+      # == Export ==
+
+      # Update session moves record
+      def update_session_moves
+        move_pairs = build_move_pairs(*all_moves)
+        rebuild_moves_record(move_pairs)
+      end
+
       private
 
       # Initialise the chessboard
@@ -196,16 +204,10 @@ module ConsoleGame
       # Save turn handling
       def save_turn
         save_player_move
-        update_full_move_and_pgn_pair
+        @full_move = calculate_full_move
         fen_str = to_fen
         session[:fens].push(fen_str) if session.fetch(:fens)[-1] != fen_str
         controller.save(mute: true)
-      end
-
-      # Process move history and full move counter
-      def update_full_move_and_pgn_pair
-        @full_move = calculate_full_move
-        update_session_moves
       end
 
       # Save player move to session
@@ -217,12 +219,11 @@ module ConsoleGame
 
       # Calculate the full move
       # @return [Integer]
-      def calculate_full_move = session[:white_moves].size + 1
+      def calculate_full_move = session[:black_moves].size + 1
 
-      # Update session moves record
-      def update_session_moves
-        move_pairs = build_move_pairs(*all_moves)
-        session[:moves].clear if session[:moves].size != move_pairs.size
+      # Rebuild session moves record
+      def rebuild_moves_record(move_pairs)
+        session[:moves] = {}
         move_pairs.each_with_index { |pair, i| session[:moves][i + 1] = pair }
       end
 

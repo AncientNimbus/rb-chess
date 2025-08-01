@@ -42,6 +42,17 @@ module ConsoleGame
         end_game
       end
 
+      # Handle new game sequence
+      # @param err [Boolean] is use when there is a load err
+      def new_game(err: false)
+        print_msg(s("new.err")) if err
+        print_msg(s("new.f1"))
+        @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
+        @p1, @p2 = setup_players
+        start_order
+        create_session
+      end
+
       private
 
       # == Flow ==
@@ -58,17 +69,6 @@ module ConsoleGame
       def game_selection
         print_msg(s("load.f1"))
         controller.ask(s("load.f1a"), err_msg: s("load.f1a_err"), reg: [1, 2], input_type: :range).to_i
-      end
-
-      # Handle new game sequence
-      # @param err [Boolean] is use when there is a load err
-      def new_game(err: false)
-        print_msg(s("new.err")) if err
-        print_msg(s("new.f1"))
-        @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
-        @p1, @p2 = setup_players
-        start_order
-        create_session
       end
 
       # Handle load game sequence

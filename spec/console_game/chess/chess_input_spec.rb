@@ -171,6 +171,9 @@ describe ConsoleGame::Chess::ChessInput do
   describe "#quit" do
     context "when the method is called" do
       before do
+        chess_input_test.instance_variable_set(:@level, level)
+        allow(level).to receive(:update_session_moves)
+        allow(game_manager).to receive(:save_user_profile)
         allow(game_manager).to receive(:exit_arcade).and_return(SystemExit)
       end
 

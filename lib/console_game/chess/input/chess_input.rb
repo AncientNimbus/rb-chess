@@ -76,6 +76,7 @@ module ConsoleGame
       # Exit sequences | command patterns: `exit`
       def quit(_args = [])
         print_msg(s("cmd.exit"))
+        save_moves
         super
       end
 
@@ -91,7 +92,6 @@ module ConsoleGame
 
       # Display system info | command pattern: `info`
       def info(_args = [])
-        p level.session
         str = level.nil? ? s("cmd.info", { ver: chess_manager.ver }) : s("cmd.info2", build_info_data)
         print_msg(str)
       end
@@ -116,10 +116,11 @@ module ConsoleGame
       # Export current game session as pgn file | command pattern: `export`
       # @todo: not ready
       def export(_args = [])
-        print_msg(s("cmd.soon"), pre: "* ")
-        # return cmd_disabled if level.nil?
+        # print_msg(s("cmd.soon"), pre: "* ")
+        return cmd_disabled if level.nil?
 
         # print_msg(s("cmd.export"), pre: "* ")
+        save_moves
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
@@ -177,6 +178,12 @@ module ConsoleGame
       def build_info_data
         date, fens, event, white, black = level.session.values_at(:date, :fens, :event, :white, :black)
         { date:, fen: fens.last, event:, w_player: white, b_player: black, ver: chess_manager.ver }
+      end
+
+      # Helper to save session moves data
+      def save_moves
+        level.update_session_moves
+        save(mute: true)
       end
     end
   end

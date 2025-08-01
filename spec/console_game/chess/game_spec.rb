@@ -81,6 +81,7 @@ describe ConsoleGame::Chess::Game do
       before do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(chess_manager.level).to receive(:update_session_moves)
         allow(game_manager).to receive(:save_user_profile)
         allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end
@@ -97,6 +98,7 @@ describe ConsoleGame::Chess::Game do
       before do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(chess_manager.level).to receive(:update_session_moves)
         allow(game_manager).to receive(:save_user_profile)
         allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
       end

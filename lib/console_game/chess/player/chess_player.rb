@@ -35,7 +35,7 @@ module ConsoleGame
         @data = Hash.new do |hash, key|
           hash[key] =
             { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil, mode: nil, moves: {},
-              fens: [], white_moves: [], black_moves: [] }
+              white_moves: [], black_moves: [], fens: [] }
         end
       end
 
