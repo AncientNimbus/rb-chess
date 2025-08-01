@@ -2,6 +2,92 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0] - 2025-08-01
+
+### 🚀 Features
+
+- *(UX)* Add a spinner to certain prompt messages
+- Prompt user to start another session
+- Replace hardcoded version with variable
+- Add underlying code to support endgame msg
+- Add the support to output endgame condition
+- Ability to print various endgame messages
+- *(UX)* Add warning message during promotion
+- *(UX)* Improve message clarity
+- Integrate new message to game flow
+- Add a filter option to #to_alg_pos
+- Add support to convert promo move to PGN
+- Add support to convert castling move to PGN
+- Update data structure to support PGN export
+- Add the ability to save PGN moves
+- Add support to append + & # marker to PGN
+- Add support to export session as .pgn file
+
+### 🐛 Bug Fixes
+
+- Address a crash during load session flow
+
+### 🚜 Refactor
+
+- Decouple Chess game from GameManager
+- Move #shut_down_msg back to manager
+- Centralise print responsibility
+- Optimise king castling method
+- Move #draw logic to endgame_logic
+- Create SessionUtils module for Chess
+- Optimise chess session setup process
+- Change PieceLookup from module to class
+- Mini optimisation when using PieceLookup
+- Move simulation logic to a service class
+- Decouple PieceAnalysis from Level class
+- Decouple endgame logic from Level class
+- Make use of delegators in EndgameLogic
+- Revert previous change in EndgameLogic
+- Decouple fen_export from Level
+- Move shared logics to ChessUtils module
+- Decouple Logic from Level class
+- Optimise core game loop
+- Extract player action as a method
+- Convert FenImport to a service class
+- Decouple FenImport from Level
+- Optimise Level class
+- Optimise metadata workflow
+- Optimise player class creation workflow
+- Optimise chess Game class
+- Extract session creation as a service
+- Optimise PieceLookup class
+- Change output value of #regexp_algebraic
+- Optimise Time object usage
+
+### 📚 Documentation
+
+- Update CHANGELOG
+- Update README
+
+### 🎨 Styling
+
+- Update EndgameLogic pattern signature
+- Update Level class layout
+- Streamline pieces initialization
+
+### 🧪 Testing
+
+- Test cases for Game class and SessionUtils
+- Add integration test suite for GameManager
+- New test cases for error handling on load
+- Update fen_export test cases
+
+### ⚙️ Miscellaneous Tasks
+
+- Update Gemfile requirements
+- Update gemfile
+- Update gemfile
+- Cleanup chess_input_spec file
+- Update test workflow file
+- Merge branch 'main'
+- Docstring tidying
+- Move player classes to player folder
+
 ## [0.7.0] - 2025-07-24
 
 ### 🚀 Features
