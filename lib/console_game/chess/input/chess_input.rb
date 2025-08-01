@@ -3,6 +3,7 @@
 require_relative "../../input"
 require_relative "../logics/display"
 require_relative "../utilities/chess_utils"
+require_relative "../utilities/pgn_export"
 require_relative "smith_notation"
 require_relative "algebraic_notation"
 
@@ -121,6 +122,7 @@ module ConsoleGame
 
         # print_msg(s("cmd.export"), pre: "* ")
         save_moves
+        PgnExport.export_session(level.session)
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`

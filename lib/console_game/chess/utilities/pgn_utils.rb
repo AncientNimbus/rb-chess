@@ -6,6 +6,8 @@
 # @author Ancient Nimbus
 # @version v1.0.0
 module PgnUtils
+  # Pgn file format
+  DOT_PGN = ".pgn"
   # Essential tags in PGN
   TAGS = { event: nil, site: nil, date: nil, round: nil, white: nil, black: nil, result: nil }.freeze
   # Optional tags in PGN
@@ -60,7 +62,7 @@ module PgnUtils
       in String | Integer | Float
         "[#{key} \"#{value}\"]"
       in Time
-        "[#{key} \"#{value.year}.#{value.mon}.#{value.day}\"]"
+        "[#{key} \"#{value.strftime('%Y.%m.%d')}\"]"
       else
         "[#{key} \"#{value}\"]"
       end
@@ -115,7 +117,6 @@ module PgnUtils
         if elem.include?(".")
           turn_tracker = elem.sub(".", "").to_i
         elsif moves[turn_tracker].size < 2
-          # TODO: need to add check to see if elem is a valid chess move, go through chess_logic.rb
           moves[turn_tracker] << elem
         end
       end

@@ -47,7 +47,7 @@ describe PgnUtils do
         <<~DATA
           [Event "ch-USA Seniors 2024"]
           [Site "Saint Louis USA"]
-          [Date "2024.7.25"]
+          [Date "2024.07.25"]
           [Round "9.2"]
           [White "Akopian, Vl"]
           [Black "Benjamin, Joe"]
@@ -134,7 +134,7 @@ describe PgnUtils do
 
       it "returns a formatted date as string value" do
         result = described_class.send(:format_metadata, key, time)
-        expect(result).to eq("[Event \"#{time.year}.#{time.mon}.#{time.day}\"]")
+        expect(result).to eq("[Event \"#{time.strftime('%Y.%m.%d')}\"]")
       end
     end
 
