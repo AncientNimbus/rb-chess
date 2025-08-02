@@ -35,7 +35,7 @@ module ConsoleGame
       # Query and update possible_moves
       def query_moves
         king_to_the_table
-        can_castle?
+        setup_castle
         super
       end
 
@@ -62,8 +62,8 @@ module ConsoleGame
       end
 
       # Determine if the King can perform castling
-      def can_castle?
-        return false unless at_start
+      def setup_castle
+        return unless can_castle?
 
         @castle_key ||= side == :white ? %i[K Q] : %i[k q]
         @castle_config ||= castle_key.zip(castle_dirs)
@@ -71,8 +71,11 @@ module ConsoleGame
           key, dir = set
           castle_dirs.delete(dir) if level.castling_states[key] == false
         end
-        true
       end
+
+      # Determine if the King can perform castling
+      # @return [Boolean]
+      def can_castle? = at_start && !checked
 
       # Process castling event
       # @param old_pos [Integer] previous position
@@ -121,7 +124,7 @@ module ConsoleGame
       # @param range [Symbol, Integer] movement range of the given piece or :max for furthest possible range
       # @return [Array<Integer>]
       def path(pos = 0, path = :e, range: 1)
-        range = 2 if at_start && castle_dirs.include?(path)
+        range = 2 if can_castle? && castle_dirs.include?(path)
         super(pos, path, range: range)
       end
 

@@ -11,9 +11,7 @@ module ConsoleGame
 
       # @!attribute [r] turn_data
       #   @return [Array<ChessPiece, String>] complete state of the current turn
-      # @!attribute [r] update_state
-      #   @return [Method] refresh level state
-      attr_reader :level, :piece, :turn_data, :update_state
+      attr_reader :level, :piece, :turn_data
 
       # @param level [Level] expects a Chess::Level class object
       # @param piece [ChessPiece] expects a ChessPiece class objet
@@ -21,7 +19,6 @@ module ConsoleGame
         @level = level
         @piece = piece
         @turn_data = level.turn_data
-        @update_state = level.update_board_state
       end
 
       # Simulate next move - Find good moves
@@ -43,7 +40,7 @@ module ConsoleGame
       def simulate_move(new_pos)
         tile = turn_data[new_pos]
         piece.curr_pos = new_pos
-        update_state
+        level.update_board_state
         turn_data[new_pos] = tile
         new_pos unless piece.under_threat?
       end
@@ -53,7 +50,7 @@ module ConsoleGame
       def restore_previous_state(current_pos)
         piece.curr_pos = current_pos
         turn_data[current_pos] = piece
-        update_state
+        level.update_board_state
       end
     end
   end
