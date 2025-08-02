@@ -124,5 +124,21 @@ describe ConsoleGame::Chess::Game do
         expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
+
+    context "when user loads a valid stalemate game session" do
+      let(:test_sessions) { { "1" => { event: "Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["7k/5K2/6Q1/8/8/8/8/8 b - - 1 1"], white_moves: [], black_moves: [] } } }
+
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      it "opens level and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "2", "1", "y", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
   end
 end

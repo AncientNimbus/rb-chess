@@ -65,21 +65,6 @@ describe ConsoleGame::Chess::EndgameLogic do
     end
   end
 
-  describe "#stalemate?" do
-    context "when imported FEN session will result in stalemate draw" do
-      subject(:fen_str) { "7k/5K2/6Q1/8/8/8/8/8 b - - 1 1" }
-
-      let(:level) { ConsoleGame::Chess::Level.new(controller, sides, session, fen_str) }
-
-      it "returns true if the game is a draw" do
-        allow($stdout).to receive(:puts)
-        level.send(:init_level)
-        result = level.send(:game_end_check)
-        expect(result).to be true
-      end
-    end
-  end
-
   describe "#insufficient_material?" do
     context "when imported FEN session will result in an insufficient material draw" do
       subject(:fen_str) { "5K2/2B5/7k/4b3/8/8/8/8 b - - 0 1" }

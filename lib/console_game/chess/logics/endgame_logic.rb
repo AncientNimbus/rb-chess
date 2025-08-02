@@ -66,10 +66,7 @@ module ConsoleGame
 
       # End game if is it a draw
       # @return [Hash, nil] the game is a draw when true
-      def draw?
-        level.update_board_state
-        [stalemate?, half_move_overflow?, threefold_repetition?, insufficient_material?(*last_four)].compact.first
-      end
+      def draw? = [stalemate?, fifty_move?, threefold_repetition?, insufficient_material?(*last_four)].compact.first
 
       # Game is a stalemate
       # @return [Hash, nil] returns a message if it is a draw
@@ -77,7 +74,7 @@ module ConsoleGame
 
       # Game is a draw due to Fifty-move rule
       # @return [Hash, nil] returns a message if it is a draw
-      def half_move_overflow? = half_move >= 100 ? { draw: "fifty_move" } : nil
+      def fifty_move? = half_move >= 100 ? { draw: "fifty_move" } : nil
 
       # Game is a draw due to Threefold Repetition
       # @return [Hash, nil] returns a message if it is a draw
