@@ -14,7 +14,7 @@ module ConsoleGame
       attr_accessor :side, :piece_at_hand
       # @!attribute [r] controller
       #   @return [ChessInput]
-      attr_reader :level, :board, :controller, :moves_history, :session_id, :move_formatter
+      attr_reader :level, :board, :controller, :moves_history, :session_id, :move_formatter, :cmd_usage_cp
 
       # @param name [String]
       # @param controller [ChessInput]
@@ -27,6 +27,7 @@ module ConsoleGame
         @piece_at_hand = nil
         @moves_history = m_history
         @move_formatter = MoveFormatter.new(self)
+        store_cmd_usage
       end
 
       # Override: Initialise player save data
@@ -129,7 +130,7 @@ module ConsoleGame
         piece = level.reverse_lookup(side, type, target, file_rank)
 
         if piece.nil?
-          puts "Invalid selection!"
+          level.board.print_after_cb("cmd.input.err")
           return false
         end
 
@@ -139,12 +140,17 @@ module ConsoleGame
 
       # Invalid input
       def invalid_input(input)
-        keypath = input.empty? ? "cmd.input.done" : "'cmd.input.err"
-        level.board.print_msg(level.board.s(keypath, { input: input }), pre: "* ")
+        return false unless cmd_usage_cp != controller.command_usage.slice(:alg, :smith)
+
+        store_cmd_usage
+        level.board.print_after_cb("cmd.input.done", { input: })
         false
       end
 
       private
+
+      # Fetch and copy command usage data from input
+      def store_cmd_usage = @cmd_usage_cp = controller.command_usage.slice(:alg, :smith)
 
       # Move action message bundle for Paint
       # @return [Hash]

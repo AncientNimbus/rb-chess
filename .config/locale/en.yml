@@ -306,7 +306,7 @@ en:
           alg: "Press 'enter' to switch input detection to Algebraic notation"
           smith: "Press 'enter' to switch input detection to Smith notation"
           done: "Input scheme has been updated!"
-          err: "%{input} is not a valid notation."
+          err: "This is not a valid selection, please try again!"
         board:
           err: "'board' command is expecting an additional keyword, type --help to view all possible commands."
           size1: "Board size is set to standard"

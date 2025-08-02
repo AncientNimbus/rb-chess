@@ -29,12 +29,12 @@ module ConsoleGame
       # Print after the chessboard
       # @param keypath [String] TF keypath
       # @param sub [Hash] `{ demo: ["some text", :red] }`
-      def print_after_cb(keypath, sub = {}) = print_msg(s(keypath, sub))
+      def print_after_cb(keypath, sub = {}) = print_msg(s(keypath, sub), pre: "* ")
 
       # Print turn
       # @param event_msgs [Array<String>]
       def print_turn(event_msgs = [""])
-        system("clear")
+        # system("clear")
         # p event_msgs
         print_msg(*event_msgs, pre: "* ") unless event_msgs.empty?
         print_chessboard
