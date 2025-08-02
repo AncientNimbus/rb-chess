@@ -73,7 +73,7 @@ module ConsoleGame
         return false unless assign_piece(curr_alg_pos)
 
         level.event_msgs << board.s("level.preview", move_msg_bundle)
-        level.refresh
+        board.print_turn(level.event_msgs)
 
         # Second prompt to complete the turn
         controller.make_a_move(self)
@@ -129,7 +129,7 @@ module ConsoleGame
       def fetch_and_move(side, type, target, file_rank = nil)
         piece = level.reverse_lookup(side, type, target, file_rank)
 
-        return level.board.print_after_cb("level.err.notation") if piece.nil?
+        return board.print_after_cb("level.err.notation") if invalid_assignment?(piece)
 
         store_active_piece(piece)
         move_piece(target)
@@ -140,7 +140,7 @@ module ConsoleGame
         return false unless cmd_usage_cp != controller.command_usage.slice(:alg, :smith)
 
         store_cmd_usage
-        level.board.print_after_cb("cmd.input.done", { input: })
+        board.print_after_cb("cmd.input.done", { input: })
         false
       end
 
@@ -165,10 +165,16 @@ module ConsoleGame
       def assign_piece(alg_pos)
         put_piece_down
         piece = level.fetch_piece(alg_pos, bypass: false)
-        return level.board.print_after_cb("level.err.notation") if piece.nil?
+
+        return board.print_after_cb("level.err.notation") if invalid_assignment?(piece)
 
         store_active_piece(piece)
       end
+
+      # Assignment validation
+      # @param piece [nil, ChessPiece]
+      # @return [Boolean]
+      def invalid_assignment?(piece) = piece.nil? || level.simulate_next_moves(piece).empty?
 
       # Unassign active piece
       def put_piece_down
@@ -183,6 +189,8 @@ module ConsoleGame
       def store_active_piece(piece, current_level = level)
         self.piece_at_hand = piece
         current_level.active_piece = piece_at_hand
+        level.update_board_state
+        level.game_end_check
         piece_at_hand
       end
 

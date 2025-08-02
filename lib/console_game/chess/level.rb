@@ -79,9 +79,9 @@ module ConsoleGame
 
       # Simulate next move - Find good moves
       # @param piece [ChessPiece] expects a ChessPiece object
-      # @return [Array<Integer>] good moves
+      # @return [nil, Array<Integer>] good moves
       # @see MovesSimulation #simulate_next_moves
-      def simulate_next_moves(piece) = MovesSimulation.simulate_next_moves(self, piece)
+      def simulate_next_moves(piece) = piece.nil? ? nil : MovesSimulation.simulate_next_moves(self, piece)
 
       # == Game Logic ==
 
@@ -123,6 +123,17 @@ module ConsoleGame
       def update_session_moves
         move_pairs = build_move_pairs(*all_moves)
         rebuild_moves_record(move_pairs)
+      end
+
+      # Check for end game condition
+      # @return [Hash, nil] if it is hash message the game will end.
+      # @see EndgameLogic #game_end_check
+      def game_end_check
+        case EndgameLogic.game_end_check(self)
+        in nil then self.game_ended = false
+        in { draw: type } then handle_result(type:)
+        in { checkmate: side } then handle_result(type: "checkmate", side:)
+        end
       end
 
       private
@@ -170,17 +181,6 @@ module ConsoleGame
       end
 
       # == Endgame Logics ==
-
-      # Check for end game condition
-      # @return [Hash, nil] if it is hash message the game will end.
-      # @see EndgameLogic #game_end_check
-      def game_end_check
-        case EndgameLogic.game_end_check(self)
-        in nil then self.game_ended = false
-        in { draw: type } then handle_result(type:)
-        in { checkmate: side } then handle_result(type: "checkmate", side:)
-        end
-      end
 
       # Handle checkmate and draw event
       # @param type [String] grounds of draw

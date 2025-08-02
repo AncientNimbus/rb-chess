@@ -44,6 +44,7 @@ module ConsoleGame
       # @param new_pos [Integer]
       def simulate_move(new_pos)
         tile = turn_data[new_pos]
+        turn_data[new_pos] = piece
         piece.curr_pos = new_pos
         level.update_board_state
         good_pos.push(new_pos) if good_move?
