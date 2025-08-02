@@ -77,7 +77,7 @@ module ConsoleGame
       # Exit sequences | command patterns: `exit`
       def quit(_args = [])
         print_msg(s("cmd.exit"))
-        save_moves
+        save_moves unless level.nil?
         super
       end
 
