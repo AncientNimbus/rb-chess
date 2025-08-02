@@ -17,8 +17,8 @@ module ConsoleGame
       # Points system for chess pieces
       PTS_VALUES = { k: 100, q: 9, r: 5, b: 5, n: 3, p: 1 }.freeze
 
-      attr_accessor :at_start, :curr_pos, :targets, :sights, :color, :moved, :last_move
-      attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :captured, :possible_moves,
+      attr_accessor :at_start, :curr_pos, :targets, :sights, :color, :moved, :last_move, :possible_moves
+      attr_reader :level, :notation, :name, :icon, :pts, :movements, :start_pos, :side, :captured,
                   :std_color, :highlight
 
       # @param alg_pos [Symbol] expects board position in Algebraic notation

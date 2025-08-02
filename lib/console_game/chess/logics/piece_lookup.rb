@@ -14,17 +14,13 @@ module ConsoleGame
       #   @return [Array<ChessPiece, String>] complete state of the current turn
       # @!attribute [r] player
       #   @return [ChessPlayer, ChessComputer] player of the current turn
-      # @!attribute [r] choices
-      #   @return [Array<String>] usable pieces available to the current player
-      attr_reader :level, :turn_data, :usable_pieces, :player, :choices
+      attr_reader :level, :turn_data, :player
 
       # @param level [Level] expects a Chess::Level class object
       def initialize(level)
         @level = level
         @turn_data = level.turn_data
-        @usable_pieces = level.usable_pieces
         @player = level.player
-        @choices = usable_pieces[player.side]
       end
 
       # Fetch a single chess piece
@@ -84,6 +80,14 @@ module ConsoleGame
           piece.possible_moves.include?(new_pos) && (file_rank.nil? || piece.info.include?(file_rank))
         end
       end
+
+      # Helper: fetch latest usable piece
+      # @return [Hash{Symbol => Array<String>}]
+      def usable_pieces = level.usable_pieces
+
+      # Helper: fetch latest player choices
+      # @return [Array<String>]
+      def choices = usable_pieces[player.side]
     end
   end
 end

@@ -129,10 +129,7 @@ module ConsoleGame
       def fetch_and_move(side, type, target, file_rank = nil)
         piece = level.reverse_lookup(side, type, target, file_rank)
 
-        if piece.nil?
-          level.board.print_after_cb("cmd.input.err")
-          return false
-        end
+        return level.board.print_after_cb("level.err.notation") if piece.nil?
 
         store_active_piece(piece)
         move_piece(target)
