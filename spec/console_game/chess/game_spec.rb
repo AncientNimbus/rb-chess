@@ -29,7 +29,21 @@ describe ConsoleGame::Chess::Game do
       end
     end
 
-    context "when the game will end has a fool's mate" do
+    context "when user wishes to create a new game and load another session mid game" do
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      it "opens level, use the load command while in game, load the first session and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "--help", "--load", "2", "1", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
+    context "when the game will end as a fool's mate (Algebraic notation)" do
       before do
         allow($stdout).to receive(:puts)
         chess_manager.instance_variable_set(:@sessions, test_sessions)
@@ -41,8 +55,44 @@ describe ConsoleGame::Chess::Game do
         Dir.glob("user_data/pgn_export/*.pgn").each { |f| File.delete(f) }
       end
 
-      it "opens level and exit successfully" do
-        allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "--alg", "", "f4", "e5", "g4", "Qh4", "--info", "--export", "--exit")
+      it "opens level, switch input scheme to algebraic notation, play all the moves, export file twice and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "--alg", "", "f4", "e5", "g4", "Qh4", "--info", "--export", "--export", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
+    context "when the game will end as a legal's mate (Algebraic notation)" do
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      after do
+        Dir.glob("user_data/pgn_export/*.pgn").each { |f| File.delete(f) }
+      end
+
+      it "opens level, switch input scheme to algebraic notation, play all the moves, export file twice and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "--alg", "", "e4", "e5", "Nf3", "Nc6", "Bc4", "d6", "Nc3", "Bg4", "h3", "Bh5", "Nxe5", "Bxd1", "Bxf7", "Ke7", "Nd5", "y", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
+    context "when the game will end as a fool's mate (Smith notation)" do
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      after do
+        Dir.glob("user_data/pgn_export/*.pgn").each { |f| File.delete(f) }
+      end
+
+      it "opens level, switch input scheme to smith notation, play all the moves, export file twice and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "f2f4", "e7e5", "g2g4", "d8", "h4", "--info", "--export", "--exit")
         expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
