@@ -284,9 +284,9 @@ en:
         f1a_err: "Invalid input, please choose between 1 to 3"
         f2: "All set! %{p1} will play as %{c1}, %{p2} will play as %{c2}."
       session:
-        new: "Starting session: '%{event}'"
-        load: "Session %{event} restored successfully. Welcome back %{p1}!"
-        restart: "Would you like to play another round of chess?"
+        new: "Starting session: %{event}"
+        load: "Session: %{event} restored successfully. Welcome back %{p1}!"
+        restart: "Would you like to play another round of chess? "
       cmd:
         save: "This game features autosave. Progress is saved automatically at the end of each turn."
         load: "Opening the list of available sessions..."

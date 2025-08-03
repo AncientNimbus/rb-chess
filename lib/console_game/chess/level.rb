@@ -147,6 +147,13 @@ module ConsoleGame
           fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
         set_current_player
         refresh(print_turn: false)
+        greet_player
+      end
+
+      # greet player on load, message should change depending on load state
+      def greet_player
+        keypath = full_move == 1 ? "session.new" : "session.load"
+        event_msgs.push(board.s(keypath, { event: session[:event], p1: player.name }))
       end
 
       # Pre-turn flow
@@ -189,8 +196,8 @@ module ConsoleGame
       def handle_result(type:, side: nil)
         winner = session[opposite_of(side)]
         kings[side].color = "#CC0000" if type == "checkmate"
-        board.print_chessboard
-        board.print_after_cb("level.endgame.#{type}", { win_player: winner })
+        event_msgs << board.s("level.endgame.#{type}", { win_player: winner })
+        board.print_turn(event_msgs)
         @game_ended = true
       end
 
