@@ -4,7 +4,7 @@
 # `.pgn` is a file type that stores detailed chess session data.
 # It is compatible with most online chess site, and extremely readable.
 # @author Ancient Nimbus
-# @version v1.0.0
+# @version v1.1.0
 module PgnUtils
   # Pgn file format
   DOT_PGN = ".pgn"
@@ -46,7 +46,7 @@ module PgnUtils
       <<~PGN
         #{data.join("\n")}
 
-        #{moves.join(' ')}
+        #{moves}
       PGN
     end
 
@@ -99,11 +99,11 @@ module PgnUtils
     # Helper to format PGN moves
     # @param moves [Hash] expects moves in Algebraic notation format
     # @param result [String, nil] session result, if any.
-    # @return [Array<String>]
+    # @return [String]
     def format_moves(moves, result = nil)
       moves_arr = moves.map { |k, v| "#{k}. #{v.join(' ')}" }
       moves_arr << result unless result.nil?
-      moves_arr
+      moves_arr.each_slice(8).map { |line| line.join(" ") }.join("\n")
     end
 
     # Helper to turn pgn moves data to key, value array pair

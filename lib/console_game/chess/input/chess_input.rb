@@ -120,8 +120,9 @@ module ConsoleGame
 
         save_moves
 
-        dir, filename = PgnExport.export_session(level.session)
+        dir, filename, output = PgnExport.export_session(level.session).values_at(:path, :filename, :export_data)
         print_msg(s("cmd.export", { filename: [filename, "gold"], dir: [dir, "gold"] }))
+        puts output
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
