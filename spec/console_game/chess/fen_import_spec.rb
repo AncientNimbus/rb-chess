@@ -180,6 +180,15 @@ describe ConsoleGame::Chess::FenImport do
         expect(result).to be_nil
       end
     end
+
+    context "when there are too many black queens" do
+      let(:invalid_sequence) { "qqqqkqqq/qqqppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe "#parse_active_color" do

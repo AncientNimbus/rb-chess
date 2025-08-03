@@ -13,6 +13,9 @@ module ConsoleGame
       # FEN default values
       FEN = { w_start: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" }.merge(ALG_REF).freeze
 
+      # Pieces limits
+      LIMITS = { "k" => 1, "q" => 9, "b" => 10, "n" => 10, "r" => 10, "p" => 8 }.freeze
+
       # FEN Raw data parser (FEN import)
       # @return [Hash<Hash>] FEN data hash for internal use
       def self.parse_fen(...) = new(...).parse_fen
@@ -71,7 +74,7 @@ module ConsoleGame
       # @param fen_board [String] expects an Array with FEN positions data
       # @return [Hash<Array<ChessPiece, String>>, nil] chess position data starts from a1..h8
       def parse_piece_placement(fen_board)
-        return nil unless one_king_only?(fen_board)
+        return nil unless good_fen?(fen_board)
 
         pos_value = 0
         fen_board.split("/").reverse.each_with_index do |rank, row|
@@ -85,15 +88,30 @@ module ConsoleGame
         @board_data = { turn_data: turn_data.flatten }
       end
 
-      # Acceptance checks for FEN string (Lazy evaluation)
+      # FEN board acceptance checks
+      # @return [Boolean] true if there is one key on each side and not too many pieces.
+      def good_fen?(...) = one_king_only?(...) && !too_many_pieces?(...)
+
+      # Counting checks for the rest of the pieces
+      # @param fen_board [String] expects an Array with FEN positions data
+      # @return [Boolean]
+      def too_many_pieces?(fen_board)
+        allies = LIMITS.keys[1..].join("")
+        all_pieces = allies + allies.upcase
+        return true if fen_board.count(all_pieces) > 30
+
+        all_pieces.split("").any? { |ally| fen_board.count(ally) > LIMITS[ally.downcase] }
+      end
+
+      # Counting checks for the king (Lazy evaluation)
       # Main criteria: One K and one k
       # @param fen_board [String] expects an Array with FEN positions data
       # @return [Boolean]
-      def one_king_only?(fen_board) = fen_board.count("K") == 1 && fen_board.count("k") == 1
+      def one_king_only?(fen_board) = fen_board.count("K") == LIMITS["k"] && fen_board.count("k") == LIMITS["k"]
 
       # Row acceptance check
       # @return [Boolean]
-      def valid_row?(...) = valid_characters?(...) && no_pawn_in_back_row?(...)
+      def valid_row?(...) = no_pawn_in_back_row?(...) && valid_characters?(...)
 
       # Pattern matching checks for FEN string
       # @param rank [String]
