@@ -7,7 +7,7 @@ module ConsoleGame
     # FenImport is a class that performs FEN data parsing operations.
     # It is compatible with most online chess site, and machine readable.
     # @author Ancient Nimbus
-    # @version v1.2.0
+    # @version v1.3.0
     class FenImport
       include ChessUtils
       # FEN default values
@@ -22,12 +22,14 @@ module ConsoleGame
       # @!attribute [r] fen_str
       #   @return [String] a complete FEN string
       attr_reader :level, :fen_str
+      attr_accessor :turn_data
 
       # @param level [Level] expects chess Level object
       # @param fen_import [String, nil] expects a complete FEN string
       def initialize(level, fen_import = nil)
         @level = level
         @fen_str = fen_import.nil? ? FEN[:w_start] : fen_import
+        @turn_data = Array.new(8) { [] }
       end
 
       # == FEN Import ==
@@ -69,10 +71,11 @@ module ConsoleGame
       # @param fen_board [String] expects an Array with FEN positions data
       # @return [Hash<Array<ChessPiece, String>>, nil] chess position data starts from a1..h8
       def parse_piece_placement(fen_board)
-        turn_data = Array.new(8) { [] }
+        return nil unless one_king_only?(fen_board)
+
         pos_value = 0
         fen_board.split("/").reverse.each_with_index do |rank, row|
-          return nil unless rank.match?(/\A[kqrbnp1-8]+\z/i)
+          return nil unless valid_row?(rank, row)
 
           normalise_fen_rank(rank).each_with_index do |unit, col|
             turn_data[row][col] = /\A\d\z/.match?(unit) ? "" : piece_maker(pos_value, unit)
@@ -81,6 +84,28 @@ module ConsoleGame
         end
         @board_data = { turn_data: turn_data.flatten }
       end
+
+      # Acceptance checks for FEN string (Lazy evaluation)
+      # Main criteria: One K and one k
+      # @param fen_board [String] expects an Array with FEN positions data
+      # @return [Boolean]
+      def one_king_only?(fen_board) = fen_board.count("K") == 1 && fen_board.count("k") == 1
+
+      # Row acceptance check
+      # @return [Boolean]
+      def valid_row?(...) = valid_characters?(...) && no_pawn_in_back_row?(...)
+
+      # Pattern matching checks for FEN string
+      # @param rank [String]
+      # @return [Boolean]
+      def valid_characters?(rank, _row) = rank.match?(/\A[kqrbnp1-8]+\z/i)
+
+      # Acceptance checks for the first row and last row (Lazy evaluation)
+      # Main criteria: No black pawn in rank 8 and no white pawn in rank 1
+      # @param rank [String]
+      # @param row [Integer]
+      # @return [Boolean]
+      def no_pawn_in_back_row?(rank, row) = [*1..6].include?(row) || rank.count(row.zero? ? "P" : "p").zero?
 
       # Process the active colour field
       # @param color [String]

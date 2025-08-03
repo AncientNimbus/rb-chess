@@ -126,6 +126,60 @@ describe ConsoleGame::Chess::FenImport do
         expect(result).to be_nil
       end
     end
+
+    context "when the value contains more than two kings" do
+      let(:invalid_sequence) { "rnkqkbnr/pppppppp/8/8/8/8/PPPPPKPP/RNBKQKBNR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when the value contains only one king" do
+      let(:invalid_sequence) { "rnbqbbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when the value contains no king" do
+      let(:invalid_sequence) { "rnbqbbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQQBNR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when any black pawn is found in the first sequence or any white pawn is found in the last sequence" do
+      let(:invalid_sequence) { "rnppkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKPPR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when any black pawn is found in the first sequence" do
+      let(:invalid_sequence) { "rnpqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when any white pawn is found in the last sequence" do
+      let(:invalid_sequence) { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKPNR" }
+
+      it "returns nil" do
+        result = fen_import_test.new(level_double).send(:parse_piece_placement, invalid_sequence)
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe "#parse_active_color" do
