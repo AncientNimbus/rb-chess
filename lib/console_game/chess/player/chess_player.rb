@@ -2,7 +2,6 @@
 
 require_relative "../../player"
 require_relative "../utilities/chess_utils"
-require_relative "../utilities/move_formatter"
 
 module ConsoleGame
   module Chess
@@ -14,7 +13,7 @@ module ConsoleGame
       attr_accessor :side, :piece_at_hand
       # @!attribute [r] controller
       #   @return [ChessInput]
-      attr_reader :level, :board, :controller, :moves_history, :session_id, :move_formatter, :cmd_usage_cp
+      attr_reader :level, :board, :controller, :moves_history, :session_id, :cmd_usage_cp
 
       # @param name [String]
       # @param controller [ChessInput]
@@ -26,7 +25,7 @@ module ConsoleGame
         # @type [ChessPiece, nil]
         @piece_at_hand = nil
         @moves_history = m_history
-        @move_formatter = MoveFormatter.new(self)
+
         store_cmd_usage
       end
 
@@ -200,7 +199,6 @@ module ConsoleGame
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
         moves_history << piece_at_hand.last_move
-        # moves_history << move_formatter.to_pgn_move
         level.reset_en_passant
         put_piece_down
         true

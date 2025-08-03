@@ -143,6 +143,22 @@ describe ConsoleGame::Chess::Game do
       end
     end
 
+    context "when user wishes to load a valid ongoing game session where white must response to a check" do
+      let(:test_sessions) { { "1" => { event: "Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["rnb1kbnr/ppp2ppp/3p1p2/3PqP2/8/8/PPPP1QPP/RNB1KBNR w KQkq - 0 1"], white_moves: [], black_moves: [] } } }
+
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      it "opens level and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "2", "1", "f2", "e3", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
     context "when user wishes to load an ongoing game session where the game mode is invalid" do
       let(:test_sessions) { { "1" => { event: "Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Computer", result: nil, mode: 3, moves: {}, fens: ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"], white_moves: [], black_moves: [] } } }
 
