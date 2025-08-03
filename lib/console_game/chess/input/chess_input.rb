@@ -16,7 +16,7 @@ module ConsoleGame
       include SmithNotation
       include AlgebraicNotation
 
-      attr_accessor :input_scheme, :input_parser
+      attr_accessor :input_scheme
       attr_reader :alg_reg, :smith_reg, :level, :active_side, :chess_manager
 
       # @param game_manager [GameManager]
@@ -26,7 +26,6 @@ module ConsoleGame
         @chess_manager = chess_manager
         notation_patterns_builder
         @input_scheme = smith_reg
-        @input_parser = SMITH_PARSER
       end
 
       # Store active level object
@@ -50,7 +49,7 @@ module ConsoleGame
       # @param player [ChessPlayer]
       def make_a_move(player)
         input = ask(s("level.action2"), reg: SMITH_PATTERN[:gp1], input_type: :custom, empty: true)
-        ops = case input.scan(input_parser)
+        ops = case input.scan(SMITH_PARSER)
               in [new_pos] then { type: :move_piece, args: [new_pos] }
               else { type: :invalid_input, args: [input] }
               end
@@ -169,10 +168,8 @@ module ConsoleGame
       end
 
       # Setup input commands
-      def setup_commands
-        super.merge({ "save" => method(:save), "load" => method(:load), "export" => method(:export),
-                      "smith" => method(:smith), "alg" => method(:alg), "board" => method(:board) })
-      end
+      def setup_commands = super.merge({ "save" => method(:save), "load" => method(:load), "export" => method(:export),
+                                         "smith" => method(:smith), "alg" => method(:alg), "board" => method(:board) })
 
       # Print command is disabled at this stage
       def cmd_disabled = print_msg(s("cmd.disabled"), pre: D_MSG[:warn_prefix])
