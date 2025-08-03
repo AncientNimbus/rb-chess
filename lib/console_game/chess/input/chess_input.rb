@@ -118,9 +118,10 @@ module ConsoleGame
       def export(_args = [])
         return cmd_disabled if level.nil?
 
-        # print_msg(s("cmd.export"), pre: "* ") # @todo: Update this
         save_moves
-        PgnExport.export_session(level.session)
+
+        dir, filename = PgnExport.export_session(level.session)
+        print_msg(s("cmd.export", { filename: [filename, "gold"], dir: [dir, "gold"] }))
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`

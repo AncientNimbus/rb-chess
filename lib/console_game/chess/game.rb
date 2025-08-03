@@ -14,7 +14,7 @@ require_relative "utilities/load_manager"
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
   # @author Ancient Nimbus
-  # @version 0.8.0
+  # @version 0.9.0
   module Chess
     # Main game flow for the game Chess, a subclass of ConsoleGame::BaseGame
     class Game < BaseGame
@@ -26,7 +26,7 @@ module ConsoleGame
       # @param game_manager [GameManager]
       # @param title [String]
       def initialize(game_manager = nil, title = "Chess")
-        super(game_manager, title, ChessInput.new(game_manager, self), ver: "0.8.0")
+        super(game_manager, title, ChessInput.new(game_manager, self), ver: "0.9.0")
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
       end

@@ -117,8 +117,9 @@ module ConsoleGame
 
       # Pawn specific: Present a list of option when player can promote a pawn
       def indirect_promote
-        level.event_msgs << board.s("level.promo_opt")
+        piece_at_hand.query_moves
         level.refresh
+        level.event_msgs << board.s("level.promo_opt")
         controller.promote_a_pawn
       end
 
@@ -198,18 +199,15 @@ module ConsoleGame
       # @return [Boolean]
       def turn_end
         piece_at_hand.is_a?(Pawn) ? level.half_move = 0 : level.half_move += 1
-        # moves_history << piece_at_hand.last_move
-        # moves_history << to_pgn_move(piece_at_hand)
-        moves_history << move_formatter.to_pgn_move
+        moves_history << piece_at_hand.last_move
+        # moves_history << move_formatter.to_pgn_move
         level.reset_en_passant
         put_piece_down
         true
       end
 
       # Access player session keys
-      def write_metadata(key, value)
-        data[session_id][key] = value.is_a?(String) ? Paint.unpaint(value) : value
-      end
+      def write_metadata(key, value) = data[session_id][key] = value.is_a?(String) ? Paint.unpaint(value) : value
     end
   end
 end

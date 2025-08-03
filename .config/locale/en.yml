@@ -300,8 +300,9 @@ en:
           * Black: %{b_player}
           * ♞ Ruby Chess by Ancient Nimbus ver: %{ver}
         export: |
-          Session has been exported as %{file_name}
-          It can be found at the following directory: \n==> '%{dir}'
+          * Your Chess session has been exported as: '%{filename}'
+          * It can be found at the following directory: 
+          * ==> '%{dir}'
         input:
           alg: "Press 'enter' to switch input detection to Algebraic notation"
           smith: "Press 'enter' to switch input detection to Smith notation"

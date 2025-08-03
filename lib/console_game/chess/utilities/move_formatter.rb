@@ -33,17 +33,17 @@ module ConsoleGame
       # @return [String]
       def to_pgn_move
         init_query
-        p alg_output_capture_gps(last_move)
+        # p alg_output_capture_gps(last_move)
         modify_last_move
         last_move
       end
 
       # Modify last move during a check event
       # @param mate [Boolean]
-      def modify_last_move(mate: false)
-        p move_pairs
-        last_pair = move_pairs.values.last
-        p last_pair
+      def modify_last_move(_mate: false)
+        # p move_pairs
+        move_pairs.values.last
+        # p last_pair
         # p move_pairs
       end
 

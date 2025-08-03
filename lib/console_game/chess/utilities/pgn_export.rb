@@ -20,7 +20,7 @@ module ConsoleGame
 
       # @!attribute [r] session
       #   @return [Hash] game session data
-      attr_reader :session, :date, :sub_path
+      attr_reader :session, :date, :sub_path, :filename, :path
 
       # Alias for NimbusFileUtils
       F = NimbusFileUtils
@@ -36,6 +36,7 @@ module ConsoleGame
       def export_session
         process_time_field
         F.write_to_disk(pgn_filepath, to_pgn)
+        [path, filename]
       end
 
       private
@@ -43,17 +44,16 @@ module ConsoleGame
       # Create file name and return full file path
       # @return [String] valid filepath
       def pgn_filepath
-        date_suffix = session[:date].strftime("%Y_%m_%d")
-        base = "#{session[:event]}_#{date_suffix}"
+        base = "#{session[:event]}_#{session[:date].strftime('%Y_%m_%d')}"
         count = 0
-        filename = F.formatted_filename(base, DOT_PGN)
-        path = F.filepath(filename, *sub_path)
+        @filename = F.formatted_filename(base, DOT_PGN)
+        @path = F.filepath(filename, *sub_path)
         while F.file_exist?(path, use_filetype: false)
           count += 1
-          filename = F.formatted_filename("#{base}_#{count}", DOT_PGN)
-          path = F.filepath(filename, *sub_path)
+          @filename = F.formatted_filename("#{base}_#{count}", DOT_PGN)
+          @path = F.filepath(filename, *sub_path)
         end
-        path
+        @path
       end
 
       # Returns PGN ready string
