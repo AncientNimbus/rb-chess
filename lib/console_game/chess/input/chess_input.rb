@@ -120,28 +120,17 @@ module ConsoleGame
         return cmd_disabled if level.nil?
 
         save_moves
-
-        dir, filename, output = PgnExport.export_session(level.session).values_at(:path, :filename, :export_data)
-        print_msg(s("cmd.export", { filename: [filename, "gold"], dir: [dir, "gold"] }))
-        puts output
+        dir, filename, pgn_out = PgnExport.export_session(level.session).values_at(:path, :filename, :export_data)
+        print_msg(s("cmd.export", {
+                      filename: [filename, "gold"], dir: [dir, "gold"], sep: ["PGN".center(80, "=")], pgn_out:
+                    }))
       end
 
       # Change input mode to detect Smith Notation | command pattern: `smith`
-      def smith(_args = [])
-        return cmd_disabled if level.nil?
-
-        print_msg(s("cmd.input.smith"), pre: "* ")
-        self.input_scheme = smith_reg
-        self.input_parser = SMITH_PARSER
-      end
+      def smith(_args = []) = switch_notation(:smith)
 
       # Change input mode to detect Algebraic Notation | command pattern: `alg`
-      def alg(_args = [])
-        return cmd_disabled if level.nil?
-
-        print_msg(s("cmd.input.alg"), pre: "* ")
-        self.input_scheme = alg_reg
-      end
+      def alg(_args = []) = switch_notation(:alg)
 
       # Update board settings | command pattern: `board`
       # @example usage example
@@ -160,6 +149,18 @@ module ConsoleGame
       private
 
       # == Utilities ==
+
+      # Switch notation depending on user input
+      # @param mode [Symbol] expects :smith or :alg
+      def switch_notation(mode)
+        return cmd_disabled if level.nil?
+
+        self.input_scheme = case mode
+                            when :smith then smith_reg
+                            when :alg then alg_reg
+                            end
+        print_msg(s("cmd.input.#{mode}"), pre: "* ")
+      end
 
       # Create regexp patterns for various input modes
       def notation_patterns_builder

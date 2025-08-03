@@ -111,6 +111,7 @@ module ConsoleGame
         @sides = {}
         setup_p1
         @p2 = nil
+        @fen = nil
       end
 
       # Create new session data
