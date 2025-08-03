@@ -268,7 +268,7 @@ en:
         f1: |
           * Select a game mode:
           *   • [1] Player vs Player
-          *   • [2] Player vs Computer (Coming soon)
+          *   • [2] Player vs Computer (Level: Easy)
         f1a: "Please select a game mode: "
         f1a_err: "Invalid input, please choose between 1 or 2"
         f2: "Please name Player %{count} (Default: %{name})"

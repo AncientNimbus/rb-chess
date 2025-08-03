@@ -188,6 +188,7 @@ module ConsoleGame
       # @return [Boolean]
       def handle_result(type:, side: nil)
         winner = session[opposite_of(side)]
+        kings[side].color = "#CC0000" if type == "checkmate"
         board.print_chessboard
         board.print_after_cb("level.endgame.#{type}", { win_player: winner })
         @game_ended = true

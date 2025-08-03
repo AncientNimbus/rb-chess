@@ -102,6 +102,7 @@ module ConsoleGame
       def save(_args = [], mute: false)
         return cmd_disabled if level.nil?
 
+        level.session[:date] = Time.new.ceil.strftime(STR_TIME)
         game_manager.save_user_profile(mute:)
       end
 

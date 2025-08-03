@@ -16,4 +16,5 @@ group :development, :test do
 end
 
 gem "paint", "~> 2.3"
+gem "reline", "~> 0.6.2"
 gem "whirly", "~> 0.3.0"
