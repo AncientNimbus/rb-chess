@@ -10,6 +10,7 @@ require_relative "utilities/chess_utils"
 require_relative "utilities/player_builder"
 require_relative "utilities/session_builder"
 require_relative "utilities/load_manager"
+require_relative "utilities/fen_import"
 
 module ConsoleGame
   # The Chess module features all the working parts for the game Chess.
@@ -22,6 +23,7 @@ module ConsoleGame
       include Display
 
       attr_reader :mode, :p1, :p2, :sides, :sessions, :level
+      attr_accessor :fen
 
       # @param game_manager [GameManager]
       # @param title [String]
@@ -36,24 +38,32 @@ module ConsoleGame
       def setup_game
         reset_state
         opt = game_selection
-        id = opt == 1 ? new_game : load_game
-        fen = sessions.dig(id, :fens, -1)
+        id = opt == 2 ? load_game : new_game(import: (opt == 3))
+        @fen ||= sessions.dig(id, :fens, -1)
         @level = Level.new(controller, sides, sessions[id], fen).open_level
         end_game
       end
 
       # Handle new game sequence
       # @param err [Boolean] is use when there is a load err
-      def new_game(err: false)
+      # @param import [Boolean] true if opt is 3
+      def new_game(err: false, import: false)
         print_msg(s("new.err")) if err
         print_msg(s("new.f1"))
         @mode = controller.ask(s("new.f1a"), err_msg: s("new.f1a_err"), reg: [1, 2], input_type: :range).to_i
         @p1, @p2 = setup_players
         start_order
+        import_game if import
         create_session
       end
 
       private
+
+      # Import game mode
+      def import_game
+        print_msg(s("new.f3"), pre: "* ")
+        @fen = controller.ask("FEN: ", input_type: :any)
+      end
 
       # == Flow ==
 
@@ -68,7 +78,7 @@ module ConsoleGame
       # Prompt player for new game or load game
       def game_selection
         print_msg(s("load.f1"))
-        controller.ask(s("load.f1a"), err_msg: s("load.f1a_err"), reg: [1, 2], input_type: :range).to_i
+        controller.ask(s("load.f1a"), err_msg: s("load.f1a_err"), reg: [1, 3], input_type: :range).to_i
       end
 
       # Handle load game sequence

@@ -29,6 +29,20 @@ describe ConsoleGame::Chess::Game do
       end
     end
 
+    context "when user wishes to import a game via FEN string" do
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      it "opens level and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "3", "1", "", "", "1", "rnbqkbnr/ppp3pp/4pp2/3p4/5B2/2PP4/PP2PPPP/RN1QKBNR w KQkq - 0 1", "d4d5", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
     context "when user wishes to create a new game and load another session mid game" do
       before do
         allow($stdout).to receive(:puts)
