@@ -29,6 +29,24 @@ describe ConsoleGame::Chess::Game do
       end
     end
 
+    context "when the game will end has a fool's mate" do
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      after do
+        Dir.glob("user_data/pgn_export/*.pgn").each { |f| File.delete(f) }
+      end
+
+      it "opens level and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "--alg", "", "f4", "e5", "g4", "Qh4", "--info", "--export", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
     context "when user wishes to create a new game with computer player" do
       before do
         allow($stdout).to receive(:puts)
