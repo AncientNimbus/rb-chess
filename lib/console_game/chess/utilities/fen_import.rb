@@ -16,6 +16,9 @@ module ConsoleGame
       # Pieces limits
       LIMITS = { "k" => 1, "q" => 9, "b" => 10, "n" => 10, "r" => 10, "p" => 8 }.freeze
 
+      # Basic parse pattern
+      FEN_PATTERN = /\A[kqrbnp1-8]+\z/i
+
       # FEN Raw data parser (FEN import)
       # @return [Hash<Hash>] FEN data hash for internal use
       def self.parse_fen(...) = new(...).parse_fen
@@ -116,7 +119,7 @@ module ConsoleGame
       # Pattern matching checks for FEN string
       # @param rank [String]
       # @return [Boolean]
-      def valid_characters?(rank, _row) = rank.match?(/\A[kqrbnp1-8]+\z/i)
+      def valid_characters?(rank, _row) = rank.match?(FEN_PATTERN)
 
       # Acceptance checks for the first row and last row (Lazy evaluation)
       # Main criteria: No black pawn in rank 8 and no white pawn in rank 1
