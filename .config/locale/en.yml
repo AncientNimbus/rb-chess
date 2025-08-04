@@ -272,7 +272,7 @@ en:
           *   • [2] Player vs Computer (Level: Easy)
         f1a: "Please select a game mode: "
         f1a_err: "Invalid input, please choose between 1 or 2"
-        f2: "Please name Player %{count} (Default: %{name})"
+        f2: "Please name Player %{count} (Default: %{name}) "
         f2a: "Name has been updated to '%{name}'."
         f3: "Provide a valid FEN below, invalid FEN will cancel the operation and a new game will be setup instead."
         err: "Sessions not found, entering new game creation mode..."
@@ -302,9 +302,17 @@ en:
           * Black: %{b_player}
           * ♞ Ruby Chess by Ancient Nimbus ver: %{ver}
         export: |
+          %{sep}
+
           * Your Chess session has been exported as: '%{filename}'
           * It can be found at the following directory: 
           * ==> '%{dir}'
+          * You can also select and copy the text below: ↴
+          * To import a game, visit chess site such as: https://lichess.org/paste
+
+          %{pgn_out}
+
+          %{sep}
         input:
           alg: "Press 'enter' to switch input detection to Algebraic notation"
           smith: "Press 'enter' to switch input detection to Smith notation"
@@ -361,6 +369,13 @@ en:
         err: "FEN error, '%{fen_str}' is not a valid sequence. Starting a new game..."
       misc:
         site: "Ruby Arcade Terminal Chess by Ancient Nimbus"
+      status:
+        ongoing: "In Progress"
+        stalemate: "Draw"
+        insufficient: "Draw"
+        fifty_move: "Draw"
+        threefold: "Draw"
+        checkmate: "Checkmate"
       pieces:
         k:
           name: "King"

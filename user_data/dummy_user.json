@@ -1,13 +1,13 @@
 {
   "uuid": "9e39f092-534e-4dbb-ac3c-64846b78d727",
   "username": "Dummy User",
-  "saved_date": "2025-08-03 10:04:44 +0100",
+  "saved_date": "2025-08-04 18:37:57 +0100",
   "appdata": {
     "chess": {
       "1": {
         "event": "Dummy User vs Legal Mate",
         "site": "Ruby Arcade Terminal Chess by Ancient Nimbus",
-        "date": "08/03/2025 09:56 AM",
+        "date": "08/04/2025 06:37 PM",
         "round": null,
         "white": "Dummy User",
         "black": "Legal Mate",
@@ -20,7 +20,7 @@
           "4": ["Nc3", "Bg4"],
           "5": ["h3", "Bh5"],
           "6": ["Nfxe5", "Bhxd1"],
-          "7": ["Bcxf7+", "Ke7"]
+          "7": ["Bcxf7", "Ke7"]
         },
         "white_moves": [
           "e4",
@@ -30,7 +30,7 @@
           "h3",
           "Nfxe5",
           "Bcxf7",
-          "Nd5"
+          "Nd5+"
         ],
         "black_moves": ["e5", "Nc6", "d6", "Bg4", "Bh5", "Bhxd1", "Ke7"],
         "fens": [
@@ -51,10 +51,33 @@
           "r2q1bnr/ppp1kBpp/2np4/4N3/4P3/2N4P/PPPP1PP1/R1BbK2R w KQ - 5 8",
           "r2q1bnr/ppp1kBpp/2np4/3NN3/4P3/7P/PPPP1PP1/R1BbK2R b KQ - 6 8"
         ]
+      },
+      "2": {
+        "event": "Dummy User vs Master Yo status-Checkmate",
+        "site": "Ruby Arcade Terminal Chess by Ancient Nimbus",
+        "date": "08/04/2025 06:37 PM",
+        "round": null,
+        "white": "Dummy User",
+        "black": "Master Yo",
+        "result": null,
+        "mode": 1,
+        "moves": {
+          "1": ["f4", "e5"],
+          "2": ["g4", "Qh4#"]
+        },
+        "white_moves": ["f4", "g4"],
+        "black_moves": ["e5", "Qh4"],
+        "fens": [
+          "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1",
+          "rnbqkbnr/pppp1ppp/8/4p3/5P2/8/PPPPP1PP/RNBQKBNR w KQkq - 0 2",
+          "rnbqkbnr/pppp1ppp/8/4p3/5PP1/8/PPPPP2P/RNBQKBNR b KQkq - 0 2",
+          "rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3"
+        ]
       }
     }
   },
   "stats": {
-    "launch_count": 218
+    "launch_count": 370
   }
 }

@@ -7,9 +7,9 @@ module ConsoleGame
     class PieceAnalysis
       class << self
         # Analyse the board
-        # usable_pieces: usable pieces of the given turn
-        # threats_map: all blunder tile for each side
-        # @return [Array<Hash<ChessPiece>>] usable_pieces and threats_map
+        # @return [Hash] Board analysis data
+        #   @option return [Hash<Symbol, Set<Integer>>] :threats_map Threatened squares by side
+        #   @option return [Hash<Symbol, Array<String>>] :usable_pieces Movable piece positions by side
         def board_analysis(...) = new(...).board_analysis
 
         # Returns a hash with :white and :black keys to nil.
@@ -33,14 +33,14 @@ module ConsoleGame
       # Analyse the board
       # usable_pieces: usable pieces of the given turn
       # threats_map: all blunder tile for each side
-      # @return [Array<Hash<ChessPiece>>] usable_pieces and threats_map
+      # @return [Hash] Board analysis data
       def board_analysis
         threats_map, usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         pieces_group.each do |side, pieces|
           threats_map[side] = add_pos_to_blunder_tracker(pieces)
           usable_pieces[side] = pieces.map { |piece| piece.info unless piece.possible_moves.empty? }.compact
         end
-        [threats_map, usable_pieces]
+        { threats_map:, usable_pieces: }
       end
 
       private

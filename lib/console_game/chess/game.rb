@@ -61,7 +61,7 @@ module ConsoleGame
 
       # Import game mode
       def import_game
-        print_msg(s("new.f3"), pre: "* ")
+        print_msg(s("new.f3"), pre: "⠗ ")
         @fen = controller.ask("FEN: ", input_type: :any)
       end
 
@@ -107,10 +107,8 @@ module ConsoleGame
       # Reset state
       def reset_state
         Player.player_count(0)
-        @player_builder = nil
-        @sides = {}
-        setup_p1
-        @p2 = nil
+        reset_config = { player_builder: nil, sides: {}, p1: setup_p1, p2: nil, fen: nil }
+        reset_config.each { |var, v| instance_variable_set("@#{var}", v) }
       end
 
       # Create new session data
@@ -167,7 +165,7 @@ module ConsoleGame
       # == Player object creation ==
 
       # Setup player 1
-      def setup_p1 = @p1 = create_player(user.profile[:username])
+      def setup_p1 = create_player(user.profile[:username])
 
       # Create new player builder service
       # @return [PlayerBuilder]

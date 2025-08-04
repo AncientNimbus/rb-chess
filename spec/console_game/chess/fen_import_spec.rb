@@ -18,7 +18,7 @@ describe ConsoleGame::Chess::FenImport do
 
       it "returns a hash with 6 internal hash data fields: turn_data, white_turn, castling_states, en_passant, half, and full" do
         result = fen_import_test.parse_fen(level_double, new_game_placement_w)
-        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half full])
+        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half_move full_move])
       end
 
       it "returns a hash where turn_data contains an array with 64 elements" do
@@ -43,19 +43,19 @@ describe ConsoleGame::Chess::FenImport do
 
       it "returns a hash where half-move is 0" do
         result = fen_import_test.parse_fen(level_double, new_game_placement_w)
-        expect(result[:half]).to eq(0)
+        expect(result[:half_move]).to eq(0)
       end
 
       it "returns a hash where full-move is 1" do
         result = fen_import_test.parse_fen(level_double, new_game_placement_w)
-        expect(result[:full]).to eq(1)
+        expect(result[:full_move]).to eq(1)
       end
     end
 
     context "when default FEN start string is used" do
       it "returns a hash with 6 internal hash data fields: turn_data, white_turn, castling_states, en_passant, half, and full" do
         result = fen_import_test.parse_fen(level_double)
-        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half full])
+        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half_move full_move])
       end
 
       it "returns a hash where turn_data contains an array with 64 elements" do
@@ -80,21 +80,25 @@ describe ConsoleGame::Chess::FenImport do
 
       it "returns a hash where half-move is 0" do
         result = fen_import_test.parse_fen(level_double)
-        expect(result[:half]).to eq(0)
+        expect(result[:half_move]).to eq(0)
       end
 
       it "returns a hash where full-move is 1" do
         result = fen_import_test.parse_fen(level_double)
-        expect(result[:full]).to eq(1)
+        expect(result[:full_move]).to eq(1)
       end
     end
 
     context "when value is an invalid FEN string" do
       let(:invalid_fen_string) { "Invalid fen string" }
 
+      before do
+        allow(level_double).to receive(:loading_msg)
+      end
+
       it "returns a hash of a standard new game as fallback" do
         result = fen_import_test.parse_fen(level_double, invalid_fen_string)
-        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half full])
+        expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half_move full_move])
       end
     end
   end
@@ -327,27 +331,27 @@ describe ConsoleGame::Chess::FenImport do
   describe "#parse_move_num" do
     context "when value is a number and type is half-move" do
       let(:move_num) { "2" }
-      let(:type_is_half_move) { :half }
+      let(:type_is_half_move) { :half_move }
 
       it "returns a hash where key is set to half and value is converted to an integer" do
         result = fen_import_test.new(level_double).send(:parse_move_num, move_num, type_is_half_move)
-        expect(result).to eq({ half: 2 })
+        expect(result).to eq({ half_move: 2 })
       end
     end
 
     context "when value is a number and type is full-move" do
       let(:move_num) { "20" }
-      let(:type_is_full_move) { :full }
+      let(:type_is_full_move) { :full_move }
 
       it "returns a hash where key is set to full and value is converted to an integer" do
         result = fen_import_test.new(level_double).send(:parse_move_num, move_num, type_is_full_move)
-        expect(result).to eq({ full: 20 })
+        expect(result).to eq({ full_move: 20 })
       end
     end
 
     context "when value is not a number and type is full-move" do
       let(:move_num) { "ABC" }
-      let(:type_is_full_move) { :full }
+      let(:type_is_full_move) { :full_move }
 
       it "returns nil" do
         result = fen_import_test.new(level_double).send(:parse_move_num, move_num, type_is_full_move)

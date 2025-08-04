@@ -71,11 +71,7 @@ module ConsoleGame
       end
 
       # Board state refresher
-      # Generate all possible move and send it to board analysis
-      # @see PieceAnalysis #board_analysis
-      def update_board_state
-        @threats_map, @usable_pieces = PieceAnalysis.board_analysis(fetch_all.each(&:query_moves))
-      end
+      def update_board_state = board_analysis.each { |var, v| instance_variable_set("@#{var}", v) }
 
       # Simulate next move - Find good moves
       # @param piece [ChessPiece] expects a ChessPiece object
@@ -117,6 +113,11 @@ module ConsoleGame
       # @see PieceLookup #reverse_lookup
       def reverse_lookup(...) = piece_lookup.reverse_lookup(...)
 
+      # Loading message
+      # @param msg [String] message
+      # @param time [Integer] wait time
+      def loading_msg(msg, time: 2) = board.loading_msg(msg, time:)
+
       # == Export ==
 
       # Update session moves record
@@ -143,9 +144,9 @@ module ConsoleGame
         @kings = PieceAnalysis.bw_nil_hash
         @threats_map, @usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         @event_msgs = []
-        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
-          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+        fen_data.each { |field, v| instance_variable_set("@#{field}", v) }
         set_current_player
+        update_board_state
         refresh(print_turn: false)
         greet_player
       end
@@ -177,7 +178,7 @@ module ConsoleGame
 
       # Player action flow
       def player_action
-        board.print_msg(board.s("level.turn", { player: player.name }), pre: "* ")
+        board.print_msg(board.s("level.turn", { player: player.name }), pre: "⠗ ")
         player.is_a?(ChessComputer) ? player.play_turn : controller.turn_action(player)
       end
 
@@ -187,6 +188,11 @@ module ConsoleGame
         @player, @opponent = white_turn ? [w_player, b_player] : [b_player, w_player]
       end
 
+      # Generate all possible move and send it to board analysis
+      # @see PieceAnalysis #board_analysis
+      # @return [Hash]
+      def board_analysis = PieceAnalysis.board_analysis(fetch_all.each(&:query_moves))
+
       # == Endgame Logics ==
 
       # Handle checkmate and draw event
@@ -194,12 +200,17 @@ module ConsoleGame
       # @param side [Symbol, nil] player side
       # @return [Boolean]
       def handle_result(type:, side: nil)
+        update_event_status(type:)
+        save_turn
         winner = session[opposite_of(side)]
         kings[side].color = "#CC0000" if type == "checkmate"
         event_msgs << board.s("level.endgame.#{type}", { win_player: winner })
-        board.print_turn(event_msgs)
+        board.print_turn(event_msgs[-1])
         @game_ended = true
       end
+
+      # Update event state
+      def update_event_status(type:) = session[:event].sub!(board.s("status.ongoing"), board.s("status.#{type}"))
 
       # Add checked or checkmate marker to opponent's last move
       def add_check_marker

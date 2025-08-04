@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../../console/wait_utils"
 require_relative "logics/display"
 
 module ConsoleGame
@@ -26,17 +27,22 @@ module ConsoleGame
       #   board.print_msg(board.s(keypath, sub))
       # end
 
+      # Loading message
+      # @see WaitUtils #wait_msg
+      def loading_msg(...) = WaitUtils.wait_msg(...)
+
       # Print after the chessboard
       # @param keypath [String] TF keypath
       # @param sub [Hash] `{ demo: ["some text", :red] }`
-      def print_after_cb(keypath, sub = {}) = print_msg(s(keypath, sub), pre: "* ")
+      def print_after_cb(keypath, sub = {}) = print_msg(s(keypath, sub), pre: "⠗ ")
 
       # Print turn
       # @param event_msgs [Array<String>]
       def print_turn(event_msgs = [""])
-        print "\e[2J\e[H"
+        system("clear")
+        # print "\e[2J\e[H"
 
-        print_msg(*event_msgs, pre: "* ") unless event_msgs.empty?
+        print_msg(*event_msgs, pre: "⠗ ") unless event_msgs.empty?
         print_chessboard
         level.event_msgs.clear
         # self.live_board = 0

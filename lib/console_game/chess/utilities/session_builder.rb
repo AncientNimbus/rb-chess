@@ -13,14 +13,15 @@ module ConsoleGame
       # @return [Array<Integer, Hash>] session data
       def self.build_session(...) = new(...).build_session
 
-      attr_reader :sessions, :mode, :sides, :site_text
+      attr_reader :sessions, :mode, :sides, :site_txt, :ongoing_txt
 
       # @param game [Game] expects chess game manager object
       def initialize(game)
         @sessions = game.sessions
         @mode = game.mode
         @sides = game.sides
-        @site_text = game.s("misc.site")
+        @site_txt = game.s("misc.site")
+        @ongoing_txt = game.s("status.ongoing")
       end
 
       # Build session data
@@ -32,8 +33,8 @@ module ConsoleGame
         session = { mode: mode,
                     white: wp_name,
                     black: bp_name,
-                    event: "#{wp_name} vs #{bp_name}",
-                    site: site_text,
+                    event: "#{wp_name} vs #{bp_name} status-#{ongoing_txt}",
+                    site: site_txt,
                     date: Time.new.ceil.strftime(STR_TIME) }
         [id, session]
       end

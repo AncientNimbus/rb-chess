@@ -36,26 +36,51 @@ module ConsoleGame
       # @return [Hash]
       def export_session
         process_time_field
+        pgn_filepath
         export_data = to_pgn
-        F.write_to_disk(pgn_filepath, export_data)
+        F.write_to_disk(path, export_data)
         { path:, filename:, export_data: }
       end
 
       private
 
       # Create file name and return full file path
-      # @return [String] valid filepath
       def pgn_filepath
         name = build_name
+        begin
+          make_filename(name)
+          make_filepath
+          append_file_num(name)
+        rescue ArgumentError
+          name = handle_filename_err
+          retry
+        end
+      end
+
+      # Format filename
+      # @param name [String]
+      def make_filename(name) = @filename = F.formatted_filename(name, DOT_PGN)
+
+      # Format filepath
+      def make_filepath = @path = F.filepath(filename, *sub_path)
+
+      # Append number suffix if file exist
+      # @param name [String]
+      def append_file_num(name)
         count = 0
-        @filename = F.formatted_filename(name, DOT_PGN)
-        @path = F.filepath(filename, *sub_path)
         while F.file_exist?(path, use_filetype: false)
           count += 1
-          @filename = F.formatted_filename("#{name}_#{count}", DOT_PGN)
-          @path = F.filepath(filename, *sub_path)
+          make_filename("#{name}_#{count}")
+          make_filepath
         end
-        path
+      end
+
+      # Error handling when forbidden character is found in filename
+      # Likely due to my #formatted_filename method is a little too strict
+      # @return [String] default name
+      def handle_filename_err
+        puts "\n! Forbidden characters found in event name, a default filename will be used."
+        "chess session"
       end
 
       # Returns PGN ready string

@@ -59,17 +59,17 @@ module ConsoleGame
       # @param fen_data [Array<String>] expects splitted FEN as an array
       # @return [Array<Hash, nil>]
       def process_fen_data(fen_data)
-        fen_board, active_color, c_state, ep_state, halfmove, fullmove = fen_data
+        fen_board, active_color, c_state, ep_state, half_move, full_move = fen_data
         [
           parse_piece_placement(fen_board), parse_active_color(active_color), parse_castling_str(c_state),
-          parse_en_passant(ep_state), parse_move_num(halfmove, :half), parse_move_num(fullmove, :full)
+          parse_en_passant(ep_state), parse_move_num(half_move, :half_move), parse_move_num(full_move, :full_move)
         ]
       end
 
       # Process flow when there is an issue during FEN parsing
       # @param err_msg [String] error message during FEN error
       def fen_error(err_msg: "FEN error, '#{fen_str}' is not a valid sequence. Starting a new game...")
-        puts err_msg
+        level.loading_msg(err_msg, time: 3)
         self.class.parse_fen(level)
       end
 
@@ -173,7 +173,9 @@ module ConsoleGame
       # @param num [String] expects a string with either half-move or full-move data
       # @param type [Symbol] specify the key type for the hash
       # @return [Hash, nil] a hash of either half-move or full-move data
-      def parse_move_num(num, type) = num.match?(/\A\d+\z/) && %i[half full].include?(type) ? { type => num.to_i } : nil
+      def parse_move_num(num, type)
+        num.match?(/\A\d+\z/) && %i[half_move full_move].include?(type) ? { type => num.to_i } : nil
+      end
 
       # Initialize chess piece via string value
       # @param pos [Integer] positional value
