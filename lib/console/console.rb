@@ -164,9 +164,7 @@ module Console
   def table_formatter(data_arr)
     row_counts = data_arr.size
     prefix_size = ol_prefix(row_counts).size
-    auto_pad = row_counts * 2 + D_MSG[:v_sep].size
-    max_length = data_arr.map { |arr| arr.max_by(&:size) }.sum(&:size) + auto_pad + prefix_size
-    max_length = 80 if max_length > 80
+    max_length = 80
     [prefix_size, max_length]
   end
 
