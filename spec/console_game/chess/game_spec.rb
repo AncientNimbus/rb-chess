@@ -208,7 +208,7 @@ describe ConsoleGame::Chess::Game do
     end
 
     context "when user loads a valid ended game session" do
-      let(:test_sessions) { { "1" => { event: "Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["rnbqkbnr/ppppp2p/5p2/6pQ/8/4P3/PPPP1PPP/RNB1KBNR b KQkq - 1 1"], white_moves: [], black_moves: [] } } }
+      let(:test_sessions) { { "1" => { event: +"Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["rnbqkbnr/ppppp2p/5p2/6pQ/8/4P3/PPPP1PPP/RNB1KBNR b KQkq - 1 1"], white_moves: [], black_moves: [] } } }
 
       before do
         allow($stdout).to receive(:puts)
@@ -224,7 +224,7 @@ describe ConsoleGame::Chess::Game do
     end
 
     context "when user loads a valid stalemate game session" do
-      let(:test_sessions) { { "1" => { event: "Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["7k/5K2/6Q1/8/8/8/8/8 b - - 1 1"], white_moves: [], black_moves: [] } } }
+      let(:test_sessions) { { "1" => { event: +"Chess Sessions Integration test", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["7k/5K2/6Q1/8/8/8/8/8 b - - 1 1"], white_moves: [], black_moves: [] } } }
 
       before do
         allow($stdout).to receive(:puts)

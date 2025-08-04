@@ -11,6 +11,7 @@ describe ConsoleGame::Chess::EndgameLogic do
 
   before do
     allow(controller).to receive(:save)
+    allow(level).to receive(:update_event_status)
   end
 
   describe "#any_checkmate?" do
