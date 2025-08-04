@@ -22,7 +22,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop and white pawn moves from a2 to a3" do
         allow(Readline).to receive(:readline).and_return("a2a3")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[16].is_a?(ConsoleGame::Chess::Pawn)
         expect(result).to be true
@@ -41,7 +41,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop and black pawn moves from h7 to h5" do
         allow(Readline).to receive(:readline).and_return("h7h5")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[39].is_a?(ConsoleGame::Chess::Pawn)
         expect(result).to be true
@@ -63,7 +63,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop and black knight captures pawn from c6" do
         allow(Readline).to receive(:readline).and_return("Nxd4")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[27].is_a?(ConsoleGame::Chess::Knight)
         expect(result).to be true
@@ -85,7 +85,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop and white pawn to move from e2 to e4, trigger en passant" do
         allow(Readline).to receive(:readline).and_return("e4")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.en_passant[1]
         expect(result).to eq(20)
@@ -105,7 +105,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop and moves to e3, white pawn at e4 is removed and en_passant is reset" do
         allow(Readline).to receive(:readline).and_return("dxe3")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.en_passant.nil? && level_test.turn_data[28] == ""
         expect(result).to be true
@@ -125,7 +125,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop and moves to e3, white pawn at e4 is removed and en_passant is reset" do
         allow(Readline).to receive(:readline).and_return("d3")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.en_passant.nil? && level_test.turn_data[28].is_a?(ConsoleGame::Chess::Pawn)
         expect(result).to be true
@@ -147,7 +147,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, white pawn moves from a7 to a8 and promotes to a Queen" do
         allow(Readline).to receive(:readline).and_return("a8=Q")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[56].is_a?(ConsoleGame::Chess::Queen)
         expect(result).to be true
@@ -167,7 +167,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, white pawn captures black knight in b8 and promotes to a Rook" do
         allow(Readline).to receive(:readline).and_return("axb8=R")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[57].is_a?(ConsoleGame::Chess::Rook)
         expect(result).to be true
@@ -186,7 +186,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, black pawn moves from a2 to a1 and promotes to a Bishop" do
         allow(Readline).to receive(:readline).and_return("a2a1b")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[0].is_a?(ConsoleGame::Chess::Bishop)
         expect(result).to be true
@@ -205,7 +205,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, black pawn moves from a2 to a1 and promotes to a Knight" do
         allow(Readline).to receive(:readline).and_return("a2a1", "n")
-        allow(level_test).to receive(:game_ended).and_return(false, false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[0].is_a?(ConsoleGame::Chess::Knight)
         expect(result).to be true
@@ -227,7 +227,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, if input is O-O, Kingside castling is triggered, white king's new position is g1 and rook's position is f1" do
         allow(Readline).to receive(:readline).and_return("O-O")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[5].is_a?(ConsoleGame::Chess::Rook) && level_test.turn_data[6].is_a?(ConsoleGame::Chess::King)
         expect(result).to be true
@@ -235,7 +235,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, if input is O-O-O, Queenside castling is triggered, white king's new position is c1 and rook's position is d1" do
         allow(Readline).to receive(:readline).and_return("O-O-O")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[3].is_a?(ConsoleGame::Chess::Rook) && level_test.turn_data[2].is_a?(ConsoleGame::Chess::King)
         expect(result).to be true
@@ -254,7 +254,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, if input is e8g8, Kingside castling is triggered, black king's new position is g8 and rook's position is f8" do
         allow(Readline).to receive(:readline).and_return("e8", "g8")
-        allow(level_test).to receive(:game_ended).and_return(false, false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[61].is_a?(ConsoleGame::Chess::Rook) && level_test.turn_data[62].is_a?(ConsoleGame::Chess::King)
         expect(result).to be true
@@ -262,7 +262,7 @@ describe ConsoleGame::Chess::Level do
 
       it "enters the game loop, if input is e8c8, Queenside castling is triggered, black king's new position is c8 and rook's position is d8" do
         allow(Readline).to receive(:readline).and_return("e8c8")
-        allow(level_test).to receive(:game_ended).and_return(false, false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.turn_data[59].is_a?(ConsoleGame::Chess::Rook) && level_test.turn_data[58].is_a?(ConsoleGame::Chess::King)
         expect(result).to be true
@@ -283,7 +283,7 @@ describe ConsoleGame::Chess::Level do
       end
 
       it "enters the game loop and each take turn to make a move" do
-        allow(level_test).to receive(:game_ended).and_return(false, false, false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(5, false), true)
         level_test.open_level
         result = level_test.send(:all_moves).flatten.compact.size
         expect(result).to eq(2)
@@ -305,7 +305,7 @@ describe ConsoleGame::Chess::Level do
 
       it "adjusts the chessboard size by making it bigger" do
         allow(Readline).to receive(:readline).and_return("--board size", "e4")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.board.board_size == 2
         expect(result).to be true
@@ -325,7 +325,7 @@ describe ConsoleGame::Chess::Level do
 
       it "disable the chessboard flip feature" do
         allow(Readline).to receive(:readline).and_return("--board flip", "e4")
-        allow(level_test).to receive(:game_ended).and_return(false, false, true)
+        allow(level_test).to receive(:game_ended).and_return(*Array.new(3, false), true)
         level_test.open_level
         result = level_test.board.flip_board == false
         expect(result).to be true

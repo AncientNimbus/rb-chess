@@ -146,6 +146,7 @@ module ConsoleGame
         @event_msgs = []
         fen_data.each { |field, v| instance_variable_set("@#{field}", v) }
         set_current_player
+        update_board_state
         refresh(print_turn: false)
         greet_player
       end
