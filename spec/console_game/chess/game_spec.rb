@@ -105,8 +105,28 @@ describe ConsoleGame::Chess::Game do
         Dir.glob("user_data/pgn_export/*.pgn").each { |f| File.delete(f) }
       end
 
-      it "opens level, switch input scheme to smith notation, play all the moves, export file twice and exit successfully" do
+      it "opens level, switch input scheme to smith notation, play all the moves, export file and exit successfully" do
         allow(Readline).to receive(:readline).and_return("", "", "", "1", "1", "", "", "1", "f2f4", "e7e5", "g2g4", "d8", "h4", "--info", "--export", "--exit")
+        expect { chess_manager.start }.to raise_error(SystemExit)
+      end
+    end
+
+    context "when the event name contains forbidden character" do
+      let(:test_sessions) { { "1" => { event: +"Chess Sessions (Integration test)", site: "Chess game menu", date: Time.new(2025, 7, 26), round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"], white_moves: [], black_moves: [] } } }
+
+      before do
+        allow($stdout).to receive(:puts)
+        chess_manager.instance_variable_set(:@sessions, test_sessions)
+        allow(game_manager).to receive(:save_user_profile)
+        allow(game_manager).to receive(:exit_arcade).and_raise(SystemExit)
+      end
+
+      after do
+        Dir.glob("user_data/pgn_export/*.pgn").each { |f| File.delete(f) }
+      end
+
+      it "opens level, switch input scheme to smith notation, play all the moves, export file where file is renamed to default, and exit successfully" do
+        allow(Readline).to receive(:readline).and_return("", "", "", "2", "1", "", "", "1", "f2f4", "e7e5", "g2g4", "d8", "h4", "--info", "--export", "--exit")
         expect { chess_manager.start }.to raise_error(SystemExit)
       end
     end
