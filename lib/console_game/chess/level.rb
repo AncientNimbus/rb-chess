@@ -71,11 +71,7 @@ module ConsoleGame
       end
 
       # Board state refresher
-      # Generate all possible move and send it to board analysis
-      # @see PieceAnalysis #board_analysis
-      def update_board_state
-        @threats_map, @usable_pieces = PieceAnalysis.board_analysis(fetch_all.each(&:query_moves))
-      end
+      def update_board_state = board_analysis.each { |var, v| instance_variable_set("@#{var}", v) }
 
       # Simulate next move - Find good moves
       # @param piece [ChessPiece] expects a ChessPiece object
@@ -143,8 +139,7 @@ module ConsoleGame
         @kings = PieceAnalysis.bw_nil_hash
         @threats_map, @usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         @event_msgs = []
-        @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
-          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half_move, :full_move)
+        fen_data.each { |field, v| instance_variable_set("@#{field}", v) }
         set_current_player
         refresh(print_turn: false)
         greet_player
@@ -186,6 +181,11 @@ module ConsoleGame
       def set_current_player
         @player, @opponent = white_turn ? [w_player, b_player] : [b_player, w_player]
       end
+
+      # Generate all possible move and send it to board analysis
+      # @see PieceAnalysis #board_analysis
+      # @return [Hash]
+      def board_analysis = PieceAnalysis.board_analysis(fetch_all.each(&:query_moves))
 
       # == Endgame Logics ==
 
