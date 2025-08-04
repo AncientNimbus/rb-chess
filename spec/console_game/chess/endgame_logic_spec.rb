@@ -6,8 +6,12 @@ require_relative "../../../lib/console_game/chess/level"
 describe ConsoleGame::Chess::EndgameLogic do
   NimbusFileUtils.set_locale("en")
   let(:controller) { ConsoleGame::Chess::ChessInput.new }
-  let(:session) { { event: "Integration test", site: "Level and Endgame logic", date: nil, round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: [] } }
+  let(:session) { { event: "Integration test", site: "Level and Endgame logic", date: nil, round: nil, white: "Ancient", black: "Nimbus", result: nil, mode: 1, moves: {}, fens: [], white_moves: [], black_moves: [] } }
   let(:sides) { { white: ConsoleGame::Chess::ChessPlayer.new("Ancient", controller, :white), black: ConsoleGame::Chess::ChessPlayer.new("Nimbus", controller, :black) } }
+
+  before do
+    allow(controller).to receive(:save)
+  end
 
   describe "#any_checkmate?" do
     context "when imported FEN session will result in black being checkmate" do

@@ -194,10 +194,11 @@ module ConsoleGame
       # @param side [Symbol, nil] player side
       # @return [Boolean]
       def handle_result(type:, side: nil)
+        save_turn
         winner = session[opposite_of(side)]
         kings[side].color = "#CC0000" if type == "checkmate"
         event_msgs << board.s("level.endgame.#{type}", { win_player: winner })
-        board.print_turn(event_msgs)
+        board.print_turn(event_msgs[-1])
         @game_ended = true
       end
 
