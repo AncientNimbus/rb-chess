@@ -34,7 +34,7 @@ module ConsoleGame
       attr_reader :controller, :w_player, :b_player, :session, :board, :kings, :castling_states, :threats_map,
                   :usable_pieces, :opponent
 
-      # @param input [ChessInput]
+      # @param input [ChessInput]``
       # @param sides [Hash]
       #   @option sides [ChessPlayer, ChessComputer] :white Player who plays as White
       #   @option sides [ChessPlayer, ChessComputer] :black Player who plays as Black
@@ -67,7 +67,7 @@ module ConsoleGame
         update_board_state
         game_end_check
         add_check_marker
-        board.print_turn(event_msgs) if print_turn
+        board.print_turn(event_msgs) if print_turn || game_ended
       end
 
       # Board state refresher
@@ -154,7 +154,9 @@ module ConsoleGame
       # greet player on load, message should change depending on load state
       def greet_player
         keypath = full_move == 1 ? "session.new" : "session.load"
-        event_msgs.push(board.s(keypath, { event: session[:event], p1: player.name }))
+        event_msgs.push(board.s(keypath, {
+                                  event: [session[:event].sub("Status", "| Status:"), "gold"], p1: player.name
+                                }))
       end
 
       # Pre-turn flow
@@ -204,8 +206,7 @@ module ConsoleGame
         save_turn
         winner = session[opposite_of(side)]
         kings[side].color = "#CC0000" if type == "checkmate"
-        event_msgs << board.s("level.endgame.#{type}", { win_player: winner })
-        board.print_turn(event_msgs[-1])
+        event_msgs << board.s("level.endgame.#{type}", { win_player: [winner, "gold"] })
         @game_ended = true
       end
 
