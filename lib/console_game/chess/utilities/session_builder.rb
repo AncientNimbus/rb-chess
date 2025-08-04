@@ -33,7 +33,7 @@ module ConsoleGame
         session = { mode: mode,
                     white: wp_name,
                     black: bp_name,
-                    event: "#{wp_name} vs #{bp_name} status-#{ongoing_txt}",
+                    event: "#{wp_name} vs #{bp_name} Status #{ongoing_txt}",
                     site: site_txt,
                     date: Time.new.ceil.strftime(STR_TIME) }
         [id, session]
