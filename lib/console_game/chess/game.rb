@@ -107,8 +107,8 @@ module ConsoleGame
       # Reset state
       def reset_state
         Player.player_count(0)
-        original_state = { player_builder: nil, sides: {}, p1: setup_p1, p2: nil, fen: nil }
-        @player_builder, @sides, @p1, @p2, @fen = original_state.values_at(:player_builder, :sides, :p1, :p2, :fen)
+        reset_config = { player_builder: nil, sides: {}, p1: setup_p1, p2: nil, fen: nil }
+        reset_config.each { |var, v| instance_variable_set("@#{var}", v) }
       end
 
       # Create new session data

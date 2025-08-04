@@ -144,7 +144,7 @@ module ConsoleGame
         @threats_map, @usable_pieces = Array.new(2) { PieceAnalysis.bw_arr_hash }
         @event_msgs = []
         @turn_data, @white_turn, @castling_states, @en_passant, @half_move, @full_move =
-          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half, :full)
+          fen_data.values_at(:turn_data, :white_turn, :castling_states, :en_passant, :half_move, :full_move)
         set_current_player
         refresh(print_turn: false)
         greet_player
