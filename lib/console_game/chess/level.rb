@@ -194,6 +194,7 @@ module ConsoleGame
       # @param side [Symbol, nil] player side
       # @return [Boolean]
       def handle_result(type:, side: nil)
+        update_event_status(type:)
         save_turn
         winner = session[opposite_of(side)]
         kings[side].color = "#CC0000" if type == "checkmate"
@@ -201,6 +202,9 @@ module ConsoleGame
         board.print_turn(event_msgs[-1])
         @game_ended = true
       end
+
+      # Update event state
+      def update_event_status(type:) = session[:event].sub!(board.s("status.ongoing"), board.s("status.#{type}"))
 
       # Add checked or checkmate marker to opponent's last move
       def add_check_marker

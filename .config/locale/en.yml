@@ -369,6 +369,10 @@ en:
         err: "FEN error, '%{fen_str}' is not a valid sequence. Starting a new game..."
       misc:
         site: "Ruby Arcade Terminal Chess by Ancient Nimbus"
+      status:
+        ongoing: "Ongoing"
+        draw: "Draw"
+        checkmate: "Checkmate"
       pieces:
         k:
           name: "King"
