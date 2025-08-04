@@ -107,11 +107,8 @@ module ConsoleGame
       # Reset state
       def reset_state
         Player.player_count(0)
-        @player_builder = nil
-        @sides = {}
-        setup_p1
-        @p2 = nil
-        @fen = nil
+        original_state = { player_builder: nil, sides: {}, p1: setup_p1, p2: nil, fen: nil }
+        @player_builder, @sides, @p1, @p2, @fen = original_state.values_at(:player_builder, :sides, :p1, :p2, :fen)
       end
 
       # Create new session data
@@ -168,7 +165,7 @@ module ConsoleGame
       # == Player object creation ==
 
       # Setup player 1
-      def setup_p1 = @p1 = create_player(user.profile[:username])
+      def setup_p1 = create_player(user.profile[:username])
 
       # Create new player builder service
       # @return [PlayerBuilder]
