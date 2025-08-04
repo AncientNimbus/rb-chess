@@ -69,7 +69,7 @@ module ConsoleGame
       # Process flow when there is an issue during FEN parsing
       # @param err_msg [String] error message during FEN error
       def fen_error(err_msg: "FEN error, '#{fen_str}' is not a valid sequence. Starting a new game...")
-        puts err_msg
+        level.loading_msg(err_msg, time: 3)
         self.class.parse_fen(level)
       end
 

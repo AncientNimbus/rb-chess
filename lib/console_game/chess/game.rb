@@ -61,7 +61,7 @@ module ConsoleGame
 
       # Import game mode
       def import_game
-        print_msg(s("new.f3"), pre: "* ")
+        print_msg(s("new.f3"), pre: "⠗ ")
         @fen = controller.ask("FEN: ", input_type: :any)
       end
 

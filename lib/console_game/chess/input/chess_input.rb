@@ -110,7 +110,7 @@ module ConsoleGame
         return cmd_disabled if level.nil?
 
         @level = nil
-        print_msg(s("cmd.load"), pre: "* ")
+        print_msg(s("cmd.load"), pre: "⠗ ")
         chess_manager.setup_game
       end
 
@@ -158,7 +158,7 @@ module ConsoleGame
                             when :smith then smith_reg
                             when :alg then alg_reg
                             end
-        print_msg(s("cmd.input.#{mode}"), pre: "* ")
+        print_msg(s("cmd.input.#{mode}"), pre: "⠗ ")
       end
 
       # Create regexp patterns for various input modes

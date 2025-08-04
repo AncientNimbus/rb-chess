@@ -92,6 +92,10 @@ describe ConsoleGame::Chess::FenImport do
     context "when value is an invalid FEN string" do
       let(:invalid_fen_string) { "Invalid fen string" }
 
+      before do
+        allow(level_double).to receive(:loading_msg)
+      end
+
       it "returns a hash of a standard new game as fallback" do
         result = fen_import_test.parse_fen(level_double, invalid_fen_string)
         expect(result.keys).to eq(%i[turn_data white_turn castling_states en_passant half_move full_move])

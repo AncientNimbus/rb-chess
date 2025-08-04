@@ -55,7 +55,7 @@ module ConsoleGame
         Whirly.status = s("cli.lol.sub").sample
         sleep 1.5
         msgs = s("cli.lol.msgs")
-        print_msg(msgs[command_usage[:lol] % msgs.size], pre: "* ")
+        print_msg(msgs[command_usage[:lol] % msgs.size], pre: "⠗ ")
       end
     end
 

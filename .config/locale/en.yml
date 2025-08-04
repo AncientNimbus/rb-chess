@@ -370,8 +370,11 @@ en:
       misc:
         site: "Ruby Arcade Terminal Chess by Ancient Nimbus"
       status:
-        ongoing: "Ongoing"
-        draw: "Draw"
+        ongoing: "In Progress"
+        stalemate: "Draw"
+        insufficient: "Draw"
+        fifty_move: "Draw"
+        threefold: "Draw"
         checkmate: "Checkmate"
       pieces:
         k:

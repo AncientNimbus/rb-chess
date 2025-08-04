@@ -113,6 +113,11 @@ module ConsoleGame
       # @see PieceLookup #reverse_lookup
       def reverse_lookup(...) = piece_lookup.reverse_lookup(...)
 
+      # Loading message
+      # @param msg [String] message
+      # @param time [Integer] wait time
+      def loading_msg(msg, time: 2) = board.loading_msg(msg, time:)
+
       # == Export ==
 
       # Update session moves record
@@ -172,7 +177,7 @@ module ConsoleGame
 
       # Player action flow
       def player_action
-        board.print_msg(board.s("level.turn", { player: player.name }), pre: "* ")
+        board.print_msg(board.s("level.turn", { player: player.name }), pre: "⠗ ")
         player.is_a?(ChessComputer) ? player.play_turn : controller.turn_action(player)
       end
 
