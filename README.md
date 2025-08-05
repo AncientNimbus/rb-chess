@@ -390,7 +390,63 @@ Note: As a reminder, `--help` will display all available commands for chess.
 >
 > 1. PGN export might not include the last move if it is made by White
 > 2. FEN import will reset the full move counter, this is a minor issue as it won’t affect the actual gameplay
-> 
+>
+
+## Data Serialisation
+
+I would like to briefly highlight some of the key characteristics of the user serialisation structure for this project. The core objectives are to preserve game state optimally, provide multi-sessions and multi-user support.
+
+When designing the data structure for the chess game, I referenced the metadata field used by PGN as a starting point, this ensures that it is compliance from the start and allow easy data conversion. As the development progresses, I realised that it is easier to rebuild game state using FEN data string, hence `fens` field is added to the serialisation structure.
+
+Since all the data related to chess is grouped under the `chess` field, this user profile should be robust enough to handle other games or services without corrupting chess specific data. 
+
+Lastly, all data values are saved with primitive types to ensure maximum compatibly across different platforms. Therefore, it is language agnostic.
+
+<details>
+  <summary><b>Click to see a sample of an user profile</b></summary>
+
+```json
+{
+  "uuid": "bdfe89d5-d9eb-4397-b203-5f1a7eccd639",
+  "username": "Nimbus",
+  "saved_date": "2025-08-05 16:55:53 +0100",
+  "appdata": {
+    "chess": {
+      "1": {
+        "event": "Nimbus vs Spock Status Checkmate",
+        "site": "Ruby Arcade Terminal Chess by Ancient Nimbus",
+        "date": "08/05/2025 04:55 PM",
+        "round": null,
+        "white": "Nimbus",
+        "black": "Spock",
+        "result": null,
+        "mode": 1,
+        "moves": {
+          "1": ["f4", "e5"],
+          "2": ["g4", "Qh4#"]
+        },
+        "white_moves": ["f4", "g4"],
+        "black_moves": ["e5", "Qh4"],
+        "fens": [
+          "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1",
+          "rnbqkbnr/pppp1ppp/8/4p3/5P2/8/PPPPP1PP/RNBQKBNR w KQkq - 0 2",
+          "rnbqkbnr/pppp1ppp/8/4p3/5PP1/8/PPPPP2P/RNBQKBNR b KQkq - 0 2",
+          "rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3"
+        ]
+      }
+    }
+  },
+  "stats": {
+    "launch_count": 1
+  }
+}
+```
+</details>
+
+
+
+
 
 ## Technical Documentations
 
