@@ -4,7 +4,7 @@
 ![Status](https://img.shields.io/badge/Status-Pre_Release-2db84d)
 
 
-Welcome to the Chess project repo, it is my implementation of a terminal based Chess game written in Ruby, with user experience set as the primary focus.
+Welcome to the Chess project repo, it is my implementation of a terminal based [Chess](https://www.instructables.com/Playing-Chess/) game written in Ruby, with user experience set as the primary focus.
 
 ---
 
@@ -66,9 +66,9 @@ Without further ado, read on below to learn more about my chess project.
 
 **Input mode options**
 
-- **Smith Notation** (Default) - Coordinate-based system (`e2e3` to move directly or enter `e2` to preview, enter `e4` to complete the move)
+- [**Smith Notation**](https://en.wikipedia.org/wiki/Chess_notation#Notation_systems) (Default) - Coordinate-based system (`e2e3` to move directly or enter `e2` to preview, enter `e4` to complete the move)
 
-- **Algebraic Notation** - The official standard for chess notation (`e4`, `Nc3`, `bxc8=Q`)
+- [**Algebraic Notation**](https://www.chessable.com/blog/chess-notation-for-beginners/) - The official standard for chess notation (`e4`, `Nc3`, `bxc8=Q`)
 
 **Export capabilities**
 
@@ -101,10 +101,12 @@ Note: This mode respects the [Touch-move](https://en.wikipedia.org/wiki/Touch-mo
 
 - Two chessboard sizes can be swap via the `--board size` command
 - Chessboard flip settings can be enabled/disabled via the `--board flip` command
+- The default chessboard design is inspired by [Lichess.org](https://lichess.org/)
 
 **Contextual highlights**
 
 - Meaningful text highlights are used throughout the program to act as a visual aid
+- The input prompt prefix is inspired by [GitHub CLI](https://cli.github.com/)
 
 # Getting Started
 
