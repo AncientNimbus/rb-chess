@@ -3,10 +3,15 @@
 [![Rspec Test Fulltrack](https://github.com/AncientNimbus/rb-chess/actions/workflows/rspec_full_track.yml/badge.svg)](https://ancientnimbus.github.io/rb-chess/coverage/#_AllFiles)
 ![Status](https://img.shields.io/badge/Status-Pre_Release-2db84d)
 
+<p align="center">
+<img width="746" height="400" alt="chess-boot-screen" src="https://github.com/user-attachments/assets/c7e7e032-aaa7-4f91-9657-e98558ab736d" />
+</p>
+
 
 Welcome to the Chess project repo, it is my implementation of a terminal based [Chess](https://www.instructables.com/Playing-Chess/) game written in Ruby, with user experience set as the primary focus.
 
 ---
+
 
 # Introduction
 
@@ -23,6 +28,15 @@ Welcome to the Chess project repo, it is my implementation of a terminal based [
 > While all the core logics have been tested, you are likely to come across bugs and issues. Shall you encounter any problems or have any questions about the project, please feel free to open an issue. 
 >
 > All feedback is welcome and appreciated.
+
+<details>
+  <summary><b>Gamplay Preview - v0.9.0 (Spoiler)</b></summary>
+
+**A classic fool's mate**
+<p align="center">
+<img width="746" height="559" alt="chess-boot-screen" src="https://github.com/user-attachments/assets/4f8c3cd3-7a97-4ad7-b819-932b0d15cdec" />
+</p>
+</details>
 
 ## Motivations
 
