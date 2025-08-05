@@ -22,7 +22,7 @@ Welcome to the Chess project repo, it is my implementation of a terminal based C
 >
 > While all the core logics have been tested, you are likely to come across bugs and issues. Shall you encounter any problems or have any questions about the project, please feel free to open an issue. 
 >
-> All feedbacks are welcomed and appreciated.
+> All feedback is welcome and appreciated.
 
 ## Motivations
 
@@ -73,9 +73,9 @@ Without further ado, read on below to learn more about my chess project.
 **Export capabilities**
 
 - View the FEN record of the current turn via the `--info` command
-- [PGN Export](https://en.wikipedia.org/wiki/Portable_Game_Notation) - Save your session as a `.pgn` file and import it to your preferred online chess engine
+- [PGN Export](https://en.wikipedia.org/wiki/Portable_Game_Notation) - Save your session as a `.pgn` file and import it to your preferred online [chess engine](https://lichess.org/paste)
 
-## Quality of Life improvements
+## Quality of Life Improvements
 
 **User Profile Management**
 
@@ -128,7 +128,7 @@ Follow the simple steps below to get started:
   ```
 
 
-# How to play
+# How to Play
 
 > [!TIP]
 > Instructions can be found throughout the program via the command `--help`.
@@ -146,7 +146,7 @@ See the example below on how to launch chess as a new player:
 2. You will be prompted to create or load a user profile
    - Enter `1` to create a new profile
 4. Give your profile a username such as `Ruby Chess Tester`
-5. Your profile will be created automatically and it can be found at `/rb-chess/user_data/` directory.
+5. Your profile will be created automatically and can be found at the `/rb-chess/user_data/` directory.
 6. You have successfully entered the lobby, enter `--help` to see a list of commands.
 </details>
 
@@ -169,7 +169,7 @@ See the example below on how to launch chess as a new player:
 6. Next, indicate which side would you like to play.
    - Enter `1` to play as White
 7. You have successfully created a Player vs. Player chess session
-   </details>
+</details>
 
 <details>
   <summary><b>Stage 3a: Play a turn using Smith Notation</b></summary>
@@ -310,30 +310,92 @@ q
 
 </details>
 
+<details>
+  <summary><b>Stage 4: Using commands in Chess</b></summary>
+Note: As a reminder, `--help` will display all available commands for chess.
 
-# Technical Specifications
+- Print session details and FEN record for the current turn:
 
-**Project Scope for v1.0.0**
+```
+--info
+```
+
+- Load or create another session in game:
+
+```
+--load
+```
+
+- Toggle between standard or large chessboard:
+
+```
+--board size
+```
+
+- Toggle chessboard flip settings (when play as black the board file index starts from h to a):
+
+```
+--board flip
+```
+
+- Export current session as a `.pgn` file
+- The exported file can be found at the `/rb-chess/user_data/pgn_export/` directory.
+
+```
+--export
+```
+</details>
+
+# Technical Details 
+
+## **Project Scope for v1.0.0**
+
 - [x] Terminal based
+- [x] Colourful chessboard within unicode and terminal environment constrains 
+- [x] Full Chess rules
 - [x] Game mode 1: Local Player vs Player
 - [x] Game mode 2: Local Player vs AI (Difficulty: Easy)
+- [x] Flexible yet butterfingers-proof user input system
+- [x] Persistence data serialisation 
+- [x] FEN I/O
+- [x] Turn-based FEN Generation
+- [x] PGN Export
+- [x] Implement command pattern interface
 
-**Technical Documentations can be found below:**
+## Stretch goals
 
-**Test**
+- [ ] Adjust computer’s response rate
+- [ ] Custom board theme
 
-|      |      |
-| ---- | ---- |
-|      |      |
-|      |      |
-|      |      |
+## Known Issues
+
+> [!WARNING]
+> Below are a list of of known issues found during testing
+>
+> 1. PGN export might not include the last move if it is made by White
+> 2. FEN import will reset the full move counter, this is a minor issue as it won’t affect the actual gameplay
+> 
+
+## Technical Documentations
+
+**Test Coverage Summary**
+
+| Metric                         | Value               |
+| ------------------------------ | ------------------- |
+| Test Suites                    | 17                  |
+| Test cases                     | 338                 |
+| Chess related scripts coverage | 100%                |
+| Overall coverage               | 99.01%              |
+| Lines covered (Libs + Chess)   | 1711 (Total: ≈1750) |
+| Avg. Hits per line             | 2335.8              |
+|                                |                     |
 
 - [Codebase documentation](https://ancientnimbus.github.io/rb-chess/doc/)
 - [Code coverage report](https://ancientnimbus.github.io/rb-chess/coverage/#_AllFiles)
 
-For more details regarding the development of this project, feel free to checkout the [Wiki](https://github.com/AncientNimbus/rb-chess/wiki) page.
+For more details regarding the development of this project, feel free to checkout the [Wiki](https://github.com/AncientNimbus/rb-chess/wiki) page (New article coming soon).
 
-## Gems used
+## Gems Used
 
 - [Paint](https://github.com/janlelis/paint)
 - [Whirly](https://github.com/janlelis/whirly)
