@@ -76,7 +76,7 @@ en:
         * If this is your first visit to the Arcade, enter [1] to create a new profile.
         * If you have already created a profile, enter [2] to load your profile.
       msg2: "Please specify a profile loading mode: "
-      msg3: "Please provide a username(Default: Arcade Player): "
+      msg3: "Please provide a username (Default: Arcade Player): "
       msg4: |
         * 👋 Greetings %{name}!
     load:
@@ -227,7 +227,7 @@ en:
         * • '0-0-0' => 'Castle Queenside'
         * 
         * Pawn Promotion:
-        * Pawn can be prompted to a queen(Q), rook(R), bishop(B) or a knight(N).
+        * Pawn can be prompted to a queen (Q), rook (R), bishop (B) or a knight (N).
         * • 'e8=Q' => 'Pawn promotes to queen'
         * • 'e8=R' => 'Pawn promotes to rook'
       sm_h: |
@@ -247,7 +247,7 @@ en:
         * • 'e1c1' => 'Castle Queenside'
         * 
         * Pawn Promotion:
-        * Pawn can be prompted to a queen(q), rook(r), bishop(b) or a knight(n).
+        * Pawn can be prompted to a queen (q), rook (r), bishop (b) or a knight (n).
         * • 'e7e8q' => 'Pawn promotes to queen'
         * • 'e7e8r' => 'Pawn promotes to rook'
       blanks:
