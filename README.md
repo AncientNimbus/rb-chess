@@ -1,7 +1,7 @@
 # ♟️Ruby Chess 
 
 [![Rspec Test Fulltrack](https://github.com/AncientNimbus/rb-chess/actions/workflows/rspec_full_track.yml/badge.svg)](https://ancientnimbus.github.io/rb-chess/coverage/#_AllFiles)
-![Status](https://img.shields.io/badge/Status-In_Development-cccc00)
+![Status](https://img.shields.io/badge/Status-Pre_Release-2db84d)
 
 
 Welcome to the Chess project repo, it is my implementation of a terminal based Chess game written in Ruby, with user experience set as the primary focus.
@@ -14,13 +14,13 @@ Welcome to the Chess project repo, it is my implementation of a terminal based C
 >
 > Main branch version: `v0.9.0`
 >
-> Development Stage: `Complete (Pre-release)`
+> Release branch version: `v0.9.0`
 >
 > This version includes most of the features I planned for this project and it is now fully playable and ready for play-testing. Checkout **Getting Started** and **How to play** sections for guidance.
 >
 > There are a couple more user refinements I wish to add, but I am pretty happy with the current outcome.
 >
-> While all the core logics have been tested, you are likely to come across some bugs and issues. Shall you encounter any problems or have any questions about the project, please feel free to open an issue. 
+> While all the core logics have been tested, you are likely to come across bugs and issues. Shall you encounter any problems or have any questions about the project, please feel free to open an issue. 
 >
 > All feedbacks are welcomed and appreciated.
 
@@ -30,13 +30,13 @@ In this chess project, my primary goals are to validate my working knowledge in 
 
 This project is also presented as my final learning outcome for the Ruby course in the Full Stack Ruby on Rails path developed by [The Odin Project](https://www.theodinproject.com/paths/full-stack-ruby-on-rails/courses/ruby).
 
-I had a lot of fun working on this project, and discovered many new things about Ruby. While the journey is far from over, completing this project is a major milestone to cross.
+I had a lot of fun working on this project, and have discovered many new things about Ruby. While the journey is far from over, completing this project is a major milestone to cross.
 
 Without further ado, read on below to learn more about my chess project.
 
 ## Core User Features
 
-Complete Chess Experience
+**Complete Chess Experience**
 
 - Legal moves only
 - Pawn specific: En passant and Promotion
@@ -48,56 +48,63 @@ Complete Chess Experience
   - Threefold repetition
   - Insufficient Material
 
-Game modes 
+**Game mode options** 
 
 1. Player vs. Player (PvP) - Locally play with two players
-
 2. Player vs. Computer (PvE) - Difficulty: Easy
 
-Session load options
+**Session load options**
 
 1. New Game
 2. Load Game
 3. Import Game via [FEN record](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
 
-Save & Resume
+**Save & Resume**
 
 - Session is automatically save at the end of each turn
 - Load and resume any session without having to restart the program
 
-Input modes
+**Input mode options**
 
-- **Smith Notation** (Default): Coordinate-based system (`e2e3` to move directly or enter `e2` to preview, enter `e4` to complete the move)
+- **Smith Notation** (Default) - Coordinate-based system (`e2e3` to move directly or enter `e2` to preview, enter `e4` to complete the move)
 
-- **Algebraic Notation**: The official standard for chess notation (`e4`, `Nc3`, `bxc8=Q`)
+- **Algebraic Notation** - The official standard for chess notation (`e4`, `Nc3`, `bxc8=Q`)
 
-Export capabilities
+**Export capabilities**
 
 - View the FEN record of the current turn via the `--info` command
-- Export your session as a `.pgn` file and import it to your preferred online chess engine
+- [PGN Export](https://en.wikipedia.org/wiki/Portable_Game_Notation) - Save your session as a `.pgn` file and import it to your preferred online chess engine
 
 ## Quality of Life improvements
 
-User Profile Management
+**User Profile Management**
 
 - A mini console system - **Ruby Arcade** is purpose built for this project to offer support for multiple user profiles
 
-Input hot-swapping 
+**Preview mode on Smith Notation**
+
+In addition to direct move such as `e2e4`, this input mode also supports a preview feature where players have the ability see all the possible movements of a given chess piece.
+
+To use it, select a chess piece such as `e2` and hit enter, the board will display all movements with distinctive highlights. In the following prompt, confirm your move such as `e4` to complete your turn.
+
+Note: This mode respects the [Touch-move](https://en.wikipedia.org/wiki/Touch-move_rule) rule, meaning once a chess piece is selected, you must play it this turn.
+
+**Input hot-swapping** 
 
 - Notation input preference is interchangeable throughout the program
 
-Session hot-swapping 
+**Session hot-swapping** 
 
 - Load or start a new chess without having to restart the program
 
-Chessboard customisations
+**Chessboard customisations**
 
 - Two chessboard sizes can be swap via the `--board size` command
 - Chessboard flip settings can be enabled/disabled via the `--board flip` command
 
-Contextual highlights
+**Contextual highlights**
 
-- Meaningful text highlights are used throughout the program to act as an aid
+- Meaningful text highlights are used throughout the program to act as a visual aid
 
 # Getting Started
 
@@ -105,6 +112,7 @@ Follow the simple steps below to get started:
 
 1. Ensure that Ruby `3.4.x` and Bundler are correctly installed on your device (This project is developed using Ruby version `3.4.2`)
 2. Clone the repo or download the project from Releases `v0.9.x` 
+
 3. In your terminal, open the directory:
 
   ```
@@ -123,15 +131,190 @@ Follow the simple steps below to get started:
 # How to play
 
 > [!TIP]
-> Instructions can be found throughout the program via the command `--help`, more detailed introductions will be added here shortly.
+> Instructions can be found throughout the program via the command `--help`.
+>
+> You can exit the program at any point via the `--exit` command.
+>
+> The command system is context aware, so its usage availability depends on the location you are at.
+
+See the example below on how to launch chess as a new user:
+
+<details>
+  <summary><b>Stage 1: Welcome to Ruby Arcade</b></summary>
+
+1. A boot screen is printed, adjust your terminal window size if needed (Recommended size: `80x35`)
+2. You will be prompted to create or load a user profile
+3. Enter `1` to create a new profile
+4. Give your profile a username such as `Ruby Chess Tester`
+5. Your profile will be created automatically and it can be found at `/rb-chess/user_data/` directory.
+6. You have successfully entered the lobby, enter `--help` to see a list of commands.
+</details>
+
+<details>
+  <summary><b>Stage 2: Launching Chess</b></summary>
+
+1. To launch chess, simply type the following:
+
+```
+--play chess
+```
+
+2. A boot screen is printed, the instructions shall hopefully get you orientated with the program quicker.
+3. You will be prompted to select a load mode
+4. Enter `1` to create a new game
+5. You will be prompted to select a game mode
+6. Enter `1` to play locally with a friend (or by yourself) or `2` to play with a computer player
+7. In this example, I will enter `1` to create a Player vs. Player session
+8. You will be given the option to rename both players (mode 1 only), you can skip this by pressing enter.
+9. Next, indicate which side would you like to play.
+10. Enter `1` to play as White
+11. You have successfully created a Player vs. Player chess session
+</details>
+
+<details>
+  <summary><b>Stage 3a: Play a turn using Smith Notation</b></summary>
+
+
+
+1. This game opted to use Smith notation as a default input option as it has a simpler learning curve. Type the `--help smith` command will print a simple user guide while in-game
+
+**Direct move**
+
+- To select a piece and move with a single prompt:
+
+```
+e2e4
+```
+
+Promotion a pawn
+
+- To promote a pawn to a queen and move with a single prompt:
+
+```
+e7e8q
+```
+
+**Preview then move**
+
+- To use preview mode, first select a piece:
+
+```
+e2
+```
+
+- After previewing, enter the desire location to move:
+
+```
+e4
+```
+
+Promotion a pawn
+
+- To promote a pawn to a bishop, first select a pawn at h7:
+
+```
+h7
+```
+
+- After previewing, enter the desire location to move:
+
+```
+h8
+```
+
+- You will be prompted to promote the pawn, in this case b is entered to represent bishop:
+
+```
+b
+```
+
+</details>
+
+<details>
+  <summary><b>Stage 3b: Play a turn using Algebraic Notation</b></summary>
+
+
+
+Note: Preview mode is not available for Algebraic notation due to usage consideration.
+
+1. To use Algebraic Notation as an input option. First type the `--alg` command and press enter to confirm the selection
+
+2. Type the `--help alg` command will print a simple user guide while in-game
+
+Move a chess piece
+
+- Move a pawn to e4
+
+```
+e4
+```
+
+- Move a queen to a1
+
+```
+Qa1
+```
+
+Capture a chess piece
+
+- Pawn captures e4 from d file
+
+```
+dxe4
+```
+
+- Bishop captures c5 from f file
+
+```
+Bxc5 / Bfxc5
+```
+
+Castling
+
+- Kingside castling
+
+```
+O-O
+```
+
+- Queenside castling
+
+```
+O-O-O
+```
+
+Pawn Promotion
+
+- Move and promote to a queen
+
+```
+e8=Q
+```
+
+- Capture and promote to a rook
+
+```
+bxc1=R
+```
+
+- In the event where you have forgotten to enter promote option, an additional prompt will appear as fallback
+
+```
+# First prompt (Move pawn to c8)
+c8
+# Second prompt (Promote to queen)
+q
+```
+
+</details>
 
 
 # Technical Specifications
 
 **Project Scope for v1.0.0**
-- Terminal based
-- Game mode 1: Local Player vs Player
-- Game mode 2: Local Player vs AI (Difficulty: Basic)
+- [x] Terminal based
+- [x] Game mode 1: Local Player vs Player
+- [x] Game mode 2: Local Player vs AI (Difficulty: Easy)
 
 **Technical Documentations can be found below:**
 
