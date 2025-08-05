@@ -137,14 +137,14 @@ Follow the simple steps below to get started:
 >
 > The command system is context aware, so its usage availability depends on the location you are at.
 
-See the example below on how to launch chess as a new user:
+See the example below on how to launch chess as a new player:
 
 <details>
   <summary><b>Stage 1: Welcome to Ruby Arcade</b></summary>
 
 1. A boot screen is printed, adjust your terminal window size if needed (Recommended size: `80x35`)
 2. You will be prompted to create or load a user profile
-3. Enter `1` to create a new profile
+   - Enter `1` to create a new profile
 4. Give your profile a username such as `Ruby Chess Tester`
 5. Your profile will be created automatically and it can be found at `/rb-chess/user_data/` directory.
 6. You have successfully entered the lobby, enter `--help` to see a list of commands.
@@ -159,24 +159,26 @@ See the example below on how to launch chess as a new user:
 --play chess
 ```
 
-2. A boot screen is printed, the instructions shall hopefully get you orientated with the program quicker.
+2. A boot screen is printed, the instructions shall hopefully get you orientated with the program easier.
 3. You will be prompted to select a load mode
-4. Enter `1` to create a new game
-5. You will be prompted to select a game mode
-6. Enter `1` to play locally with a friend (or by yourself) or `2` to play with a computer player
-7. In this example, I will enter `1` to create a Player vs. Player session
-8. You will be given the option to rename both players (mode 1 only), you can skip this by pressing enter.
-9. Next, indicate which side would you like to play.
-10. Enter `1` to play as White
-11. You have successfully created a Player vs. Player chess session
-</details>
+   - Enter `1` to create a new game
+4. You will be prompted to select a game mode
+   - Enter `1` to play locally with a friend (or by yourself) or `2` to play with a computer player
+   - In this example, I will enter `1` to create a Player vs. Player session
+5. You will be given the option to rename both players (mode 1 only), you can skip this by pressing enter.
+6. Next, indicate which side would you like to play.
+   - Enter `1` to play as White
+7. You have successfully created a Player vs. Player chess session
+   </details>
 
 <details>
   <summary><b>Stage 3a: Play a turn using Smith Notation</b></summary>
 
 
 
-1. This game opted to use Smith notation as a default input option as it has a simpler learning curve. Type the `--help smith` command will print a simple user guide while in-game
+Note: This game opted to use Smith notation as a default input option as it has a simpler learning curve.
+
+1. Type the `--help smith` command will print a simple user guide while in-game
 
 **Direct move**
 
@@ -186,7 +188,7 @@ See the example below on how to launch chess as a new user:
 e2e4
 ```
 
-Promotion a pawn
+Promote a pawn
 
 - To promote a pawn to a queen and move with a single prompt:
 
@@ -208,7 +210,7 @@ e2
 e4
 ```
 
-Promotion a pawn
+Promote a pawn
 
 - To promote a pawn to a bishop, first select a pawn at h7:
 
@@ -241,7 +243,7 @@ Note: Preview mode is not available for Algebraic notation due to usage consider
 
 2. Type the `--help alg` command will print a simple user guide while in-game
 
-Move a chess piece
+**Move a chess piece**
 
 - Move a pawn to e4
 
@@ -255,7 +257,7 @@ e4
 Qa1
 ```
 
-Capture a chess piece
+**Capture a chess piece**
 
 - Pawn captures e4 from d file
 
@@ -269,7 +271,7 @@ dxe4
 Bxc5 / Bfxc5
 ```
 
-Castling
+**Castling**
 
 - Kingside castling
 
@@ -283,7 +285,7 @@ O-O
 O-O-O
 ```
 
-Pawn Promotion
+**Promote a pawn**
 
 - Move and promote to a queen
 
