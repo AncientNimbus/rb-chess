@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.0] - 2025-08-05
+
+### 🚀 Features
+
+- *(UX)* Improve prompt handling
+- Update MovesSimulation to check other pieces
+- *(UX)* Improve PGN export messaging
+- *(UX)* Change king's colour during checkmate
+- *(UX)* Add player greetings on new & load game
+- Improve FenImport's edge case handling
+- Further refine FenImport's edge case handling
+- Add the ability to import a game via FEN (#70)
+- Add missing player messages (#71)
+
+### 🐛 Bug Fixes
+
+- Resolve a crash when exiting from load game
+- Resolve an issue related to castling and check
+- Move that will result in check restricted
+
+### 💼 Other
+
+- Remove board refresh in #draw method
+- Table formatting and adjust print spacing (#72)
+
+### 📚 Documentation
+
+- Update CHANGELOG
+- Update README for v0.9.0
+
+### 🧪 Testing
+
+- Add test cases for PgnExport
+- Integration test for info and export command
+- Add tests for Fool's mate and Legal's mate
+- Test case for loading a checked session
+
+### ⚙️ Miscellaneous Tasks
+
+- Rspec automated test script for pr workflow
+
 ## [0.8.0] - 2025-08-01
 
 ### 🚀 Features
