@@ -61,7 +61,7 @@ Without further ado, read on below to learn more about my chess project.
 
 **Save & Resume**
 
-- Session is automatically save at the end of each turn
+- Session is automatically saved at the end of each turn
 - Load and resume any session without having to restart the program
 
 **Input mode options**
