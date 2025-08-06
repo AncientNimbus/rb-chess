@@ -29,13 +29,21 @@ Welcome to the Chess project repo, it is my implementation of a terminal based [
 >
 > All feedback is welcome and appreciated.
 
+[Gameplay footage for v0.9.0](https://www.youtube.com/shorts/7rKmVUZ2Aq4)
 <details>
   <summary><b>Gamplay Preview - v0.9.0 (Spoiler)</b></summary>
 
-**A classic fool's mate**
+**A classic fool's mate** (Terminal: Warp)
 <p align="center">
-<img width="746" height="559" alt="chess-boot-screen" src="https://github.com/user-attachments/assets/4f8c3cd3-7a97-4ad7-b819-932b0d15cdec" />
+<img width="746" height="559" alt="fools-mate" src="https://github.com/user-attachments/assets/4f8c3cd3-7a97-4ad7-b819-932b0d15cdec" />
 </p>
+
+**Legal's mate is another classic** (Terminal: iTerm)
+<p align="center">
+<img width="746" height="820" alt="legals-mate" src="https://github.com/user-attachments/assets/ded67f03-e062-4942-96ac-ad7fcbd9e208" />
+</p>
+
+
 </details>
 
 ## Motivations
