@@ -17,7 +17,7 @@ Welcome to the Chess project repo, it is my implementation of a terminal based [
 
 > [!NOTE]
 >
-> Main branch version: `v0.9.0`
+> Main branch version: `v0.9.1`
 >
 > Release branch version: `v0.9.0`
 >

@@ -55,7 +55,7 @@ module ConsoleGame
       def good_move? = !(i_am_the_king ? am_i_in_danger? : hows_the_king?)
 
       # Determine check conditions based on smart_moves
-      def hows_the_king? = smart_moves ? (am_i_in_danger? && king_in_danger) : king_in_danger?
+      def hows_the_king? = smart_moves ? (am_i_in_danger? && king_in_danger?) : king_in_danger?
 
       # Check yourself
       def am_i_in_danger? = piece.under_threat?

@@ -223,8 +223,8 @@ en:
         * • 'Rbxd4' => 'b-Rook captures d4'
         * 
         * Castling:
-        * • '0-0' => 'Castle Kingside'
-        * • '0-0-0' => 'Castle Queenside'
+        * • 'O-O' => 'Castle Kingside'
+        * • 'O-O-O' => 'Castle Queenside'
         * 
         * Pawn Promotion:
         * Pawn can be prompted to a queen (Q), rook (R), bishop (B) or a knight (N).
