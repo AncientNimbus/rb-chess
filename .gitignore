@@ -1,5 +1,5 @@
 coverage/*
 doc/*
 .yardoc/*
-user_data/*
 .vscode/*
+*.gem

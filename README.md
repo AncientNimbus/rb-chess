@@ -17,9 +17,9 @@ Welcome to the Chess project repo, it is my implementation of a terminal based [
 
 > [!NOTE]
 >
-> Main branch version: `v0.9.1`
+> Main branch version: `v0.9.2`
 >
-> Release branch version: `v0.9.0`
+> Release branch version: `v0.9.2`
 >
 > This version includes most of the features I planned for this project and it is now fully playable and ready for play-testing. Checkout **Getting Started** and **How to play** sections for guidance.
 >
@@ -134,23 +134,57 @@ Note: This mode respects the [Touch-move](https://en.wikipedia.org/wiki/Touch-mo
 
 Follow the simple steps below to get started:
 
-1. Ensure that Ruby `3.4.x` and Bundler are correctly installed on your device (This project is developed using Ruby version `3.4.2`)
-2. Clone the repo or download the project from Releases `v0.9.x` 
+Ensure that Ruby `3.4.x` and Bundler are correctly installed on your device (This project is developed using Ruby version `3.4.2`)
 
-3. In your terminal, open the directory:
+### Recommended: Install via RubyGems.org
+
+1. Install the gem to your local environment:
+
+```
+gem install chess_cli
+```
+
+2. Run the game!
+
+```
+chess_cli
+```
+
+3. To uninstall the game:
+
+```
+gem uninstall chess_cli
+```
+
+### Alternatively: Build From Source Code
+
+1. Clone the repo or download the project from Releases `v0.9.x` 
+
+2. In your terminal, open the directory:
 
   ```
   cd rb-chess/
   ```
-4. Installed the required Gems:
+4. Build the gem locally:
   ```
-  bundle install
+  gem build chess_cli.gemspec
   ```
-5. You are ready to launch the program:
+5. Install the gem to your local environment:
   ```
-  bundle exec ruby main.rb
+  gem install chess_cli
   ```
 
+6. Run the game!
+
+```
+chess_cli
+```
+
+7. To uninstall the game:
+
+```
+gem uninstall chess_cli
+```
 
 # How to Play
 
