@@ -1,5 +1,6 @@
 # ♟️Ruby Chess 
 
+[![Gem Version](https://badge.fury.io/rb/chess_cli.svg)](https://badge.fury.io/rb/chess_cli)
 [![Rspec Test Fulltrack](https://github.com/AncientNimbus/rb-chess/actions/workflows/rspec_full_track.yml/badge.svg)](https://ancientnimbus.github.io/rb-chess/coverage/#_AllFiles)
 ![Status](https://img.shields.io/badge/Status-Pre_Release-2db84d)
 
@@ -156,7 +157,10 @@ chess_cli
 gem uninstall chess_cli
 ```
 
-### Alternatively: Build From Source Code
+<details>
+  <summary><h3>Alternatively: Build From Source Code</h3></summary>
+  
+### Build From Source Code
 
 1. Clone the repo or download the project from Releases `v0.9.x` 
 
@@ -185,6 +189,7 @@ chess_cli
 ```
 gem uninstall chess_cli
 ```
+</details>
 
 # How to Play
 

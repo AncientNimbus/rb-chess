@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.2] - 2025-08-25
+
+### 🚀 Features
+
+- Gemification (#74)
+
+### 🐛 Bug Fixes
+
+- Update helper text for algebraic input
+
+### 📚 Documentation
+
+- Add gameplay footage to README
+
+### ⚙️ Miscellaneous Tasks
+
+- Update CHANGELOG
+
 ## [0.9.0] - 2025-08-05
 
 ### 🚀 Features
