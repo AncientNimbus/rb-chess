@@ -1,7 +1,7 @@
 {
   "uuid": "9e39f092-534e-4dbb-ac3c-64846b78d727",
   "username": "Dummy User",
-  "saved_date": "2025-08-04 18:37:57 +0100",
+  "saved_date": "2025-08-25 17:18:33 +0100",
   "appdata": {
     "chess": {
       "1": {
@@ -14,13 +14,34 @@
         "result": null,
         "mode": 1,
         "moves": {
-          "1": ["e4", "e5"],
-          "2": ["Nf3", "Nc6"],
-          "3": ["Bc4", "d6"],
-          "4": ["Nc3", "Bg4"],
-          "5": ["h3", "Bh5"],
-          "6": ["Nfxe5", "Bhxd1"],
-          "7": ["Bcxf7", "Ke7"]
+          "1": [
+            "e4",
+            "e5"
+          ],
+          "2": [
+            "Nf3",
+            "Nc6"
+          ],
+          "3": [
+            "Bc4",
+            "d6"
+          ],
+          "4": [
+            "Nc3",
+            "Bg4"
+          ],
+          "5": [
+            "h3",
+            "Bh5"
+          ],
+          "6": [
+            "Nfxe5",
+            "Bhxd1"
+          ],
+          "7": [
+            "Bcxf7",
+            "Ke7"
+          ]
         },
         "white_moves": [
           "e4",
@@ -32,7 +53,15 @@
           "Bcxf7",
           "Nd5+"
         ],
-        "black_moves": ["e5", "Nc6", "d6", "Bg4", "Bh5", "Bhxd1", "Ke7"],
+        "black_moves": [
+          "e5",
+          "Nc6",
+          "d6",
+          "Bg4",
+          "Bh5",
+          "Bhxd1",
+          "Ke7"
+        ],
         "fens": [
           "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
           "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
@@ -62,11 +91,23 @@
         "result": null,
         "mode": 1,
         "moves": {
-          "1": ["f4", "e5"],
-          "2": ["g4", "Qh4#"]
+          "1": [
+            "f4",
+            "e5"
+          ],
+          "2": [
+            "g4",
+            "Qh4#"
+          ]
         },
-        "white_moves": ["f4", "g4"],
-        "black_moves": ["e5", "Qh4"],
+        "white_moves": [
+          "f4",
+          "g4"
+        ],
+        "black_moves": [
+          "e5",
+          "Qh4"
+        ],
         "fens": [
           "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
           "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1",
@@ -78,6 +119,6 @@
     }
   },
   "stats": {
-    "launch_count": 370
+    "launch_count": 374
   }
 }

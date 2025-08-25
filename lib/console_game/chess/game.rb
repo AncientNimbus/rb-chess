@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "version"
 require_relative "../base_game"
 require_relative "player/chess_player"
 require_relative "player/chess_computer"
@@ -28,7 +29,7 @@ module ConsoleGame
       # @param game_manager [GameManager]
       # @param title [String]
       def initialize(game_manager = nil, title = "Chess")
-        super(game_manager, title, ChessInput.new(game_manager, self), ver: "0.9.0")
+        super(game_manager, title, ChessInput.new(game_manager, self), ver: VER)
         user.profile[:appdata][:chess] ||= {}
         @sessions = user.profile[:appdata][:chess]
       end
