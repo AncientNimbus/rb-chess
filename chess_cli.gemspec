@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name = "chess_cli"
   s.files = Dir["lib/**/*.rb"] + Dir["bin/*"]
   s.files += Dir[".config/locale/**/*.yml"]
-  s.files += Dir["user_data/**/*"]
+  s.files += Dir["user_data/**/*"] + Dir["user_data/**/.keep"]
   s.summary = "A colourful terminal Chess, support Smith & Algebraic input, FEN I/O, user profile management and more."
   s.version = ConsoleGame::Chess::VER
 
